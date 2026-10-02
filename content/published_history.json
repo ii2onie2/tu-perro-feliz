@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "date": "2026-10-03",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro sin gritos ni castigos",
+    "topic_family": "educacion_con_refuerzo",
+    "format": "mini_lesson",
+    "hook_pattern": "do_this_not_that",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-03",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Tu perro puede estar pidiendo espacio sin gruñir",
+    "topic_family": "lenguaje_corporal",
+    "format": "body_language",
+    "hook_pattern": "surprising_fact",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-03",
+    "series": "Tu perro feliz",
+    "title": "Tu cachorro llega hoy a casa: las 5 primeras cosas que debes hacer",
+    "topic_family": "llegada_del_cachorro",
+    "format": "checklist",
+    "hook_pattern": "problem_first",
+    "duration_target": "35-50s"
+  }
+]
