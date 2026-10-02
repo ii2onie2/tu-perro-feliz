@@ -1,0 +1,41 @@
+{
+  "series": "Buenos modales",
+  "title": "Cómo enseñar a tu perro sin gritos ni castigos",
+  "date": "2026-10-03",
+  "slot": "16:00",
+  "hook": "Si tu perro repite una conducta que no quieres, castigarle no es la única respuesta: puedes enseñarle qué hacer en su lugar.",
+  "narration": "Para enseñar buenos modales, empieza por decidir qué conducta quieres ver. Si quieres que se siente para saludar, recompensa el momento en que mantiene las cuatro patas en el suelo o se sienta. Si tira de la correa, trabaja en distancias cortas y refuerza cuando camina contigo. Las sesiones deben ser breves, claras y fáciles de repetir. La American Veterinary Society of Animal Behavior recomienda métodos basados en recompensas y desaconseja los métodos aversivos, como collares de castigo, tirones o intimidación. Premiar no significa dejar hacer cualquier cosa: significa enseñar de forma clara qué conducta funciona. Síguenos y convierte la educación en una forma de comunicación con tu perro.",
+  "caption": "Educar no es castigar. Enseña la conducta que quieres y refuérzala de forma consistente.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#EducacionCanina",
+    "#AdiestramientoCanino",
+    "#RefuerzoPositivo",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "AVSAB - Humane Dog Training Position Statement",
+      "url": "https://avsab.org/resources/position-statements/"
+    },
+    {
+      "name": "AVSAB - Reward-Based Training Methods",
+      "url": "https://avsab.org/what-are-reward-based-training-methods-for-dogs-and-cats/"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Dog training.jpg",
+      "role": "Entrenamiento con refuerzo positivo"
+    },
+    {
+      "commons_title": "File:Golden Retriever Puppy 2012 03.jpg",
+      "role": "Cachorro durante aprendizaje"
+    }
+  ],
+  "cta": "Síguenos y convierte la educación en una forma de comunicación con tu perro.",
+  "format": "mini_lesson",
+  "hook_pattern": "do_this_not_that",
+  "topic_family": "educacion_con_refuerzo",
+  "duration_target": "35-50s"
+}
