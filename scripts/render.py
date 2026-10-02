@@ -118,7 +118,7 @@ def main():
             parts.append(
                 f"[{i}:v]scale=1200:2134:force_original_aspect_ratio=increase,"
                 f"crop=1200:2134,zoompan=z='{zexpr}':x='{xexpr}':y='ih/2-(ih/zoom/2)':"
-                f"d=1:s={W}x{H}:fps={FPS},trim=duration={seg:.3f},setpts=PTS-STARTPTS[{label}]"
+                f"d=1:s={W}x{H}:fps={FPS},setsar=1,trim=duration={seg:.3f},setpts=PTS-STARTPTS[{label}]"
             )
         parts.append("".join(labels)+f"concat=n={len(beat_bgs)}:v=1:a=0[base]")
         parts.append(f"[base]{subtitle_filter}{branding}{hook_overlay}{cta_overlay}[vout]")
