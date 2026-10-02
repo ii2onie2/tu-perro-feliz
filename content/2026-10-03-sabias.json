@@ -1,0 +1,41 @@
+{
+  "series": "¿Sabías esto de tu perro?",
+  "title": "Tu perro puede estar pidiendo espacio sin gruñir",
+  "date": "2026-10-03",
+  "slot": "19:00",
+  "hook": "Un perro no necesita gruñir para decir que algo le incomoda: muchas señales aparecen mucho antes.",
+  "narration": "Antes de un gruñido o un ladrido, muchos perros muestran señales más sutiles. Pueden girar la cabeza, apartar el cuerpo, lamerse los labios sin comida cerca, bostezar sin estar cansados, bajar la cola, echar las orejas hacia atrás o quedarse completamente quietos. No hay que interpretar una sola señal aislada: observa el cuerpo completo y el contexto. Por ejemplo, mover la cola no siempre significa que el perro esté relajado. Reconocer estas señales pronto permite darle espacio y evitar que la situación siga aumentando de intensidad. Si un cambio de comportamiento aparece de repente, también conviene descartar dolor o un problema médico con el veterinario. Síguenos para aprender a leer mejor lo que tu perro intenta decirte.",
+  "caption": "Antes del gruñido suelen aparecer señales más pequeñas. Aprende a observar el cuerpo completo y el contexto.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#LenguajeCanino",
+    "#ComportamientoCanino",
+    "#Perros",
+    "#BienestarAnimal"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - How to understand your dog's body language",
+      "url": "https://www.dogstrust.org.uk/dog-advice/understanding-your-dog/body-language"
+    },
+    {
+      "name": "Dogs Trust - Signs your dog may be stressed",
+      "url": "https://www.dogstrust.org.uk/dog-advice/understanding-your-dog/signs-your-dog-may-be-stressed"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Dog body language confident upright posture alert focused dog.JPG",
+      "role": "Postura corporal canina"
+    },
+    {
+      "commons_title": "File:Vorderkoerpertiefstellung THWZ (cropped).jpg",
+      "role": "Señal corporal de juego"
+    }
+  ],
+  "cta": "Síguenos para aprender a leer mejor lo que tu perro intenta decirte.",
+  "format": "body_language",
+  "hook_pattern": "surprising_fact",
+  "topic_family": "lenguaje_corporal",
+  "duration_target": "35-50s"
+}
