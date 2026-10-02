@@ -1,0 +1,41 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Tu cachorro llega hoy a casa: las 5 primeras cosas que debes hacer",
+  "date": "2026-10-03",
+  "slot": "10:00",
+  "hook": "El primer día de un cachorro en casa no debería empezar con órdenes: debería empezar con seguridad, calma y una rutina sencilla.",
+  "narration": "Cuando un cachorro llega a casa, lo más importante es reducir el estrés y ayudarle a entender que está en un lugar seguro. Prepara una zona tranquila con cama, agua, juguetes y un espacio donde pueda descansar sin interrupciones. Mantén al principio una rutina sencilla para comida, salidas y sueño. Evita presentarle demasiadas personas o experiencias de golpe. La socialización es importante, pero debe hacerse de forma progresiva, positiva y segura. También conviene empezar desde el primer día con pequeñas ausencias y momentos de descanso independiente. Y recuerda: dormir y descansar también forma parte del aprendizaje. Síguenos para aprender cada día a entender y educar mejor a tu perro.",
+  "caption": "¿Llega un cachorro a casa? Seguridad, rutina y experiencias positivas antes que demasiados estímulos.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#Cachorros",
+    "#EducacionCanina",
+    "#Perros",
+    "#ConsejosParaPerros"
+  ],
+  "sources": [
+    {
+      "name": "RSPCA - Caring for your puppy",
+      "url": "https://www.rspca.org.uk/adviceandwelfare/pets/dogs/health/puppycare"
+    },
+    {
+      "name": "AVSAB - Puppy Socialization Position Statement",
+      "url": "https://avsab.org/resources/position-statements/"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Golden Retriever Puppy in the House.JPG",
+      "role": "Cachorro en casa"
+    },
+    {
+      "commons_title": "File:Golden Retriever puppy.jpg",
+      "role": "Cachorro joven"
+    }
+  ],
+  "cta": "Síguenos para aprender cada día a entender y educar mejor a tu perro.",
+  "format": "checklist",
+  "hook_pattern": "problem_first",
+  "topic_family": "llegada_del_cachorro",
+  "duration_target": "35-50s"
+}
