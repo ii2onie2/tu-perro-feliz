@@ -1,0 +1,41 @@
+{
+  "series": "¿Sabías esto de tu perro?",
+  "title": "Olfatear durante el paseo no es perder el tiempo",
+  "date": "2026-10-04",
+  "slot": "19:00",
+  "hook": "Cuando tu perro se para a oler durante el paseo, no está perdiendo el tiempo: está usando una de sus formas principales de explorar el mundo.",
+  "narration": "Para un perro, un paseo no es solo ejercicio físico. Dogs Trust explica que olfatear es una conducta natural y una forma importante de obtener información del entorno. Darle tiempo para explorar olores también forma parte del enriquecimiento: puede estimular la mente, favorecer la búsqueda y ofrecer oportunidades para usar comportamientos naturales. No hace falta convertir cada paseo en una marcha rápida. Puedes alternar tramos de caminar contigo con momentos en los que permites que investigue un lugar seguro a su ritmo. En casa también puedes esconder parte de su comida o juguetes para que los busque con la nariz. El objetivo no es cansarlo a cualquier precio, sino ofrecer actividades seguras que encajen con sus necesidades. Síguenos para entender mejor cómo disfruta y aprende tu perro.",
+  "caption": "Olfatear también forma parte del paseo. Explorar olores es una conducta natural y una forma de enriquecimiento.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#SabiasEstoDeTuPerro",
+    "#OlfatoCanino",
+    "#EnriquecimientoCanino",
+    "#BienestarAnimal"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - Enrichment activities for dogs",
+      "url": "https://www.dogstrust.org.uk/dog-advice/life-with-your-dog/enrichment/enrichment-activities-for-dogs"
+    },
+    {
+      "name": "Dogs Trust - How to make your dog happy",
+      "url": "https://www.dogstrust.org.uk/dog-advice/understanding-your-dog/make-your-dog-happy"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Beagle sniffing in the grass.jpg",
+      "role": "Beagle olfateando el césped"
+    },
+    {
+      "commons_title": "File:Random white dog.JPG",
+      "role": "Perro olfateando hierba durante un paseo"
+    }
+  ],
+  "cta": "Síguenos para entender mejor cómo disfruta y aprende tu perro.",
+  "format": "curiosity_explainer",
+  "hook_pattern": "reframe_common_behavior",
+  "topic_family": "olfato_y_enriquecimiento",
+  "duration_target": "35-50s"
+}

@@ -1,0 +1,41 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Paseo seguro: agua, sombra y suelo antes de salir",
+  "date": "2026-10-04",
+  "slot": "10:00",
+  "hook": "Antes de salir con tu perro, tres comprobaciones sencillas pueden hacer el paseo mucho más seguro: agua, sombra y temperatura del suelo.",
+  "narration": "Un paseo saludable no depende solo de caminar más tiempo. Antes de salir, piensa en el calor, el agua y el tipo de suelo. La RSPCA recomienda evitar las horas más calurosas, llevar agua y buscar zonas de sombra cuando la temperatura sube. El pavimento también puede calentarse mucho y quemar las almohadillas. Si dudas, comprueba el suelo con la mano y elige césped o superficies más frescas. Ajusta además la duración y la intensidad al perro que tienes delante: edad, condición física, tipo de hocico y estado de salud importan. Si jadea de forma intensa, se muestra débil o desorientado, termina la actividad y busca ayuda veterinaria. Síguenos para cuidar mejor a tu perro cada día.",
+  "caption": "Antes del paseo: agua, sombra y suelo fresco. Tres comprobaciones simples que ayudan a proteger a tu perro.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#CuidadosCaninos",
+    "#PaseoConPerro",
+    "#BienestarAnimal",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "RSPCA - Dogs die on hot walks",
+      "url": "https://www.rspca.org.uk/adviceandwelfare/pets/dogs/health/hotwalks"
+    },
+    {
+      "name": "RSPCA - Keeping your dog safe in summer",
+      "url": "https://www.rspca.org.uk/adviceandwelfare/seasonal/summer/dogs"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Thirsty dog.jpg",
+      "role": "Perro bebiendo agua"
+    },
+    {
+      "commons_title": "File:Dog on grass.jpg",
+      "role": "Perro sobre césped"
+    }
+  ],
+  "cta": "Síguenos para cuidar mejor a tu perro cada día.",
+  "format": "safety_checklist",
+  "hook_pattern": "three_checks",
+  "topic_family": "paseo_seguro",
+  "duration_target": "35-50s"
+}

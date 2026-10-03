@@ -1,0 +1,41 @@
+{
+  "series": "Buenos modales",
+  "title": "Cómo enseñar a tu perro a volver cuando lo llamas",
+  "date": "2026-10-04",
+  "slot": "16:00",
+  "hook": "Si quieres que tu perro vuelva cuando lo llamas, la llamada tiene que predecir algo bueno, no el final de toda la diversión.",
+  "narration": "La llamada se construye paso a paso. Dogs Trust recomienda empezar en casa, en el jardín o en un lugar cerrado y tranquilo. Primero consigue la atención de tu perro con su nombre, usa siempre una señal corta y clara, y prémialo cuando llegue. Al principio, recompensa cada éxito con algo que realmente valore: comida, juego o atención. Después aumenta poco a poco la distancia y las distracciones. Si todavía no es fiable, una línea larga enganchada al arnés permite practicar con más seguridad. Evita enfadarte cuando tarde en volver: si regresar contigo termina en gritos o castigo, la llamada pierde valor. Practica fácil, recompensa bien y aumenta la dificultad de forma gradual. Síguenos para educar con claridad, seguridad y buen trato.",
+  "caption": "La llamada se entrena: señal clara, recompensa y dificultad gradual. Volver contigo debe seguir siendo una buena idea.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BuenosModales",
+    "#EducacionCanina",
+    "#AdiestramientoCanino",
+    "#RefuerzoPositivo"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - Recall training",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/basics/recall-training"
+    },
+    {
+      "name": "Dogs Trust - Positive reinforcement training with rewards",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/techniques/positive-reinforcement-training-with-rewards"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Dog running to see the owner.jpg",
+      "role": "Perro corriendo hacia su persona"
+    },
+    {
+      "commons_title": "File:Dog training.jpg",
+      "role": "Entrenamiento con refuerzo positivo"
+    }
+  ],
+  "cta": "Síguenos para educar con claridad, seguridad y buen trato.",
+  "format": "mini_lesson",
+  "hook_pattern": "common_mistake",
+  "topic_family": "llamada_y_retorno",
+  "duration_target": "35-50s"
+}
