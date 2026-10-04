@@ -1,0 +1,43 @@
+{
+  "series": "Tu perro feliz",
+  "title": "El rincón seguro que tu perro debería tener en casa",
+  "date": "2026-10-05",
+  "slot": "10:00",
+  "hook": "Si tu perro busca esconderse cuando hay visitas, ruido o demasiado movimiento, quizá no necesita más atención: necesita un lugar donde nadie lo moleste.",
+  "narration": "Un espacio seguro puede ayudar a tu perro a relajarse cuando necesita tranquilidad. Dogs Trust recomienda elegir un rincón cómodo, tranquilo y sin demasiado paso, con una cama o mantas que ya le resulten familiares. La regla más importante es sencilla: ese lugar nunca debe usarse como castigo. Si tu perro entra allí, niños, adultos y visitas deben dejarlo descansar. Y si necesitas que salga, no lo arrastres: llámalo con calma o invítalo con algo que le guste. No tiene que ser una jaula; puede ser una cama, una esquina protegida o una zona que él ya elija para descansar. Síguenos para cuidar mejor a tu perro cada día.",
+  "caption": "Un buen espacio seguro es cómodo, tranquilo y nunca se usa como castigo. Cuando tu perro está allí, déjalo descansar.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#CuidadosCaninos",
+    "#BienestarAnimal",
+    "#Perros",
+    "#ConsejosParaPerros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - Creating a safe space for your dog",
+      "url": "https://www.dogstrust.org.uk/dog-advice/life-with-your-dog/at-home/creating-safe-space"
+    },
+    {
+      "name": "Dogs Trust - Signs your dog may be stressed",
+      "url": "https://www.dogstrust.org.uk/dog-advice/understanding-your-dog/signs-your-dog-may-be-stressed"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Dog In Crate.jpg",
+      "role": "Perra descansando tranquilamente en una jaula abierta",
+      "license_note": "Wikimedia Commons; CC0 1.0 según la página del archivo"
+    },
+    {
+      "commons_title": "File:Dog sleeping on dog bed.jpg",
+      "role": "Perro descansando en su cama con un juguete",
+      "license_note": "Wikimedia Commons; CC BY-SA 4.0 según la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para cuidar mejor a tu perro cada día.",
+  "format": "home_care_tip",
+  "hook_pattern": "need_not_attention",
+  "topic_family": "espacio_seguro_en_casa",
+  "duration_target": "35-50s"
+}
