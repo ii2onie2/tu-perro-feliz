@@ -27,33 +27,6 @@
     "duration_target": "35-50s"
   },
   {
-    "date": "2026-10-04",
-    "series": "Buenos modales",
-    "title": "Cómo enseñar a tu perro a volver cuando lo llamas",
-    "topic_family": "llamada_y_retorno",
-    "format": "mini_lesson",
-    "hook_pattern": "common_mistake",
-    "duration_target": "35-50s"
-  },
-  {
-    "date": "2026-10-04",
-    "series": "¿Sabías esto de tu perro?",
-    "title": "Olfatear durante el paseo no es perder el tiempo",
-    "topic_family": "olfato_y_enriquecimiento",
-    "format": "curiosity_explainer",
-    "hook_pattern": "reframe_common_behavior",
-    "duration_target": "35-50s"
-  },
-  {
-    "date": "2026-10-04",
-    "series": "Tu perro feliz",
-    "title": "Paseo seguro: agua, sombra y suelo antes de salir",
-    "topic_family": "paseo_seguro",
-    "format": "safety_checklist",
-    "hook_pattern": "three_checks",
-    "duration_target": "35-50s"
-  },
-  {
     "date": "2026-10-05",
     "series": "Buenos modales",
     "title": "Cómo enseñar a tu perro a caminar sin tirar de la correa",
@@ -78,6 +51,33 @@
     "topic_family": "espacio_seguro_en_casa",
     "format": "home_care_tip",
     "hook_pattern": "need_not_attention",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-04",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro a volver cuando lo llamas",
+    "topic_family": "llamada_y_retorno",
+    "format": "mini_lesson",
+    "hook_pattern": "common_mistake",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-04",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Olfatear durante el paseo no es perder el tiempo",
+    "topic_family": "olfato_y_enriquecimiento",
+    "format": "curiosity_explainer",
+    "hook_pattern": "reframe_common_behavior",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-04",
+    "series": "Tu perro feliz",
+    "title": "Paseo seguro: agua, sombra y suelo antes de salir",
+    "topic_family": "paseo_seguro",
+    "format": "safety_checklist",
+    "hook_pattern": "three_checks",
     "duration_target": "35-50s"
   }
 ]
