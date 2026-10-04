@@ -1,0 +1,39 @@
+{
+  "series": "Buenos modales",
+  "title": "Cómo enseñar a tu perro a caminar sin tirar de la correa",
+  "date": "2026-10-05",
+  "slot": "16:00",
+  "hook": "Si tirar de la correa hace que tu perro avance, sin querer le estás enseñando que tirar funciona.",
+  "narration": "Para enseñar una correa floja, la consecuencia tiene que ser clara. Dogs Trust recomienda detenerte en cuanto la correa se tense y volver a caminar cuando esté floja. Sin tirones, sin gritos y sin arrastrarlo hacia atrás. También puedes premiar los momentos en los que camina cerca de ti o te presta atención. Empieza en lugares tranquilos y con sesiones cortas, antes de practicar donde haya más distracciones. La constancia importa más que la velocidad: si unas veces tirar funciona y otras no, el aprendizaje será más lento. El objetivo no es que camine pegado a tu pierna todo el paseo, sino que aprenda que avanzar con la correa floja merece la pena. Síguenos para educar con claridad y buen trato.",
+  "caption": "Correa floja = avanzamos. Correa tensa = nos detenemos. Sin tirones ni castigos: claridad, paciencia y recompensa.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BuenosModales",
+    "#EducacionCanina",
+    "#PaseoConPerro",
+    "#RefuerzoPositivo"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - How to stop your dog pulling on the lead",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/outdoors/walking-nicely-training"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:(1)Walking the dog.jpg",
+      "role": "Persona paseando a un perro con correa",
+      "license_note": "Wikimedia Commons; CC BY-SA 4.0 según la página del archivo"
+    },
+    {
+      "commons_title": "File:Girl walking dog 001.jpg",
+      "role": "Paseo con perro sujeto con correa",
+      "license_note": "Wikimedia Commons; CC BY-SA 4.0 según la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para educar con claridad y buen trato.",
+  "format": "mini_lesson",
+  "hook_pattern": "behavior_consequence",
+  "topic_family": "correa_sin_tirones",
+  "duration_target": "35-50s"
+}
