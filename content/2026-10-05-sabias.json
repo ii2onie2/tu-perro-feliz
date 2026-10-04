@@ -1,39 +1,39 @@
 {
-  "series": "¿Sabías esto de tu perro?",
-  "title": "Rotar los juguetes puede hacer que vuelvan a parecer nuevos",
-  "date": "2026-10-05",
-  "slot": "19:00",
-  "hook": "Tu perro puede tener una caja llena de juguetes y aun así ignorarlos. A veces el problema no es la cantidad, sino que siempre están todos disponibles.",
-  "narration": "Dogs Trust recomienda rotar los juguetes de tu perro con regularidad para mantener su interés y hacer que vuelvan a resultar atractivos. No necesitas comprar algo nuevo cada semana: puedes guardar parte de los juguetes y cambiar la selección de vez en cuando. Los juegos con juguetes aportan actividad física y mental, ayudan a reforzar la confianza y también pueden fortalecer el vínculo contigo. Durante el juego, supervisa los juguetes que puedan romperse y retira las piezas pequeñas si aparecen. Un cambio sencillo en cómo presentas los juguetes puede convertir algo conocido en una experiencia más interesante. Síguenos para descubrir ideas sencillas de bienestar y enriquecimiento.",
-  "caption": "No necesitas comprar juguetes nuevos cada semana: rotarlos puede ayudar a mantener el interés y aportar variedad.",
-  "hashtags": [
-    "#TuPerroFeliz",
-    "#SabiasEstoDeTuPerro",
-    "#EnriquecimientoCanino",
-    "#JuegosParaPerros",
-    "#Perros"
-  ],
-  "sources": [
-    {
-      "name": "Dogs Trust - Enrichment activities to keep your dog entertained",
-      "url": "https://www.dogstrust.org.uk/dog-advice/life-with-your-dog/enrichment/enrichment-activities-for-dogs"
-    }
-  ],
-  "media": [
-    {
-      "commons_title": "File:Schnauzer with a ball.jpg",
-      "role": "Perro jugando con una pelota",
-      "license_note": "Wikimedia Commons; CC BY-SA 4.0 según la página del archivo"
-    },
-    {
-      "commons_title": "File:Dog Toy Bliss (29961307572).jpg",
-      "role": "Perro jugando con su juguete en el césped",
-      "license_note": "Wikimedia Commons; CC BY 2.0 según la página del archivo"
-    }
-  ],
-  "cta": "Síguenos para descubrir ideas sencillas de bienestar y enriquecimiento.",
-  "format": "enrichment_curiosity",
-  "hook_pattern": "simple_rotation",
-  "topic_family": "rotacion_de_juguetes",
-  "duration_target": "35-50s"
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Rotar los juguetes puede hacer que vuelvan a parecer nuevos",
+    "date": "2026-10-05",
+    "slot": "19:00",
+    "hook": "Tu perro puede tener una caja llena de juguetes y aun así ignorarlos. A veces el problema no es la cantidad, sino que siempre están todos disponibles.",
+    "narration": "Dogs Trust recomienda rotar los juguetes de tu perro con regularidad para mantener su interés y hacer que vuelvan a resultar atractivos. No necesitas comprar algo nuevo cada semana: puedes guardar parte de los juguetes y cambiar la selección de vez en cuando. Los juegos con juguetes aportan actividad física y mental, ayudan a reforzar la confianza y también pueden fortalecer el vínculo contigo. Durante el juego, supervisa los juguetes que puedan romperse y retira las piezas pequeñas si aparecen. Un cambio sencillo en cómo presentas los juguetes puede convertir algo conocido en una experiencia más interesante. Síguenos para descubrir ideas sencillas de bienestar y enriquecimiento.",
+    "caption": "No necesitas comprar juguetes nuevos cada semana: rotarlos puede ayudar a mantener el interés y aportar variedad.",
+    "hashtags": [
+        "#TuPerroFeliz",
+        "#SabiasEstoDeTuPerro",
+        "#EnriquecimientoCanino",
+        "#JuegosParaPerros",
+        "#Perros"
+    ],
+    "sources": [
+        {
+            "name": "Dogs Trust - Enrichment activities to keep your dog entertained",
+            "url": "https://www.dogstrust.org.uk/dog-advice/life-with-your-dog/enrichment/enrichment-activities-for-dogs"
+        }
+    ],
+    "media": [
+        {
+            "commons_title": "File:Schnauzer with a ball.jpg",
+            "role": "Perro jugando con una pelota",
+            "license_note": "Wikimedia Commons; CC BY-SA 4.0 según la página del archivo"
+        },
+        {
+            "commons_title": "File:Dog Toy Bliss (29961307572).jpg",
+            "role": "Perro jugando con su juguete en el césped",
+            "license_note": "Wikimedia Commons; CC BY 2.0 según la página del archivo"
+        }
+    ],
+    "cta": "Síguenos para descubrir ideas sencillas de bienestar y enriquecimiento.",
+    "format": "enrichment_curiosity",
+    "hook_pattern": "simple_rotation",
+    "topic_family": "rotacion_de_juguetes",
+    "duration_target": "35-50s"
 }
