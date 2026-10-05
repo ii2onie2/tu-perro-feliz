@@ -27,33 +27,6 @@
     "duration_target": "35-50s"
   },
   {
-    "date": "2026-10-05",
-    "series": "Buenos modales",
-    "title": "Cómo enseñar a tu perro a caminar sin tirar de la correa",
-    "topic_family": "correa_sin_tirones",
-    "format": "mini_lesson",
-    "hook_pattern": "behavior_consequence",
-    "duration_target": "35-50s"
-  },
-  {
-    "date": "2026-10-05",
-    "series": "¿Sabías esto de tu perro?",
-    "title": "Rotar los juguetes puede hacer que vuelvan a parecer nuevos",
-    "topic_family": "rotacion_de_juguetes",
-    "format": "enrichment_curiosity",
-    "hook_pattern": "simple_rotation",
-    "duration_target": "35-50s"
-  },
-  {
-    "date": "2026-10-05",
-    "series": "Tu perro feliz",
-    "title": "El rincón seguro que tu perro debería tener en casa",
-    "topic_family": "espacio_seguro_en_casa",
-    "format": "home_care_tip",
-    "hook_pattern": "need_not_attention",
-    "duration_target": "35-50s"
-  },
-  {
     "date": "2026-10-04",
     "series": "Buenos modales",
     "title": "Cómo enseñar a tu perro a volver cuando lo llamas",
@@ -78,6 +51,33 @@
     "topic_family": "paseo_seguro",
     "format": "safety_checklist",
     "hook_pattern": "three_checks",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-05",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro a caminar sin tirar de la correa",
+    "topic_family": "correa_sin_tirones",
+    "format": "mini_lesson",
+    "hook_pattern": "behavior_consequence",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-05",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Rotar los juguetes puede hacer que vuelvan a parecer nuevos",
+    "topic_family": "rotacion_de_juguetes",
+    "format": "enrichment_curiosity",
+    "hook_pattern": "simple_rotation",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-05",
+    "series": "Tu perro feliz",
+    "title": "El rincón seguro que tu perro debería tener en casa",
+    "topic_family": "espacio_seguro_en_casa",
+    "format": "home_care_tip",
+    "hook_pattern": "need_not_attention",
     "duration_target": "35-50s"
   }
 ]
