@@ -1,0 +1,34 @@
+{
+  "series": "¿Sabías esto de tu perro?",
+  "title": "Aprender a relajarse también se puede entrenar",
+  "date": "2026-10-06",
+  "slot": "19:00",
+  "hook": "¿Sabías que la calma no siempre aparece sola? Algunos perros necesitan aprender poco a poco a descansar aunque haya cosas pasando alrededor.",
+  "narration": "Aprender a relajarse también se puede entrenar. Dogs Trust propone empezar en un lugar tranquilo y recompensar de forma discreta las conductas relajadas del perro, por ejemplo cuando deja de pedir atención, se tumba o permanece calmado sobre una manta. Al principio conviene practicar sin demasiadas distracciones y aumentar la dificultad poco a poco. La idea no es obligarlo a quedarse inmóvil, sino ayudarle a descubrir que descansar también tiene consecuencias agradables. Esta habilidad puede resultar útil cuando hay visitas, cuando estás trabajando en casa o cuando necesitas que el perro baje revoluciones después de una actividad intensa. El descanso forma parte del bienestar igual que el paseo, el juego y el entrenamiento. Síguenos para descubrir pequeñas claves que pueden mejorar la vida diaria de tu perro.",
+  "caption": "La calma también se aprende: empieza en un lugar tranquilo y recompensa las conductas relajadas de tu perro.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#SabiasEstoDeTuPerro",
+    "#CalmaCanina",
+    "#BienestarAnimal",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - How to train your dog to settle",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/basics/settle-training"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Sleeping DOG.jpg",
+      "role": "Perro descansando como ejemplo visual de relajación",
+      "license_note": "Wikimedia Commons; CC0 según la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para descubrir pequeñas claves que pueden mejorar la vida diaria de tu perro.",
+  "format": "behavior_curiosity",
+  "hook_pattern": "surprising_fact",
+  "topic_family": "calma_y_descanso",
+  "duration_target": "35-50s"
+}

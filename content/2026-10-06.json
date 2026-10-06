@@ -1,0 +1,34 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Una rutina sencilla puede ayudar a tu perro a sentirse más seguro",
+  "date": "2026-10-06",
+  "slot": "10:00",
+  "hook": "Tu perro no necesita que cada día sea idéntico, pero sí le ayuda saber qué suele pasar después.",
+  "narration": "Una rutina sencilla puede ayudar a tu perro a sentirse más seguro porque reduce la incertidumbre del día a día. Dogs Trust recomienda mantener horarios y señales relativamente previsibles, sobre todo cuando un perro llega a una casa nueva o está pasando por un cambio importante. No significa convertir cada jornada en un reloj exacto. Lo útil es conservar una estructura reconocible: momentos de paseo, comida, descanso, juego y salidas al exterior. También conviene dejar periodos tranquilos después de actividades muy estimulantes. Si varias personas viven con el perro, ayuda que todos sigan reglas parecidas para no enviar mensajes contradictorios. Una rutina estable no sustituye el ejercicio, el enriquecimiento ni la atención, pero puede hacer que el entorno resulte más fácil de interpretar. Síguenos para cuidar mejor a tu perro con hábitos sencillos y consistentes.",
+  "caption": "Una rutina previsible de paseo, comida, descanso y juego puede ayudar a tu perro a sentirse más seguro.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BienestarCanino",
+    "#RutinaCanina",
+    "#Perros",
+    "#ConsejosParaPerros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - Moving home with your dog",
+      "url": "https://www.dogstrust.org.uk/dog-advice/life-with-your-dog/at-home/moving-home"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:(1)Walking the dog.jpg",
+      "role": "Persona paseando a un perro como parte de una rutina cotidiana",
+      "license_note": "Wikimedia Commons; conservar atribución y condiciones de la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para cuidar mejor a tu perro con hábitos sencillos y consistentes.",
+  "format": "daily_routine",
+  "hook_pattern": "predictability_first",
+  "topic_family": "rutina_y_seguridad",
+  "duration_target": "35-50s"
+}

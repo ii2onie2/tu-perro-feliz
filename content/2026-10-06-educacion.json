@@ -1,0 +1,34 @@
+{
+  "series": "Buenos modales",
+  "title": "Cómo enseñar a tu perro a no saltar sobre las personas",
+  "date": "2026-10-06",
+  "slot": "16:00",
+  "hook": "Si tu perro consigue atención cada vez que salta, incluso cuando le dices que baje, puede aprender que saltar funciona.",
+  "narration": "Para enseñar a tu perro a saludar sin saltar, la clave es que las cuatro patas en el suelo sean la conducta que recibe atención y recompensa. Dogs Trust recomienda evitar reforzar el salto sin querer y premiar alternativas más tranquilas, como permanecer de pie con las patas en el suelo o sentarse. Cuando lleguen visitas, conviene explicarles el plan antes de entrar para que todos reaccionen de forma parecida. Puedes tener premios preparados y recompensar rápidamente los saludos calmados. Si el perro está demasiado excitado, aumenta la distancia, reduce la intensidad del encuentro y vuelve a intentarlo cuando pueda concentrarse mejor. La constancia de toda la familia es más importante que corregir con fuerza. Síguenos para educar con claridad, paciencia y refuerzo positivo.",
+  "caption": "Premia las cuatro patas en el suelo y evita que saltar sea la forma más eficaz de conseguir atención.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BuenosModales",
+    "#EducacionCanina",
+    "#RefuerzoPositivo",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - How to stop your dog jumping up at people",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/unwanted-behaviours/jumping-up-training"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Girl walking dog 001.jpg",
+      "role": "Persona interactuando con un perro en contexto cotidiano de educación",
+      "license_note": "Wikimedia Commons; conservar atribución y condiciones de la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para educar con claridad, paciencia y refuerzo positivo.",
+  "format": "mini_lesson",
+  "hook_pattern": "behavior_consequence",
+  "topic_family": "saludos_sin_saltar",
+  "duration_target": "35-50s"
+}
