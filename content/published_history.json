@@ -79,5 +79,32 @@
     "format": "home_care_tip",
     "hook_pattern": "need_not_attention",
     "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-06",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro a no saltar sobre las personas",
+    "topic_family": "saludos_sin_saltar",
+    "format": "mini_lesson",
+    "hook_pattern": "behavior_consequence",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-06",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Aprender a relajarse también se puede entrenar",
+    "topic_family": "calma_y_descanso",
+    "format": "behavior_curiosity",
+    "hook_pattern": "surprising_fact",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-06",
+    "series": "Tu perro feliz",
+    "title": "Una rutina sencilla puede ayudar a tu perro a sentirse más seguro",
+    "topic_family": "rutina_y_seguridad",
+    "format": "daily_routine",
+    "hook_pattern": "predictability_first",
+    "duration_target": "35-50s"
   }
 ]
