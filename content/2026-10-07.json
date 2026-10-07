@@ -1,0 +1,38 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Enséñale a quedarse solo poco a poco antes de que realmente lo necesites",
+  "date": "2026-10-07",
+  "slot": "10:00",
+  "hook": "Esperar al primer día de trabajo para dejar a tu perro solo durante horas es mucho más difícil que enseñarle la separación de forma gradual.",
+  "narration": "Enseñar a tu perro a quedarse solo funciona mejor cuando se practica poco a poco y antes de que sea una necesidad urgente. Dogs Trust recomienda empezar con separaciones muy breves dentro de casa, por ejemplo usando una barrera para bebés mientras el perro todavía puede verte, o alejándote durante unos minutos mientras permanece relajado con una cama cómoda o un juguete de comida. La clave es aumentar el tiempo de forma gradual y retroceder si aparecen señales de estrés como jadeo, paseo nervioso, vocalizaciones, bostezos sin sueño o lamido de labios. No se trata de ignorar al perro hasta que se rinda, sino de ayudarle a descubrir que la separación es segura y temporal. Si ya muestra angustia intensa al quedarse solo, conviene pedir ayuda profesional. Síguenos para mejorar el bienestar de tu perro con hábitos sencillos y entrenamiento amable.",
+  "caption": "Practica separaciones cortas y graduales para que tu perro aprenda que quedarse solo puede ser seguro y tranquilo.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BienestarCanino",
+    "#AnsiedadPorSeparacion",
+    "#EducacionCanina",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - How to help your dog get used to spending time alone",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/home/time-alone"
+    },
+    {
+      "name": "Dogs Trust - Separation anxiety in dogs",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/unwanted-behaviours/separation-anxiety"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Havanese in a bed resting.jpg",
+      "role": "Perro descansando cómodamente en una cama",
+      "license_note": "Wikimedia Commons; conservar atribución y condiciones indicadas en la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para mejorar el bienestar de tu perro con hábitos sencillos y entrenamiento amable.",
+  "format": "home_training",
+  "hook_pattern": "prevent_before_problem",
+  "topic_family": "tiempo_a_solas_y_separacion",
+  "duration_target": "35-50s"
+}

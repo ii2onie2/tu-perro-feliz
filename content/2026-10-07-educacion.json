@@ -1,0 +1,38 @@
+{
+  "series": "Buenos modales",
+  "title": "Cómo enseñar a tu perro a soltar objetos sin perseguirlo ni quitárselos a la fuerza",
+  "date": "2026-10-07",
+  "slot": "16:00",
+  "hook": "Si cada vez que tu perro coge algo corres detrás de él y se lo arrancas, puede aprender a huir o a protegerlo todavía más.",
+  "narration": "Para enseñar a tu perro a soltar objetos, Dogs Trust recomienda convertir el intercambio en una experiencia positiva. Empieza con un juguete que le guste, pero que no sea su favorito. Déjale jugar unos segundos y después ofrece varios premios de alto valor a un lado. Cuando suelte el juguete por decisión propia para ir hacia la comida, marca ese momento y recompensa. Repite varias veces antes de añadir una palabra como “suelta”. Con la práctica, el perro aprende que entregar un objeto no significa perderlo todo, sino que puede traer algo bueno. Si tiene algo peligroso, evita perseguirlo o meter la mano en su boca salvo una emergencia real; intenta hacer un intercambio seguro y tranquilo. También ayuda guardar fuera de su alcance objetos que no debería coger. Síguenos para educar con claridad, paciencia y refuerzo positivo.",
+  "caption": "Enseña “suelta” mediante intercambio: ofrecer algo mejor puede hacer que entregar un objeto sea una decisión segura y voluntaria.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BuenosModales",
+    "#EducacionCanina",
+    "#RefuerzoPositivo",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - Teach your dog to leave it",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/basics/leave-training"
+    },
+    {
+      "name": "Dogs Trust - Resource guarding in dogs explained",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/unwanted-behaviours/resource-guarding-food-and-toys"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Dog with Chew Toy.png",
+      "role": "Perro sujetando un juguete de morder",
+      "license_note": "Wikimedia Commons; licencia CC BY-SA 4.0 según la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para educar con claridad, paciencia y refuerzo positivo.",
+  "format": "mini_lesson",
+  "hook_pattern": "swap_not_take",
+  "topic_family": "soltar_e_intercambiar_objetos",
+  "duration_target": "35-50s"
+}

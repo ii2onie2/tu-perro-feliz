@@ -1,0 +1,38 @@
+{
+  "series": "¿Sabías esto de tu perro?",
+  "title": "Un bostezo no siempre significa sueño: también puede ser una señal de estrés",
+  "date": "2026-10-07",
+  "slot": "19:00",
+  "hook": "¿Sabías que un perro puede bostezar aunque no tenga sueño? A veces es una señal de que una situación le resulta incómoda o estresante.",
+  "narration": "Un bostezo no siempre significa que tu perro tenga sueño. Dogs Trust explica que algunos perros bostezan en situaciones que les generan preocupación, especialmente cuando el bostezo aparece junto con otras señales como girar la cabeza, lamerse los labios, bajar las orejas, tensar el cuerpo, mostrar el blanco de los ojos o intentar alejarse. La clave está en observar el conjunto y el contexto, no una sola conducta aislada. Un bostezo después de despertarse puede ser totalmente normal; uno repetido durante una interacción incómoda puede indicar que el perro necesita más espacio. Si detectas varias señales de estrés, reduce la presión, aumenta la distancia respecto a lo que le preocupa y permite que se recupere. Algunas de estas conductas también pueden relacionarse con dolor o problemas médicos, así que consulta al veterinario si aparecen de forma nueva o persistente. Síguenos para aprender a leer mejor el lenguaje de tu perro.",
+  "caption": "Bostezar sin estar cansado puede formar parte de las señales sutiles de estrés; observa siempre el contexto y el resto del cuerpo.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#SabiasEstoDeTuPerro",
+    "#LenguajeCanino",
+    "#BienestarAnimal",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - How to understand your dog's body language",
+      "url": "https://www.dogstrust.org.uk/dog-advice/understanding-your-dog/body-language"
+    },
+    {
+      "name": "Dogs Trust - Helping dogs cope with fear and big emotions",
+      "url": "https://www.dogstrust.org.uk/dog-advice/understanding-your-dog/signs-your-dog-may-be-stressed"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Yawning Dog.jpg",
+      "role": "Perro bostezando",
+      "license_note": "Wikimedia Commons; archivo publicado bajo CC0 según la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para aprender a leer mejor el lenguaje de tu perro.",
+  "format": "body_language",
+  "hook_pattern": "context_changes_meaning",
+  "topic_family": "bostezos_y_estres",
+  "duration_target": "35-50s"
+}
