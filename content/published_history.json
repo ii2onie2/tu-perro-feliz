@@ -106,5 +106,32 @@
     "format": "daily_routine",
     "hook_pattern": "predictability_first",
     "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-07",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro a soltar objetos sin perseguirlo ni quitárselos a la fuerza",
+    "topic_family": "soltar_e_intercambiar_objetos",
+    "format": "mini_lesson",
+    "hook_pattern": "swap_not_take",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-07",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Un bostezo no siempre significa sueño: también puede ser una señal de estrés",
+    "topic_family": "bostezos_y_estres",
+    "format": "body_language",
+    "hook_pattern": "context_changes_meaning",
+    "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-07",
+    "series": "Tu perro feliz",
+    "title": "Enséñale a quedarse solo poco a poco antes de que realmente lo necesites",
+    "topic_family": "tiempo_a_solas_y_separacion",
+    "format": "home_training",
+    "hook_pattern": "prevent_before_problem",
+    "duration_target": "35-50s"
   }
 ]
