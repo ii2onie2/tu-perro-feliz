@@ -1,34 +1,13 @@
-name: Schedule TikTok via TryPost
+name: Schedule TikTok via TryPost (manual only)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "45 4,5,6,7,8 * * *"
 
 permissions:
   contents: read
 
-concurrency:
-  group: trypost-tiktok-${{ github.repository }}-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
-  schedule:
+  disabled:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Resolve Madrid publication date
-        id: date
-        shell: bash
-        run: |
-          echo "day=$(TZ=Europe/Madrid date +%F)" >> "$GITHUB_OUTPUT"
-
-      - name: Schedule today's three TikToks in TryPost
-        env:
-          TRYPOST_BASE_URL: ${{ secrets.TRYPOST_BASE_URL }}
-          TRYPOST_API_KEY: ${{ secrets.TRYPOST_API_KEY }}
-          TRYPOST_TIKTOK_ACCOUNT_ID: ${{ secrets.TRYPOST_TIKTOK_ACCOUNT_ID }}
-        run: |
-          D="${{ steps.date.outputs.day }}"
-          python3 scripts/publish_trypost.py             --repo "${{ github.repository }}"             --date "$D"             --slot "10:00|videos/$D.caption.txt|videos/$D.mp4"             --slot "16:00|videos/$D-educacion.caption.txt|videos/$D-educacion.mp4"             --slot "19:00|videos/$D-sabias.caption.txt|videos/$D-sabias.mp4"
+      - run: echo "Automatic TryPost publishing is disabled. Metricool reduced-quota mode is active."
