@@ -1,0 +1,43 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Un molde de magdalenas puede convertirse en un juego de olfato para tu perro",
+  "date": "2026-10-09",
+  "slot": "10:00",
+  "hook": "¿Un molde de magdalenas y unas pelotas pueden entretener a tu perro sin comprar un juguete nuevo?",
+  "narration": "¿Sabías que un molde de magdalenas puede convertirse en un juego de olfato para tu perro? No necesitas gastar dinero en juguetes complicados. Dogs Trust propone poner parte de su pienso o premios pequeños en los huecos de un molde para magdalenas y cubrirlos con pelotas de tamaño adecuado. Después deja que tu perro investigue y mueva las pelotas para encontrar la comida. Empieza con algunos huecos sin tapar, para que entienda el juego y no se frustre. Supervisa la actividad y retira cualquier pelota que pueda romper o tragar. Utiliza parte de su ración habitual para no añadir demasiadas calorías durante el día. Si se cansa o se frustra, simplifica el desafío o termina la sesión. El enriquecimiento ofrece oportunidades de exploración y resolución de problemas, pero siempre debe adaptarse a cada perro. Síguenos para descubrir más actividades sencillas que respetan su bienestar.",
+  "caption": "Un molde de magdalenas, unas pelotas adecuadas y parte de su pienso: prueba este juego de olfato siempre bajo supervisión.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#EnriquecimientoCanino",
+    "#JuegosDeOlfato",
+    "#BienestarCanino",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust - Muffin tin munchies",
+      "url": "https://www.dogstrust.ie/dog-advice/life-with-your-dog/enrichment/muffin-game"
+    },
+    {
+      "name": "RSPCA Knowledgebase - Why is enrichment important for dogs?",
+      "url": "https://kb.rspca.org.au/categories/companion-animals/dogs/caring-for-my-dog/why-is-enrichment-important-for-dogs"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Schnauzer with a ball.jpg",
+      "role": "Perro jugando con una pelota",
+      "license_note": "Wikimedia Commons; conservar atribución y condiciones de la página del archivo"
+    },
+    {
+      "commons_title": "File:Dog Toy Bliss (29961307572).jpg",
+      "role": "Perro con un juguete durante actividad de enriquecimiento",
+      "license_note": "Wikimedia Commons; conservar atribución y condiciones de la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para descubrir más actividades sencillas que respetan su bienestar.",
+  "format": "step_by_step",
+  "hook_pattern": "low_cost_enrichment",
+  "topic_family": "juego_de_olfato_con_molde",
+  "duration_target": "45-60s"
+}
