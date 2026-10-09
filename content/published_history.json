@@ -133,5 +133,14 @@
     "format": "home_training",
     "hook_pattern": "prevent_before_problem",
     "duration_target": "35-50s"
+  },
+  {
+    "date": "2026-10-09",
+    "series": "Tu perro feliz",
+    "title": "Un molde de magdalenas puede convertirse en un juego de olfato para tu perro",
+    "topic_family": "juego_de_olfato_con_molde",
+    "format": "step_by_step",
+    "hook_pattern": "low_cost_enrichment",
+    "duration_target": "45-60s"
   }
 ]
