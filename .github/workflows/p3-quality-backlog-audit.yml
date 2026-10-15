@@ -1,0 +1,24 @@
+name: P3 Quality and Backlog Read-Only Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/p3-quality-backlog-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Audit 14-day supply and duplicate risks
+        run: python tools/p3_quality_backlog_audit.py --brand dogs --days 14
