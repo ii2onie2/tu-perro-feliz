@@ -1,0 +1,29 @@
+name: Premium V1 Static Test
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/premium-v11-static-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  static-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile Premium V1 scripts
+        run: |
+          python -m py_compile tools/premium_v11_audio_video.py
+          python -m py_compile tools/premium_v12_subtitle_check.py
+          python -m py_compile tools/premium_v1_quality_gate.py
+          echo "RESULT=PASS_STATIC_ONLY"
+          echo "MEDIA_RENDER_TESTED=NO"
+          echo "PUBLICATION_ENABLED=NO"
