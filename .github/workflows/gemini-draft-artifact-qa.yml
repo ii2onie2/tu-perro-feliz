@@ -17,6 +17,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p /tmp/gemini-qa
-          gh run download 38801180906 -R ${{ github.repository }} -n gemini-single-draft-dogs -D /tmp/gemini-qa
+          gh run download 38802121535 -R ${{ github.repository }} -n gemini-single-draft-dogs -D /tmp/gemini-qa
       - name: Check schema and provenance
         run: python tools/gemini_draft_static_qa.py /tmp/gemini-qa/gemini-draft.json evidence/approved/2026-10-16-gemini-draft.json
