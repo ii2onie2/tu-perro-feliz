@@ -1,0 +1,38 @@
+name: Gemini 3.x Model Access - Read Only
+on:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/gemini-3x-model-access-readonly.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  model-access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: List available Gemini 3.x text models without generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python - <<'PY'
+          import os,json,urllib.request,urllib.error
+          key=os.getenv("GEMINI_API_KEY","")
+          if not key: raise SystemExit("BLOCKED_NO_KEY")
+          u="https://generativelanguage.googleapis.com/v1beta/models?pageSize=100"
+          req=urllib.request.Request(u,headers={"x-goog-api-key":key,"Accept":"application/json"})
+          try:
+              with urllib.request.urlopen(req,timeout=20) as r: data=json.load(r)
+          except urllib.error.HTTPError as e:
+              print("HTTP_STATUS="+str(e.code));raise SystemExit("BLOCKED_MODEL_LIST")
+          models=[m["name"] for m in data.get("models",[]) if "generateContent" in m.get("supportedGenerationMethods",[]) and m.get("name","").startswith("models/gemini-3")]
+          print("MODE=READ_ONLY")
+          print("ELIGIBLE_GEMINI_3_MODELS="+str(len(models)))
+          for model in sorted(models): print("VISIBLE_MODEL="+model)
+          print("PAID_USAGE_AUTHORIZED=NO")
+          print("GEMINI_CONTENT_GENERATED=NO")
+          print("MODEL_ACCESS_NOT_PROVEN_BY_LIST=YES")
+          print("NEXT=CHECK_FREE_TIER_AND_SINGLE_SMOKE_TEST")
+          PY
