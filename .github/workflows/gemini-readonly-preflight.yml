@@ -1,0 +1,70 @@
+name: Gemini API Read-Only Preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/gemini-readonly-preflight.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  gemini-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify key and available text models without generating content
+        shell: bash
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.request
+          import urllib.error
+
+          key = os.environ.get("GEMINI_API_KEY", "").strip()
+          print("MODE=READ_ONLY")
+          print("CONTENT_GENERATION=NO")
+          print("BILLABLE_MODEL_REQUEST=NO")
+          print("TIKTOK_PUBLICATION=NO")
+          if not key:
+              print("RESULT=FAIL_SECRET_MISSING")
+              sys.exit(1)
+
+          request = urllib.request.Request(
+              "https://generativelanguage.googleapis.com/v1beta/models?pageSize=100",
+              headers={"x-goog-api-key": key, "Accept": "application/json"},
+              method="GET",
+          )
+          try:
+              with urllib.request.urlopen(request, timeout=20) as response:
+                  payload = json.load(response)
+                  status = response.status
+          except urllib.error.HTTPError as error:
+              print("HTTP_STATUS=" + str(error.code))
+              print("RESULT=FAIL_API_ACCESS")
+              sys.exit(1)
+          except Exception as error:
+              print("ERROR_TYPE=" + type(error).__name__)
+              print("RESULT=FAIL_API_CONNECTION")
+              sys.exit(1)
+
+          models = payload.get("models", [])
+          generate = [m.get("name", "") for m in models
+                      if "generateContent" in m.get("supportedGenerationMethods", [])]
+          print("HTTP_STATUS=" + str(status))
+          print("MODEL_LIST_ACCESS=PASS")
+          print("GENERATE_CONTENT_MODELS_VISIBLE=" + str(len(generate)))
+          print("GEMINI_2_5_FLASH_LITE_VISIBLE=" +
+                str(any("gemini-2.5-flash-lite" in m for m in generate)).upper())
+          if status != 200 or not generate:
+              print("RESULT=FAIL_NO_GENERATION_MODEL_VISIBLE")
+              sys.exit(1)
+          print("RESULT=PASS_READ_ONLY")
+          PY
