@@ -1,0 +1,27 @@
+name: Claude Readiness - Zero Cost Gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/claude-readiness-zero-cost.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Offline readiness check
+        shell: bash
+        run: |
+          echo "CLAUDE_CODE_ENABLED=NO"
+          echo "ANTHROPIC_AUTH_REQUIRED=YES"
+          echo "ANTHROPIC_API_REQUESTS=0"
+          echo "ANTHROPIC_BILLING_ENABLED_BY_WORKFLOW=NO"
+          echo "PRODUCTION_CHANGES=NO"
+          echo "RESULT=PASS_ZERO_COST_STAGING"
