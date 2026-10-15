@@ -1,0 +1,14 @@
+name: 14 Day Reserve Schedule Readonly
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths:
+      - ".github/workflows/reserve-schedule-readonly.yml"
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/reserve_schedule_readonly.py --brand dogs --start 2026-10-16 --days 14
