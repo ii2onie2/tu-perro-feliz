@@ -1,5 +1,5 @@
 name: Gemini Evidence-Approved One Draft Pilot
-# Gemini 3.1 Flash-Lite free-tier pilot; one reviewed draft only.
+# Gemini 3.1 Flash-Lite bounded retry after 163-word QA failure; review required.
 on:
   push:
     branches:
