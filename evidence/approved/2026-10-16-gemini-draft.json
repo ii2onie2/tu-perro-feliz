@@ -1,0 +1,38 @@
+{
+  "topic": "Por qué es importante recompensar inmediatamente a tu perro",
+  "target_date": "2026-10-16",
+  "manual_review_approved": true,
+  "editorial_review_required": true,
+  "media_license_approved": false,
+  "status": "APPROVED_FOR_GEMINI_DRAFT_ONLY",
+  "sources": [
+    {
+      "name": "AKC: 4 Tips for Training Your Dog With Rewards",
+      "url": "https://www.akc.org/expert-advice/training/training-rewards/",
+      "facts": [
+        "La rapidez de la recompensa ayuda al perro a asociarla con la conducta deseada.",
+        "Un marcador como un clicker puede indicar con precisión la conducta recompensada.",
+        "La colocación de la recompensa influye en la conducta que se refuerza."
+      ]
+    },
+    {
+      "name": "AKC: Schedules of Reinforcement",
+      "url": "https://www.akc.org/expert-advice/training/schedules-of-reinforcement-for-dogs/",
+      "facts": [
+        "Recompensar cada respuesta correcta es útil al enseñar un comportamiento nuevo.",
+        "La frecuencia de las recompensas puede variar a medida que el perro aprende."
+      ]
+    },
+    {
+      "name": "VCA Animal Hospitals - Using Reinforcement and Rewards to Train Your Pet",
+      "url": "https://vcahospitals.com/tlc/know-your-pet/using-reinforcement-and-rewards-to-train-your-pet",
+      "organization": "VCA Animal Hospitals",
+      "facts": [
+        "Reinforcement should closely follow the desired behavior.",
+        "Continuous reinforcement can help teach a new task, and intermittent reinforcement may be used after learning."
+      ]
+    }
+  ],
+  "publication_approved": false,
+  "review_scope": "Evidence limited to draft generation; all output remains unverified and unpublished"
+}
