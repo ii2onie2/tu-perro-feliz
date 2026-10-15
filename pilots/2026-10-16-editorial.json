@@ -1,0 +1,49 @@
+{
+  "brand": "dogs",
+  "title": "Cuándo dar un premio a tu perro",
+  "hook": "Un segundo puede cambiar lo que aprende tu perro.",
+  "narration": "¿Quieres enseñar a tu perro a sentarse o venir cuando lo llamas? El momento de la recompensa puede ayudarle a entender qué conducta estás reforzando. Intenta premiar poco después de que haga lo que le has pedido. Si pasa demasiado tiempo, puede asociar el premio con otra acción. Cuando está aprendiendo algo nuevo, recompensar las respuestas correctas de manera constante suele facilitar la práctica. También puedes utilizar un marcador, como un clicker, para señalar el instante de la conducta; no es obligatorio. Presta atención a dónde entregas el premio, porque también puede influir en el comportamiento. Conforme tu perro aprende, puedes ajustar la frecuencia de las recompensas. Practica con paciencia y sesiones cortas, observando cómo responde.",
+  "caption": "El momento de la recompensa importa al enseñar una conducta. Practica con paciencia y refuerzo positivo.",
+  "cta": "¿Qué conducta estás enseñando ahora a tu perro?",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#EducaciónCanina",
+    "#RefuerzoPositivo",
+    "#Perros"
+  ],
+  "date": "2026-10-16",
+  "series": "Tu Perro Feliz",
+  "sources": [
+    {
+      "name": "AKC: 4 Tips for Training Your Dog With Rewards",
+      "url": "https://www.akc.org/expert-advice/training/training-rewards/",
+      "facts": [
+        "La rapidez de la recompensa ayuda al perro a asociarla con la conducta deseada.",
+        "Un marcador como un clicker puede indicar con precisión la conducta recompensada.",
+        "La colocación de la recompensa influye en la conducta que se refuerza."
+      ]
+    },
+    {
+      "name": "AKC: Schedules of Reinforcement",
+      "url": "https://www.akc.org/expert-advice/training/schedules-of-reinforcement-for-dogs/",
+      "facts": [
+        "Recompensar cada respuesta correcta es útil al enseñar un comportamiento nuevo.",
+        "La frecuencia de las recompensas puede variar a medida que el perro aprende."
+      ]
+    },
+    {
+      "name": "VCA Animal Hospitals - Using Reinforcement and Rewards to Train Your Pet",
+      "url": "https://vcahospitals.com/tlc/know-your-pet/using-reinforcement-and-rewards-to-train-your-pet",
+      "organization": "VCA Animal Hospitals",
+      "facts": [
+        "Reinforcement should closely follow the desired behavior.",
+        "Continuous reinforcement can help teach a new task, and intermittent reinforcement may be used after learning."
+      ]
+    }
+  ],
+  "review_required": true,
+  "status": "EDITORIALLY_REVISED_PILOT_NO_PUBLICATION",
+  "media": [],
+  "media_license_approved": false,
+  "publication_approved": false
+}
