@@ -3,35 +3,57 @@ name: IndiePost API Read-Only Test
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/indiepost-readonly-preflight.yml"
 
 permissions:
   contents: read
 
+concurrency:
+  group: indiepost-readonly-preflight
+  cancel-in-progress: false
+
 jobs:
   verify-api:
+    name: Verify IndiePost API
     runs-on: ubuntu-latest
     timeout-minutes: 3
 
     steps:
       - name: Check IndiePost accounts
+        shell: bash
         env:
           INDIEPOST_API_KEY: ${{ secrets.INDIEPOST_API_KEY }}
-        shell: bash
         run: |
           python3 - <<'PY'
+          import json
           import os
           import sys
-          import json
           import urllib.request
           import urllib.error
 
-          key = os.environ.get("INDIEPOST_API_KEY", "").strip()
+          print("=== INDIEPOST API READ-ONLY PREFLIGHT ===")
+          print("MODE=READ_ONLY")
+          print("PUBLICATION_ENABLED=NO")
+
+          key = os.environ.get(
+              "INDIEPOST_API_KEY", ""
+          ).strip()
 
           if not key.startswith("ip_"):
-              print("RESULT=FAIL_SECRET_MISSING")
+              print("SECRET_STATUS=INVALID_OR_MISSING")
+              print("RESULT=FAIL")
               sys.exit(1)
 
-          url = "https://www.indiepost.app/api/v1/accounts"
+          print("SECRET_STATUS=PRESENT")
+
+          url = (
+              "https://www.indiepost.app"
+              "/api/v1/accounts"
+          )
 
           request = urllib.request.Request(
               url,
@@ -44,8 +66,10 @@ jobs:
 
           try:
               with urllib.request.urlopen(
-                  request, timeout=20
+                  request,
+                  timeout=20
               ) as response:
+                  status = response.status
                   data = json.load(response)
 
           except urllib.error.HTTPError as error:
@@ -54,8 +78,21 @@ jobs:
               sys.exit(1)
 
           except Exception as error:
-              print("ERROR_TYPE=" + type(error).__name__)
+              print(
+                  "ERROR_TYPE="
+                  + type(error).__name__
+              )
               print("RESULT=FAIL_CONNECTION")
+              sys.exit(1)
+
+          print("HTTP_STATUS=" + str(status))
+
+          if status != 200:
+              print("RESULT=FAIL_HTTP_STATUS")
+              sys.exit(1)
+
+          if not isinstance(data, dict):
+              print("RESULT=FAIL_INVALID_RESPONSE")
               sys.exit(1)
 
           required = {
@@ -64,30 +101,54 @@ jobs:
           }
 
           connected = set()
+          workspace_count = 0
 
-          for workspace in data.get("workspaces", []):
-              for account in workspace.get("accounts", []):
+          for workspace in data.get(
+              "workspaces", []
+          ):
+              workspace_count += 1
+
+              for account in workspace.get(
+                  "accounts", []
+              ):
                   if (
                       account.get("platform") == "tiktok"
                       and account.get("connected") is True
                   ):
                       username = str(
                           account.get("username", "")
-                      ).lower().lstrip("@")
+                      ).strip().lower().lstrip("@")
 
                       connected.add(username)
 
           print("API_AUTH=PASS")
+          print(
+              "WORKSPACE_COUNT="
+              + str(workspace_count)
+          )
+          print(
+              "CONNECTED_TIKTOK_COUNT="
+              + str(len(connected))
+          )
 
           for username in sorted(required):
               if username in connected:
-                  print(username + "=CONNECTED")
+                  print(
+                      username + "=CONNECTED"
+                  )
               else:
-                  print(username + "=MISSING")
+                  print(
+                      username + "=MISSING"
+                  )
 
           if not required.issubset(connected):
-              print("RESULT=FAIL_MISSING_ACCOUNTS")
+              print(
+                  "RESULT=FAIL_MISSING_ACCOUNTS"
+              )
               sys.exit(1)
 
           print("RESULT=PASS_READ_ONLY")
+          print("PUBLICATION_CREATED=NO")
+          print("CONTENT_MODIFIED=NO")
+          print("PUBLISHING_SCHEDULE_CHANGED=NO")
           PY
