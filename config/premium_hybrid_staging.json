@@ -1,0 +1,38 @@
+{
+  "version": "premium-hybrid-staging-v1",
+  "status": "PREPARATION_ONLY",
+  "brand": "tuperrofelizofficial",
+  "timezone": "Europe/Madrid",
+  "slots_local": [
+    "10:00",
+    "16:00",
+    "19:00"
+  ],
+  "days": [
+    "MON",
+    "TUE",
+    "WED",
+    "THU",
+    "FRI",
+    "SAT",
+    "SUN"
+  ],
+  "end_date": "2030-12-31",
+  "media": {
+    "flow_free_automatic_api": false,
+    "google_api_paid_generation_enabled": false,
+    "premium_asset_dir": "premium_assets",
+    "fallback_render": "existing_ffmpeg_pipeline",
+    "fallback_if_asset_missing": "USE_ONLY_VERIFIED_LICENCED_MEDIA_OR_FAIL_CLOSED",
+    "never_use_blank_or_unlicensed_media": true
+  },
+  "safety": {
+    "publish_enabled": false,
+    "require_tiktok_indiepost_metricool_state_cross_check": true,
+    "require_unique_brand_slot_content_hash": true,
+    "require_privacy_and_autopublish_preflight": true,
+    "require_monthly_quota_verification": true,
+    "preserve_current_main": true,
+    "never_force_push": true
+  }
+}
