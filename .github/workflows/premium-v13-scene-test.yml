@@ -1,0 +1,34 @@
+name: Premium V1 Scene Storyboard Test
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/premium-v13-scene-test.yml"
+permissions:
+  contents: read
+jobs:
+  storyboard-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Offline storyboard correctness
+        run: |
+          python -m py_compile tools/premium_v13_scene_storyboard.py
+          python tools/premium_v13_scene_storyboard.py --content content/2026-10-09.json --duration 70 --out /tmp/storyboard.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/storyboard.json'))
+          scenes=x['scenes']
+          assert scenes and scenes[0]['start_estimate']==0
+          assert scenes[-1]['end_estimate']==70
+          assert all(s['end_estimate']>s['start_estimate'] for s in scenes)
+          assert x['publish_authorized'] is False
+          assert x['source_media_verified'] is False
+          print('STORYBOARD_TEST=PASS_OFFLINE')
+          PY
