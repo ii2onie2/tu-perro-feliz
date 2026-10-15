@@ -58,6 +58,13 @@ def main():
             payload = json.load(response)
     except urllib.error.HTTPError as exc:
         print("GEMINI_HTTP_STATUS=" + str(exc.code))
+        try:
+            detail = json.loads(exc.read(8192).decode("utf-8"))
+            err = detail.get("error", {})
+            print("GEMINI_ERROR_CODE=" + str(err.get("status", "UNKNOWN")))
+            # Do not print remote detail messages, request URLs or credentials.
+        except (ValueError, UnicodeDecodeError, OSError):
+            print("GEMINI_ERROR_CODE=UNAVAILABLE")
         raise SystemExit("BLOCKED_GEMINI_REQUEST")
     parts = payload.get("candidates", [{}])[0].get("content", {}).get("parts", [])
     raw = "".join(part.get("text", "") for part in parts)
