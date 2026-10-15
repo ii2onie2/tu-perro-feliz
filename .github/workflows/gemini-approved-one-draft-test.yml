@@ -1,4 +1,5 @@
 name: Gemini Evidence-Approved One Draft Pilot
+# Diagnostic retry after API 404; single draft only.
 on:
   push:
     branches:
