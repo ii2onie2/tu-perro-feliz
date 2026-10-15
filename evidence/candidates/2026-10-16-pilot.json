@@ -4,7 +4,7 @@
   "manual_review_approved": false,
   "editorial_review_required": true,
   "media_license_approved": false,
-  "status": "CANDIDATE_EVIDENCE_NOT_APPROVED_FOR_GENERATION",
+  "status": "MULTI_ORGANIZATION_SOURCES_REVIEW_PENDING",
   "sources": [
     {
       "name": "AKC: 4 Tips for Training Your Dog With Rewards",
@@ -21,6 +21,15 @@
       "facts": [
         "Recompensar cada respuesta correcta es útil al enseñar un comportamiento nuevo.",
         "La frecuencia de las recompensas puede variar a medida que el perro aprende."
+      ]
+    },
+    {
+      "name": "VCA Animal Hospitals - Using Reinforcement and Rewards to Train Your Pet",
+      "url": "https://vcahospitals.com/tlc/know-your-pet/using-reinforcement-and-rewards-to-train-your-pet",
+      "organization": "VCA Animal Hospitals",
+      "facts": [
+        "Reinforcement should closely follow the desired behavior.",
+        "Continuous reinforcement can help teach a new task, and intermittent reinforcement may be used after learning."
       ]
     }
   ]
