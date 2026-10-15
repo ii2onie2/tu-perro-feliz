@@ -1,0 +1,93 @@
+
+name: IndiePost API Read-Only Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Check IndiePost accounts
+        env:
+          INDIEPOST_API_KEY: ${{ secrets.INDIEPOST_API_KEY }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          import sys
+          import json
+          import urllib.request
+          import urllib.error
+
+          key = os.environ.get("INDIEPOST_API_KEY", "").strip()
+
+          if not key.startswith("ip_"):
+              print("RESULT=FAIL_SECRET_MISSING")
+              sys.exit(1)
+
+          url = "https://www.indiepost.app/api/v1/accounts"
+
+          request = urllib.request.Request(
+              url,
+              headers={
+                  "Authorization": "Bearer " + key,
+                  "Accept": "application/json"
+              },
+              method="GET"
+          )
+
+          try:
+              with urllib.request.urlopen(
+                  request, timeout=20
+              ) as response:
+                  data = json.load(response)
+
+          except urllib.error.HTTPError as error:
+              print("HTTP_STATUS=" + str(error.code))
+              print("RESULT=FAIL_HTTP")
+              sys.exit(1)
+
+          except Exception as error:
+              print("ERROR_TYPE=" + type(error).__name__)
+              print("RESULT=FAIL_CONNECTION")
+              sys.exit(1)
+
+          required = {
+              "taldiacomohoy09",
+              "tuperrofelizofficial"
+          }
+
+          connected = set()
+
+          for workspace in data.get("workspaces", []):
+              for account in workspace.get("accounts", []):
+                  if (
+                      account.get("platform") == "tiktok"
+                      and account.get("connected") is True
+                  ):
+                      username = str(
+                          account.get("username", "")
+                      ).lower().lstrip("@")
+
+                      connected.add(username)
+
+          print("API_AUTH=PASS")
+
+          for username in sorted(required):
+              if username in connected:
+                  print(username + "=CONNECTED")
+              else:
+                  print(username + "=MISSING")
+
+          if not required.issubset(connected):
+              print("RESULT=FAIL_MISSING_ACCOUNTS")
+              sys.exit(1)
+
+          print("RESULT=PASS_READ_ONLY")
+          PY
