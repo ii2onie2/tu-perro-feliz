@@ -1,0 +1,57 @@
+name: Gemini Evidence-Approved One Draft Pilot
+on:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/gemini-approved-one-draft-test.yml"
+permissions:
+  contents: read
+jobs:
+  one-draft-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gate verified evidence and prevent publication
+        run: |
+          python - <<'PY'
+          import json
+          p="evidence/approved/2026-10-16-gemini-draft.json"
+          d=json.load(open(p))
+          assert d["manual_review_approved"] is True
+          assert d["publication_approved"] is False
+          assert d["media_license_approved"] is False
+          sources=d["sources"]
+          assert len(sources)>=2
+          organizations=set()
+          for s in sources:
+              organization=s.get("organization",s["name"].split(":")[0]).lower()
+              if "boe" in organization: organization="boe"
+              if "unesco" in organization: organization="unesco"
+              if "akc" in organization or "american kennel" in organization: organization="akc"
+              if "vca" in organization: organization="vca"
+              organizations.add(organization)
+          assert len(organizations)>=2
+          print("DRAFT_ONLY_EVIDENCE_GATE=PASS")
+          PY
+      - name: One Gemini draft, no publication
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo BLOCKED_NO_KEY; exit 1; }
+          python scripts/p3_2_gemini_draft_pilot.py --brand dogs --date 2026-10-16 --evidence evidence/approved/2026-10-16-gemini-draft.json --output /tmp/gemini-draft.json
+          python - <<'PY'
+          import json
+          d=json.load(open("/tmp/gemini-draft.json"))
+          assert d["status"]=="UNVERIFIED_DRAFT"
+          assert d["review_required"] is True
+          print("GEMINI_DRAFT=CREATED_REVIEW_REQUIRED")
+          print("PUBLICATION=NO")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: gemini-single-draft-dogs
+          path: /tmp/gemini-draft.json
+          retention-days: 3
