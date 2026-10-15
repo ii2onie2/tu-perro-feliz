@@ -1,0 +1,50 @@
+name: Gemini Single Draft - Manual Review Only
+on:
+  workflow_dispatch:
+    inputs:
+      evidence_file:
+        description: 'Committed, manually verified evidence JSON relative path'
+        required: true
+        type: string
+      target_date:
+        description: 'YYYY-MM-DD'
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  gated-draft:
+    if: github.ref == 'refs/heads/integration/indiepost-premium-audit-20261015'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail closed without reviewed evidence
+        env:
+          EVIDENCE_FILE: ${{ inputs.evidence_file }}
+          TARGET_DATE: ${{ inputs.target_date }}
+        run: |
+          python - <<'PY'
+          import os,json,re,pathlib
+          path=pathlib.Path(os.environ["EVIDENCE_FILE"])
+          assert not path.is_absolute() and ".." not in path.parts
+          assert re.fullmatch(r"\d{4}-\d{2}-\d{2}",os.environ["TARGET_DATE"])
+          assert path.is_file(), "BLOCKED_EVIDENCE_NOT_FOUND"
+          data=json.loads(path.read_text(encoding="utf8"))
+          assert data.get("manual_review_approved") is True, "BLOCKED_EVIDENCE_NOT_APPROVED"
+          assert data.get("topic") and len(data.get("sources",[]))>=2
+          assert all(s.get("url","").startswith("https://") and s.get("facts") for s in data["sources"])
+          print("EVIDENCE_GATE=PASS_FORMAT_AND_USER_DECLARED_REVIEW_ONLY")
+          PY
+      - name: Generate one unverified draft
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EVIDENCE_FILE: ${{ inputs.evidence_file }}
+          TARGET_DATE: ${{ inputs.target_date }}
+        run: |
+          python scripts/p3_2_gemini_draft_pilot.py --brand dogs --date "$TARGET_DATE" --evidence "$EVIDENCE_FILE" --output /tmp/gemini_draft.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gemini-draft-review-only
+          path: /tmp/gemini_draft.json
+          retention-days: 3
