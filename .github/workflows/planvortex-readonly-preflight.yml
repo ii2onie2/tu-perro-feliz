@@ -1,0 +1,20 @@
+name: PlanVortex GET-only Preflight
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-readonly-preflight.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check PlanVortex connections and Free limits without posting
+        env:
+          PLANVORTEX_CLIENT_ID: ${{ secrets.PLANVORTEX_CLIENT_ID }}
+          PLANVORTEX_CLIENT_SECRET: ${{ secrets.PLANVORTEX_CLIENT_SECRET }}
+          PLANVORTEX_ORG_ID: ${{ secrets.PLANVORTEX_ORG_ID }}
+        run: python tools/planvortex_readonly_preflight.py
