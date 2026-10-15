@@ -49,7 +49,7 @@ def main():
         "generationConfig": {"temperature": 0.3, "responseMimeType": "application/json"},
     }
     req = urllib.request.Request(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
         headers={"x-goog-api-key": key, "Content-Type": "application/json"},
         data=json.dumps(body).encode("utf-8"), method="POST",
     )
