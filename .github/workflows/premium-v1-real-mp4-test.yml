@@ -1,0 +1,47 @@
+name: Premium V1 Real MP4 Audio Comparison
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/premium-v1-real-mp4-test.yml"
+permissions:
+  contents: read
+  actions: read
+jobs:
+  comparison:
+    if: github.ref == 'refs/heads/integration/indiepost-premium-audit-20261015'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Obtain previous successful render artifact without publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/premium_comparison/reference
+          gh api -H "Accept: application/vnd.github+json" /repos/ii2onie2/tu-perro-feliz/actions/artifacts/11993965287/zip > /tmp/premium_comparison/reference.zip
+          unzip -q /tmp/premium_comparison/reference.zip -d /tmp/premium_comparison/reference
+          find /tmp/premium_comparison/reference -type f -name '*.mp4' | head -n 1 > /tmp/premium_comparison/selected_path
+          test -s /tmp/premium_comparison/selected_path
+      - name: Create independent enhanced audio MP4
+        run: |
+          set -euo pipefail
+          ORIGINAL="$(cat /tmp/premium_comparison/selected_path)"
+          python tools/premium_v11_audio_video.py --input "$ORIGINAL" --output /tmp/premium_comparison/premium-audio.mp4 --report /tmp/premium_comparison/quality-report.json --execute
+          ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 /tmp/premium_comparison/premium-audio.mp4
+          echo "REAL_MP4_POSTPROCESS=PASS_IF_COMPLETED"
+          echo "EDITORIAL_REVIEW_REQUIRED=YES"
+          echo "MEDIA_LICENSES_VERIFIED=NO"
+          echo "INDIEPOST_CALLED=NO"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: premium-comparison-tu-perro-feliz
+          path: |
+            /tmp/premium_comparison/quality-report.json
+            /tmp/premium_comparison/premium-audio.mp4
+          if-no-files-found: ignore
+          retention-days: 3
