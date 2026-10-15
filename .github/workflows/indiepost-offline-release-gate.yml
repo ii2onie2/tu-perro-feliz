@@ -1,0 +1,23 @@
+name: IndiePost Offline Release Gate
+on:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/indiepost-offline-release-gate.yml"
+permissions:
+  contents: read
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify fail-closed publication gate
+        run: |
+          python -m py_compile tools/indiepost_offline_release_gate.py
+          python tools/indiepost_offline_release_gate.py --content pilots/2026-10-16-editorial.json --brand dogs --date 2026-10-16 --slot 10 | tee /tmp/gate-report.txt
+          grep -q 'RESULT=BLOCKED' /tmp/gate-report.txt
+          grep -q 'GATE=PUBLICATION_NOT_APPROVED' /tmp/gate-report.txt
+          grep -q 'LIVE_PUBLISH=NO' /tmp/gate-report.txt
+          echo "SAFE_DRY_RUN=PASS"
