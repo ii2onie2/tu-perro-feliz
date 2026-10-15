@@ -1,0 +1,22 @@
+name: P3 Reserve and Duplicate Offline Gate
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/p3-reserve-duplicate-gate.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and inspect fourteen-day reserve
+        run: |
+          python -m py_compile tools/p3_reserve_duplicate_gate.py
+          python tools/p3_reserve_duplicate_gate.py --start 2026-10-16 --days 14
+          echo "NO_GEMINI_CALLS=YES"
+          echo "NO_INDIEPOST_POSTS=YES"
