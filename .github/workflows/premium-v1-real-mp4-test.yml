@@ -26,6 +26,11 @@ jobs:
           unzip -q /tmp/premium_comparison/reference.zip -d /tmp/premium_comparison/reference
           find /tmp/premium_comparison/reference -type f -name '*.mp4' | head -n 1 > /tmp/premium_comparison/selected_path
           test -s /tmp/premium_comparison/selected_path
+      - name: Install FFmpeg and FFprobe
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          ffprobe -version
       - name: Create independent enhanced audio MP4
         run: |
           set -euo pipefail
