@@ -115,7 +115,7 @@ jobs:
           done
 
       - name: Publish rendered MP4s in repository
-        if: steps.content.outputs.files != ''
+        if: github.ref == 'refs/heads/main' && steps.content.outputs.files != ''
         shell: bash
         run: |
           mkdir -p videos
