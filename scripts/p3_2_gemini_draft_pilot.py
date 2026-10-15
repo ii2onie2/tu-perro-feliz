@@ -36,7 +36,7 @@ def main():
     )
     instructions = (
         "Write ONE Spanish TikTok narration draft, 180-240 words for history or "
-        "100-150 words for dogs, using ONLY the supplied verified facts. "
+        "110-130 words for dogs (HARD LIMIT: never exceed 150 words), using ONLY the supplied verified facts. "
         "Do not browse, invent facts, citations or media licenses. "
         "Return JSON object with title, hook, narration, caption, cta, "
         "hashtags (array), sources (exactly supplied sources), review_required=true. "
