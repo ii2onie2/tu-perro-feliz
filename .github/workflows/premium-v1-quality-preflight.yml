@@ -1,0 +1,24 @@
+name: Premium V1 Quality Preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/premium-v1-quality-preflight.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  editorial-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate existing Spanish content
+        run: python tools/premium_v1_quality_gate.py --brand dogs --content content/2026-10-09.json
