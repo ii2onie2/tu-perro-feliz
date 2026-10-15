@@ -1,0 +1,35 @@
+name: Premium V1.4 Scene Manifest Smoke Test
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - integration/indiepost-premium-audit-20261015
+    paths:
+      - ".github/workflows/premium-v14-manifest-test.yml"
+permissions:
+  contents: read
+jobs:
+  offline-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile scene tools
+        run: |
+          python -m py_compile tools/premium_v13_scene_storyboard.py tools/premium_v14_ffconcat_manifest.py
+      - name: Synthetic scene manifest only
+        run: |
+          mkdir -p /tmp/premium_v14
+          printf 'fake image' >/tmp/premium_v14/frame.jpg
+          python - <<'PY'
+          import json
+          p='/tmp/premium_v14/storyboard.json'
+          json.dump({'publish_authorized':False,'scenes':[{'index':1,'start_estimate':0,'end_estimate':3.0,'media_path':'frame.jpg'}]},open(p,'w'))
+          PY
+          python tools/premium_v14_ffconcat_manifest.py --storyboard /tmp/premium_v14/storyboard.json --media-root /tmp/premium_v14 --output /tmp/premium_v14/scenes.ffconcat
+          grep -q '^ffconcat version 1.0$' /tmp/premium_v14/scenes.ffconcat
+          grep -q '^duration 3.000$' /tmp/premium_v14/scenes.ffconcat
+          echo 'RESULT=PASS_MANIFEST_ONLY'
+          echo 'REAL_RENDER_VALIDATED=NO'
+          echo 'GEMINI_CALLED=NO'
+          echo 'INDIEPOST_CALLED=NO'
