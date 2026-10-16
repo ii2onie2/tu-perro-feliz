@@ -36,7 +36,7 @@ $guard$;
 
 CREATE ROLE tiktok_publisher_limited
  LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS
- NOINHERIT;
+ NOINHERIT PASSWORD NULL;
 
 GRANT tiktok_reservation_rw TO tiktok_publisher_limited
  WITH INHERIT TRUE, SET FALSE, ADMIN FALSE;
@@ -46,15 +46,15 @@ DECLARE
  role_flags record;
 BEGIN
  SELECT rolcanlogin,rolsuper,rolcreatedb,rolcreaterole,rolreplication,rolbypassrls,
-        rolpassword IS NULL AS password_absent
- INTO role_flags FROM pg_authid WHERE rolname='tiktok_publisher_limited';
+        rolinherit
+ INTO role_flags FROM pg_roles WHERE rolname='tiktok_publisher_limited';
  IF NOT FOUND OR role_flags.rolcanlogin IS DISTINCT FROM TRUE
     OR role_flags.rolsuper IS DISTINCT FROM FALSE
     OR role_flags.rolcreatedb IS DISTINCT FROM FALSE
     OR role_flags.rolcreaterole IS DISTINCT FROM FALSE
     OR role_flags.rolreplication IS DISTINCT FROM FALSE
     OR role_flags.rolbypassrls IS DISTINCT FROM FALSE
-    OR role_flags.password_absent IS DISTINCT FROM TRUE THEN
+    OR role_flags.rolinherit IS DISTINCT FROM FALSE THEN
   RAISE EXCEPTION 'BLOCKED: role attributes or password state';
  END IF;
  IF pg_has_role('tiktok_publisher_limited','neon_superuser','MEMBER')
