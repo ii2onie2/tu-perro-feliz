@@ -21,3 +21,5 @@ jobs:
           PLANVORTEX_ACCOUNT_ID: ${{ secrets.PLANVORTEX_ACCOUNT_ID }}
           BRAND: dogs
         run: python tools/planvortex_live_readonly_contract.py
+
+# Recheck pinned live account identity before any future publishing integration.
