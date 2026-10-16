@@ -1,0 +1,41 @@
+name: PlanVortex Real MP4 Integrated Read-only Gate
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-real-mp4-gate.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download real MP4 preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/preview
+          gh run download 38802720156 -R ${{ github.repository }} -n gemini-editorial-mp4-preview-only -D /tmp/preview
+          find /tmp/preview -name video.mp4 -type f | head -n 1 > /tmp/mp4-path
+          test -s /tmp/mp4-path
+          test -s "$(cat /tmp/mp4-path)"
+      - name: Probe media and fail closed on publishing
+        run: |
+          MP4="$(cat /tmp/mp4-path)"
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json "$MP4" > /tmp/ffprobe.json
+          python - <<'PY'
+          import json
+          j=json.load(open("/tmp/ffprobe.json"))
+          v=[s for s in j["streams"] if s.get("codec_name")=="h264"]
+          assert v and v[0].get("width")==1080 and v[0].get("height")==1920
+          print("REAL_MP4_CODEC_DIMENSIONS=PASS")
+          PY
+          python tools/planvortex_publish_simulation.py --brand dogs --content pilots/2026-10-16-editorial.json --date 2026-10-16 --slot 10 --mp4 "$MP4" | tee /tmp/result
+          grep -q 'RESULT=BLOCKED' /tmp/result
+          grep -q 'BLOCKER=MEDIA_RIGHTS_NOT_APPROVED' /tmp/result
+          if grep -q 'BLOCKER=MP4_MISSING' /tmp/result; then exit 1; fi
+          grep -q 'UPLOAD=NO' /tmp/result
+          grep -q 'POST=NO' /tmp/result
+          echo "REAL_MP4_NEGATIVE_GATE=PASS"
