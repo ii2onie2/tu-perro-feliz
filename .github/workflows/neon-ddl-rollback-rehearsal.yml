@@ -1,0 +1,19 @@
+name: Neon Transactional DDL Rollback Rehearsal
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/neon-ddl-rollback-rehearsal.yml]
+permissions:
+  contents: read
+jobs:
+  rehearsal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --disable-pip-version-check 'psycopg[binary]>=3.2,<4'
+      - run: python -m py_compile tools/neon_ddl_rollback_rehearsal.py
+      - name: Test proposed PostgreSQL DDL then rollback
+        env:
+          NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+        run: python tools/neon_ddl_rollback_rehearsal.py
