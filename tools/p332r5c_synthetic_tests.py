@@ -16,7 +16,7 @@ SERIES = {
 }
 FILES = ["tools/p332r5_editorial_content_preflight.py",
          "tools/daily_editorial_evidence_gate.py",
-         "scripts/p3_2_prepare_daily_content.py"]
+         "scripts/p3_2_prepare_daily_content.py",\n         "tools/p332r6_evidence_alignment.py"]
 
 def run_case(repo, brand, case):
     with tempfile.TemporaryDirectory(prefix="p332r5c_") as tmp:
@@ -42,7 +42,7 @@ def run_case(repo, brand, case):
                              "sources": sources, "evidence_review_approved": True,
                              "publication_approved": False})
             items.append({"date": DAY, "slot": slot, "series": SERIES[brand][i],
-                          "title": "Synthetic title " + str(i),
+                          "title": "Synthetic title " + str(i),\n                          "evidence_topic": "Synthetic topic " + str(i),
                           "hook": "Synthetic hook", "narration": "synthetic " * 185,
                           "caption": "Synthetic caption", "cta": "Synthetic CTA",
                           "hashtags": ["#synthetic"], "media": ["synthetic-placeholder"],
@@ -56,7 +56,7 @@ def run_case(repo, brand, case):
             evidence["dossiers"][0]["evidence_review_approved"] = False
         elif case == "same_org":
             evidence["dossiers"][0]["sources"][1]["organization"] = "SyntheticOrgA"
-        elif case == "short_narration":
+        elif case == "wrong_topic":\n            draft["items"][0]["evidence_topic"] = "Unrelated topic"\n        elif case == "unmatched_source":\n            draft["items"][0]["sources"][0]["url"] = "https://example.net/other"\n        elif case == "short_narration":
             draft["items"][0]["narration"] = "too short"
         elif case == "missing_dossier":
             pass
@@ -88,7 +88,7 @@ def main():
     if any(not (repo / f).is_file() for f in FILES):
         print("BLOCKED_MISSING_REPOSITORY_FILES")
         return 2
-    cases = ("valid", "missing_dossier", "wrong_date", "unapproved", "same_org", "short_narration")
+    cases = ("valid", "missing_dossier", "wrong_date", "unapproved", "same_org", "short_narration", "wrong_topic", "unmatched_source")
     passed = sum(run_case(repo, brand, case) for case in cases)
     print("P332R5C_BRAND=" + brand + " PASS=" + str(passed) + "/" + str(len(cases)))
     print("REPOSITORY_WRITES=0 MODEL_CALLS=0 PUBLICATIONS=0")
