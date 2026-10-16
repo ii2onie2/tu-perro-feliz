@@ -1,52 +1,117 @@
+
 name: Gemini Editorial Pilot MP4 - Preview Only
+
 on:
   push:
     branches:
       - integration/indiepost-premium-audit-20261015
     paths:
       - ".github/workflows/gemini-editorial-pilot-preview.yml"
+
 permissions:
   contents: read
+
 jobs:
   preview:
+    if: github.ref == 'refs/heads/integration/indiepost-premium-audit-20261015'
     runs-on: ubuntu-latest
     timeout-minutes: 25
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout staging branch
+        uses: actions/checkout@v4
+
       - name: Install open-source render dependencies
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg fonts-dejavu-core
           python -m pip install piper-tts
+
       - name: Download Spanish TTS voice
         run: |
           mkdir -p voices
-          curl -fsSL --retry 3 -o voices/es_ES-sharvard-medium.onnx https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx
-          curl -fsSL --retry 3 -o voices/es_ES-sharvard-medium.onnx.json https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx.json
-      - name: Verify reviewed draft and render non-publishable preview
+          curl -fsSL --retry 3 \
+            -o voices/es_ES-sharvard-medium.onnx \
+            https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx
+
+          curl -fsSL --retry 3 \
+            -o voices/es_ES-sharvard-medium.onnx.json \
+            https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx.json
+
+      - name: Validate editorial pilot and prepare three images
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          source = Path("pilots/2026-10-16-editorial.json")
+          target = Path("/tmp/tu-perro-pilot-review.json")
+
+          data = json.loads(source.read_text(encoding="utf-8"))
+
+          assert data["status"] == "EDITORIALLY_REVISED_PILOT_NO_PUBLICATION"
+          assert data["publication_approved"] is False
+          assert data["media_license_approved"] is False
+          assert data["review_required"] is True
+
+          words = len(re.findall(r"\b\w+\b", data["narration"]))
+          assert 100 <= words <= 150, f"Invalid narration length: {words}"
+          assert len(data["sources"]) >= 2
+
+          images = [
+              "pilots/01.jpg",
+              "pilots/02.jpg",
+              "pilots/03.jpg",
+          ]
+
+          for image in images:
+              path = Path(image)
+              assert path.is_file(), f"Missing image: {image}"
+              assert path.stat().st_size > 0, f"Empty image: {image}"
+
+          data["media"] = [{"path": image} for image in images]
+          data["publication_approved"] = False
+          data["media_license_approved"] = False
+
+          target.write_text(
+              json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          print(f"EDITORIAL_WORDS={words}")
+          print("PILOT_IMAGES=3")
+          print("PUBLICATION_ALLOWED=NO")
+          print("PREVIEW_VIDEO_ONLY=YES")
+          PY
+
+      - name: Render canine pilot with Piper and FFmpeg
         env:
           PIPER_VOICE_MODEL: voices/es_ES-sharvard-medium.onnx
           PIPER_VOICE_CONFIG: voices/es_ES-sharvard-medium.onnx.json
         run: |
-          python - <<'PY'
-          import json,re
-          data=json.load(open("pilots/2026-10-16-editorial.json"))
-          assert data["status"] == "EDITORIALLY_REVISED_PILOT_NO_PUBLICATION"
-          assert data["publication_approved"] is False
-          assert data["media_license_approved"] is False
-          words=len(re.findall(r"\b\w+\b",data["narration"]))
-          low,high=(180,240) if data["series"]=="Tal Día Como Hoy" else (100,150)
-          assert low<=words<=high,(words,low,high)
-          assert len(data["sources"])>=2
-          print("EDITORIAL_WORDS="+str(words))
-          print("PUBLICATION_ALLOWED=NO")
-          print("PREVIEW_VIDEO_ONLY=YES")
-          PY
-          python scripts/render.py --content pilots/2026-10-16-editorial.json --out out/gemini-editorial-pilot
-          ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 out/gemini-editorial-pilot/video.mp4
+          python scripts/render.py \
+            --content /tmp/tu-perro-pilot-review.json \
+            --out out/gemini-editorial-pilot
+
           test -s out/gemini-editorial-pilot/video.mp4
-      - uses: actions/upload-artifact@v4
+          test -s out/gemini-editorial-pilot/subtitles.srt
+          test -s out/gemini-editorial-pilot/voice.wav
+
+          ffprobe -v error \
+            -show_entries format=duration \
+            -of default=nw=1:nk=1 \
+            out/gemini-editorial-pilot/video.mp4
+
+          echo "P3_24_RENDER=PASS_REVIEW_ONLY"
+          echo "PUBLICATION_ENABLED=NO"
+          echo "NEON_WRITE=NO"
+
+      - name: Upload review-only artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
-          name: gemini-editorial-mp4-preview-only
+          name: p324-tu-perro-feliz-review-only
           path: out/gemini-editorial-pilot/
+          if-no-files-found: error
           retention-days: 7
