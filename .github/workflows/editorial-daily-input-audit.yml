@@ -18,7 +18,7 @@ jobs:
           today=datetime.datetime.now(datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=2))).date().isoformat()
           evidence=pathlib.Path("evidence/approved")/(today+"-three-dossiers.json")
           if evidence.exists():
-              proc=subprocess.run([sys.executable,"tools/daily_editorial_evidence_gate.py","--input",str(evidence),"--brand", "dogs" if pathlib.Path("content/2026-10-07-educacion.json").exists() else "history"],capture_output=True,text=True)
+              proc=subprocess.run([sys.executable,"tools/daily_editorial_evidence_gate.py","--input",str(evidence),"--brand", "dogs"],capture_output=True,text=True)
               print("DOSSIER_GATE="+("PASS" if proc.returncode==0 else "BLOCKED"))
           else:
               print("DOSSIER_GATE=BLOCKED_MISSING_THREE_DOSSIERS")
