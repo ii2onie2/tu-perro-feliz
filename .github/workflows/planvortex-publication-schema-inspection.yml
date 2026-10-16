@@ -1,0 +1,21 @@
+name: PlanVortex Publication Schema Inspection
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-publication-schema-inspection.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile tools/planvortex_publication_schema_inspection.py
+      - name: Inspect GET publication response keys only
+        env:
+          PLANVORTEX_CLIENT_ID: ${{ secrets.PLANVORTEX_CLIENT_ID }}
+          PLANVORTEX_CLIENT_SECRET: ${{ secrets.PLANVORTEX_CLIENT_SECRET }}
+          PLANVORTEX_ORG_ID: ${{ secrets.PLANVORTEX_ORG_ID }}
+          BRAND: dogs
+        run: python tools/planvortex_publication_schema_inspection.py
