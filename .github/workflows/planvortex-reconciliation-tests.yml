@@ -1,0 +1,14 @@
+name: PlanVortex Fail-Closed Reconciliation Tests
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-reconciliation-tests.yml]
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile tools/planvortex_reconciliation_tests.py
+      - run: python tools/planvortex_reconciliation_tests.py
