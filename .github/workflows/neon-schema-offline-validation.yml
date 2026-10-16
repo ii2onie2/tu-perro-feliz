@@ -1,0 +1,14 @@
+name: Neon Schema Offline Validation
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/neon-schema-offline-validation.yml]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile tools/neon_schema_offline_validation.py
+      - run: python tools/neon_schema_offline_validation.py
