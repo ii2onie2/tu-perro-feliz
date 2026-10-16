@@ -21,6 +21,10 @@ jobs:
           find /tmp/preview -name video.mp4 -type f | head -n 1 > /tmp/mp4-path
           test -s /tmp/mp4-path
           test -s "$(cat /tmp/mp4-path)"
+      - name: Install ffprobe for MP4 inspection
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
       - name: Probe media and fail closed on publishing
         run: |
           MP4="$(cat /tmp/mp4-path)"
