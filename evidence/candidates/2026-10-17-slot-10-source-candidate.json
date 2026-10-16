@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-17",
+  "channel": "dogs",
+  "slot": "10:00",
+  "topic": "Premiar a tiempo durante el adiestramiento positivo",
+  "status": "CANDIDATE_EVIDENCE_NOT_APPROVED",
+  "evidence_review_approved": false,
+  "publication_approved": false,
+  "media_license_approved": false,
+  "editorial_notes": [
+    "Fuentes reutilizadas del expediente de prueba previo; volver a verificar la pertinencia editorial.",
+    "No prometer resultados garantizados ni dar consejos veterinarios individualizados."
+  ],
+  "sources": [
+    {
+      "name": "AKC - Training rewards",
+      "organization": "American Kennel Club",
+      "url": "https://www.akc.org/expert-advice/training/training-rewards/",
+      "facts": [
+        "La rapidez de la recompensa ayuda a asociarla con la conducta."
+      ]
+    },
+    {
+      "name": "VCA - Reinforcement and rewards",
+      "organization": "VCA Animal Hospitals",
+      "url": "https://vcahospitals.com/tlc/know-your-pet/using-reinforcement-and-rewards-to-train-your-pet",
+      "facts": [
+        "El refuerzo debe seguir de cerca la conducta deseada."
+      ]
+    }
+  ]
+}
