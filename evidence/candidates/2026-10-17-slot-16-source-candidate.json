@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-17",
+  "slot": "16:00",
+  "topic": "Pasear sin tirar de la correa: reforzar los pasos tranquilos",
+  "topic_type": "evergreen",
+  "evidence_review_approved": false,
+  "publication_approved": false,
+  "media_license_approved": false,
+  "status": "CANDIDATE_FACT_REVIEW_REQUIRED",
+  "sources": [
+    {
+      "name": "AKC - How to Stop Your Dog From Pulling on Leash",
+      "organization": "American Kennel Club",
+      "url": "https://www.akc.org/expert-advice/training/expert-tips-dog-leash-issues/",
+      "facts": [
+        "Reforzar la marcha con correa floja ayuda a aprender la conducta.",
+        "Parar cuando el perro tira evita premiar esa conducta con el avance."
+      ]
+    },
+    {
+      "name": "VCA - Controlling Pulling on Walks",
+      "organization": "VCA Animal Hospitals",
+      "url": "https://vcahospitals.com/lancaster/know-your-pet/controlling-pulling-on-walks",
+      "facts": [
+        "La enseñanza de caminar con correa floja requiere práctica y paciencia.",
+        "Se recomienda comenzar en un entorno con pocas distracciones."
+      ]
+    }
+  ],
+  "notes": [
+    "No afirmar que el hecho ocurrió el 17 de octubre salvo prueba explícita.",
+    "Validar las afirmaciones, el guion y las licencias audiovisuales antes de publicar."
+  ]
+}
