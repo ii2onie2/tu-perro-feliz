@@ -1,0 +1,29 @@
+name: Editorial Bundle Fail Closed Check
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/editorial-bundle-fail-closed.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify bundles remain blocked pending factual review
+        run: |
+          python - <<'PY'
+          import json,pathlib,subprocess,sys
+          p=pathlib.Path("evidence/candidates/2026-10-17-three-dossiers-unapproved.json")
+          d=json.loads(p.read_text(encoding="utf-8"))
+          assert len(d["dossiers"])==3
+          assert len({x["topic"].casefold() for x in d["dossiers"]})==3
+          assert all(x["evidence_review_approved"] is False and x["publication_approved"] is False for x in d["dossiers"])
+          result=subprocess.run([sys.executable,"tools/daily_editorial_evidence_gate.py","--input",str(p),"--brand","history"],capture_output=True,text=True)
+          assert result.returncode!=0 and "BLOCKED_EVIDENCE_NOT_APPROVED" in result.stdout+result.stderr
+          print("CANDIDATE_BUNDLE=ASSEMBLED")
+          print("EDITORIAL_GATE=BLOCKED_AS_DESIGNED")
+          print("GEMINI=NO")
+          print("PUBLICATION=NO")
+          print("RESULT=PASS_FAIL_CLOSED")
+          PY
