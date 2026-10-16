@@ -16,7 +16,8 @@ SERIES = {
 }
 FILES = ["tools/p332r5_editorial_content_preflight.py",
          "tools/daily_editorial_evidence_gate.py",
-         "scripts/p3_2_prepare_daily_content.py",\n         "tools/p332r6_evidence_alignment.py"]
+         "scripts/p3_2_prepare_daily_content.py",
+         "tools/p332r6_evidence_alignment.py"]
 
 def run_case(repo, brand, case):
     with tempfile.TemporaryDirectory(prefix="p332r5c_") as tmp:
