@@ -1,0 +1,79 @@
+name: Neon Reservation Collision Rollback
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/neon-reservation-collision-rollback.yml]
+permissions:
+  contents: read
+jobs:
+  collision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'psycopg[binary]>=3.2,<4'
+      - name: Two session uniqueness rehearsal with mandatory rollback
+        env:
+          NEON_PUBLISHER_DATABASE_URL: ${{ secrets.NEON_PUBLISHER_DATABASE_URL }}
+        run: |
+          python - <<'PY'
+          import os,socket,threading,uuid,psycopg
+          from psycopg.conninfo import conninfo_to_dict
+          dsn=os.environ['NEON_PUBLISHER_DATABASE_URL']
+          host=conninfo_to_dict(dsn)['host']
+          ip=socket.getaddrinfo(host,5432,socket.AF_INET,socket.SOCK_STREAM)[0][4][0]
+          key='rollback-test-'+uuid.uuid4().hex
+          args=(key,'history','rollback-org','rollback-account','2099-01-01',10,'2099-01-01T09:00:00Z','a'*64,'b'*64)
+          query="""INSERT INTO tiktok_autopilot.publication_reservations
+          (reservation_key,channel,organization_id,account_id,local_date,slot_hour,scheduled_at_utc,content_sha256,media_sha256)
+          VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+          outcomes={}
+          ready=threading.Event()
+          def first():
+              db=psycopg.connect(dsn,hostaddr=ip,connect_timeout=12)
+              try:
+                  with db.cursor() as c:
+                      c.execute("SET LOCAL statement_timeout='12000ms'")
+                      c.execute(query,args)
+                      outcomes['first']='INSERT_HELD'
+                      ready.set()
+                      if not done.wait(10):raise RuntimeError('SECOND_SESSION_TIMEOUT')
+              finally:
+                  db.rollback()
+                  db.close()
+                  outcomes['first_rollback']='YES'
+          done=threading.Event()
+          def second():
+              if not ready.wait(10):raise RuntimeError('FIRST_SESSION_NOT_READY')
+              db=psycopg.connect(dsn,hostaddr=ip,connect_timeout=12)
+              try:
+                  with db.cursor() as c:
+                      c.execute("SET LOCAL lock_timeout='1200ms'")
+                      try:
+                          c.execute(query,(key+'-second',)+args[1:])
+                          outcomes['second']='UNEXPECTED_INSERT'
+                      except psycopg.errors.LockNotAvailable:
+                          outcomes['second']='UNIQUENESS_BLOCKED'
+                      except psycopg.errors.UniqueViolation:
+                          outcomes['second']='UNIQUENESS_REJECTED'
+              finally:
+                  db.rollback()
+                  db.close()
+                  done.set()
+                  outcomes['second_rollback']='YES'
+          t1=threading.Thread(target=first)
+          t2=threading.Thread(target=second)
+          t1.start();t2.start();t1.join();t2.join()
+          assert outcomes.get('first')=='INSERT_HELD',outcomes
+          assert outcomes.get('second') in ('UNIQUENESS_BLOCKED','UNIQUENESS_REJECTED'),outcomes
+          assert outcomes.get('first_rollback')=='YES' and outcomes.get('second_rollback')=='YES',outcomes
+          with psycopg.connect(dsn,hostaddr=ip,options='-c default_transaction_read_only=on') as verify:
+              with verify.cursor() as c:
+                  c.execute("SELECT count(*) FROM tiktok_autopilot.publication_reservations WHERE reservation_key IN (%s,%s)",(key,key+'-second'))
+                  assert c.fetchone()[0]==0
+          print('TWO_SESSION_DUPLICATE_GATE=PASS')
+          print('ROLLBACK_BOTH=PASS')
+          print('PERSISTED_TEST_ROWS=0')
+          print('PLANVORTEX_WRITE=NO')
+          print('RESULT=PASS_NEON_COLLISION_REHEARSAL')
+          PY
