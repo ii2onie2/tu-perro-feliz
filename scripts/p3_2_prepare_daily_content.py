@@ -61,7 +61,7 @@ def main():
             with path.open("x",encoding="utf-8") as f:
                 created.append(path)
                 json.dump(item,f,ensure_ascii=False,indent=2)
-                f.write("\\n")
+                f.write("\n")
     except Exception:
         for path in created:
             path.unlink(missing_ok=True)
