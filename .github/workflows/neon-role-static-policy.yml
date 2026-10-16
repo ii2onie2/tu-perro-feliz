@@ -1,0 +1,13 @@
+name: Neon Role SQL Static Policy
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/neon-role-static-policy.yml]
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/neon_role_static_policy.py
