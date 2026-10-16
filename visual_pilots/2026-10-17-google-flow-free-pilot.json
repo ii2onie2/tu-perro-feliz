@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-17",
+  "channel": "dogs",
+  "topic": "Cómo recompensar a tu perro en el momento adecuado",
+  "status": "VISUAL_PROMPTS_DRAFT_NOT_APPROVED",
+  "visual_generator": "Google Flow free / Nano Banana UI",
+  "media_status": "NOT_GENERATED",
+  "publication_approved": false,
+  "editorial_review_required": true,
+  "aspect_ratio": "9:16",
+  "target_resolution": "1080x1920",
+  "shots": [
+    {
+      "id": "01",
+      "duration_seconds": 7,
+      "prompt": "Vertical 9:16 natural documentary-style image of a relaxed medium-sized family dog sitting near a trainer in a safe, quiet home, trainer holding a tiny treat at waist level, calm and gentle positive reinforcement atmosphere, lifelike correct dog anatomy, no text."
+    },
+    {
+      "id": "02",
+      "duration_seconds": 9,
+      "prompt": "Vertical 9:16 sequence-style single frame of a dog calmly offering a paw and human rewarding it immediately, training setting free of distractions, hands and dog's limbs anatomically accurate, humane positive reinforcement, no restraining equipment, no text."
+    },
+    {
+      "id": "03",
+      "duration_seconds": 8,
+      "prompt": "Vertical 9:16 beautiful candid dog enrichment training moment in a peaceful park, attentive dog on a comfortable loose leash looking at trainer, small reward pouch visible, no choking collars, safe daylight, naturally correct anatomy, no text."
+    }
+  ],
+  "negative_prompt": "No prong/choke collar, no forceful handling, no unsafe foods, no extra legs or paws, no text, no logos, no medical claims.",
+  "overlay_disclosure_es": "Imágenes creadas con IA",
+  "facts_gate": "Treat immediacy as one useful training factor, not a guaranteed result or veterinary advice",
+  "flow_budget": {
+    "credits_before": null,
+    "credits_after": null,
+    "images_accepted": 0,
+    "cost_unverified": true
+  },
+  "ffmpeg_plan": "Static images with slow pan/zoom, voice via Piper, Spanish subtitles, no automated publishing."
+}
