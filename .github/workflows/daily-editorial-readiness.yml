@@ -1,0 +1,39 @@
+name: Daily Editorial Readiness Gate
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/daily-editorial-readiness.yml]
+permissions:
+  contents: read
+jobs:
+  editorial-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect approved editorial evidence without model or publish
+        run: |
+          python - <<'PY'
+          import datetime,json,pathlib
+          day=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=2))).date().isoformat()
+          path=pathlib.Path("evidence/approved")/(day+"-gemini-draft.json")
+          if not path.exists():
+              print("EDITORIAL_SOURCES=BLOCKED_NO_TODAY_EVIDENCE")
+          else:
+              d=json.loads(path.read_text(encoding="utf-8"))
+              orgs=set()
+              for s in d.get("sources",[]):
+                  org=s.get("organization") or s.get("name","").split(":")[0]
+                  if "boe" in org.lower():org="BOE"
+                  if "unesco" in org.lower():org="UNESCO"
+                  if "akc" in org.lower():org="AKC"
+                  if "vca" in org.lower():org="VCA"
+                  orgs.add(org.lower())
+              ready=(d.get("manual_review_approved") is True and len(orgs)>=2)
+              print("ONE_DRAFT_EVIDENCE="+("READY" if ready else "BLOCKED"))
+          files=[pathlib.Path("content")/(day+s+".json") for s in ["","-educacion","-sabias"]]
+          print("COMPLETE_VALIDATED_TRIPLET="+("PRESENT_NOT_YET_VALIDATED" if all(p.exists() for p in files) else "BLOCKED_MISSING_JSON"))
+          print("DAILY_AUTOMATION_ENABLED=NO")
+          print("PUBLISH_ENABLED=NO")
+          print("RESULT=READINESS_INVENTORY_ONLY")
+          PY
