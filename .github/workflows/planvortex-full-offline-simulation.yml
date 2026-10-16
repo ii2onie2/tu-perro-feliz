@@ -1,0 +1,20 @@
+name: PlanVortex Full Offline Negative Simulation
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-full-offline-simulation.yml]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile tools/planvortex_publish_simulation.py
+      - name: Confirm unsafe unpublished pilot is blocked
+        run: |
+          python tools/planvortex_publish_simulation.py --brand dogs --content pilots/2026-10-16-editorial.json --date 2026-10-16 --slot 10 --mp4 /tmp/not_uploaded.mp4 | tee /tmp/result
+          grep -q 'RESULT=BLOCKED' /tmp/result
+          grep -q 'BLOCKER=PUBLICATION_NOT_APPROVED' /tmp/result
+          grep -q 'UPLOAD=NO' /tmp/result
+          grep -q 'POST=NO' /tmp/result
