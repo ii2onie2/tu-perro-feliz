@@ -43,7 +43,8 @@ def run_case(repo, brand, case):
                              "sources": sources, "evidence_review_approved": True,
                              "publication_approved": False})
             items.append({"date": DAY, "slot": slot, "series": SERIES[brand][i],
-                          "title": "Synthetic title " + str(i),\n                          "evidence_topic": "Synthetic topic " + str(i),
+                          "title": "Synthetic title " + str(i),
+                          "evidence_topic": "Synthetic topic " + str(i),
                           "hook": "Synthetic hook", "narration": "synthetic " * 185,
                           "caption": "Synthetic caption", "cta": "Synthetic CTA",
                           "hashtags": ["#synthetic"], "media": ["synthetic-placeholder"],
@@ -57,7 +58,11 @@ def run_case(repo, brand, case):
             evidence["dossiers"][0]["evidence_review_approved"] = False
         elif case == "same_org":
             evidence["dossiers"][0]["sources"][1]["organization"] = "SyntheticOrgA"
-        elif case == "wrong_topic":\n            draft["items"][0]["evidence_topic"] = "Unrelated topic"\n        elif case == "unmatched_source":\n            draft["items"][0]["sources"][0]["url"] = "https://example.net/other"\n        elif case == "short_narration":
+        elif case == "wrong_topic":
+            draft["items"][0]["evidence_topic"] = "Unrelated topic"
+        elif case == "unmatched_source":
+            draft["items"][0]["sources"][0]["url"] = "https://example.net/other"
+        elif case == "short_narration":
             draft["items"][0]["narration"] = "too short"
         elif case == "missing_dossier":
             pass
