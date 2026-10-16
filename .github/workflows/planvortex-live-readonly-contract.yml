@@ -1,0 +1,23 @@
+name: PlanVortex Live Read Only Contract
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-live-readonly-contract.yml]
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python syntax
+        run: python -m py_compile tools/planvortex_live_readonly_contract.py
+      - name: GET-only account, limits and publication list
+        env:
+          PLANVORTEX_CLIENT_ID: ${{ secrets.PLANVORTEX_CLIENT_ID }}
+          PLANVORTEX_CLIENT_SECRET: ${{ secrets.PLANVORTEX_CLIENT_SECRET }}
+          PLANVORTEX_ORG_ID: ${{ secrets.PLANVORTEX_ORG_ID }}
+          PLANVORTEX_ACCOUNT_ID: ${{ secrets.PLANVORTEX_ACCOUNT_ID }}
+          BRAND: dogs
+        run: python tools/planvortex_live_readonly_contract.py
