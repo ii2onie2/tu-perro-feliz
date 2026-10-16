@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-17",
+  "slot": "19:00",
+  "topic": "Por qué olfatear y resolver juegos estimula a tu perro",
+  "topic_type": "evergreen",
+  "evidence_review_approved": false,
+  "publication_approved": false,
+  "media_license_approved": false,
+  "status": "CANDIDATE_FACT_REVIEW_REQUIRED",
+  "sources": [
+    {
+      "name": "VCA - Using Enrichment Predictability and Scheduling",
+      "organization": "VCA Animal Hospitals",
+      "url": "https://vcahospitals.com/know-your-pet/using-enrichment-predictability-and-scheduling-to-train-your-dog",
+      "facts": [
+        "Los rompecabezas y la enseñanza de nuevas habilidades son ejemplos de enriquecimiento cognitivo.",
+        "El trabajo olfativo se incluye entre actividades adaptables a distintos perros."
+      ]
+    },
+    {
+      "name": "AKC - 3 Ways To Improve Your Dog's Walk",
+      "organization": "American Kennel Club",
+      "url": "https://www.akc.org/expert-advice/training/improve-your-dogs-walk/",
+      "facts": [
+        "Las oportunidades de olfatear aportan estimulación mental durante el paseo.",
+        "El olfateo puede servir de recompensa por comportamientos deseados."
+      ]
+    }
+  ],
+  "notes": [
+    "No afirmar que el hecho ocurrió el 17 de octubre salvo prueba explícita.",
+    "Validar las afirmaciones, el guion y las licencias audiovisuales antes de publicar."
+  ]
+}
