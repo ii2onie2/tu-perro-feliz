@@ -31,7 +31,11 @@ print("ACCOUNT_MATCH_COUNT="+str(len(matches)))
 if len(matches)!=1:raise SystemExit("BLOCKED_ACCOUNT_AMBIGUITY")
 ident=str(matches[0].get("_id",matches[0].get("id","")))
 if not ident:raise SystemExit("BLOCKED_ACCOUNT_ID_MISSING")
-print("ACCOUNT_ID_FINGERPRINT="+hashlib.sha256(ident.encode()).hexdigest()[:12])
+fingerprint=hashlib.sha256(ident.encode()).hexdigest()[:12]
+expected_fingerprint={"history":"1b22ebaf4344","dogs":"b371c6eb8b22"}[brand]
+print("ACCOUNT_ID_FINGERPRINT="+fingerprint)
+if fingerprint!=expected_fingerprint:raise SystemExit("BLOCKED_ACCOUNT_FINGERPRINT_CHANGED")
+print("ACCOUNT_BINDING=VERIFIED_LIVE_BY_FINGERPRINT")
 secret_account=os.getenv("PLANVORTEX_ACCOUNT_ID","")
 if secret_account and secret_account!=ident:raise SystemExit("BLOCKED_ACCOUNT_ID_MISMATCH")
 print("ACCOUNT_SECRET_STATUS="+("MATCH" if secret_account else "NOT_CONFIGURED"))
