@@ -1,0 +1,21 @@
+name: PlanVortex Limited Live Pagination Probe
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-limited-pagination-probe.yml]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile tools/planvortex_limited_pagination_probe.py
+      - name: GET only offset and limit pagination without exposing publications
+        env:
+          PLANVORTEX_CLIENT_ID: ${{ secrets.PLANVORTEX_CLIENT_ID }}
+          PLANVORTEX_CLIENT_SECRET: ${{ secrets.PLANVORTEX_CLIENT_SECRET }}
+          PLANVORTEX_ORG_ID: ${{ secrets.PLANVORTEX_ORG_ID }}
+          BRAND: dogs
+        run: python tools/planvortex_limited_pagination_probe.py
