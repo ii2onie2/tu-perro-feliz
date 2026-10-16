@@ -39,7 +39,7 @@ def main():
                 raise SystemExit("BLOCKED: item %s missing %s"%(i,field))
         if len(item["narration"].split())<65:
             raise SystemExit("BLOCKED: narration too short")
-        if not all(isinstance(s,dict) and s.get("name") and str(s.get("url","")).startswith("https://") for s in item["sources"]):
+        if not isinstance(item["sources"], list) or not all(isinstance(source,dict) and source.get("name") and str(source.get("url","")).startswith("https://") for source in item["sources"]):
             raise SystemExit("BLOCKED: source URLs invalid")
         paths.append((Path(a.content_dir)/(date+SUFFIXES[i]+".json"),item))
     if len({x["title"].casefold().strip() for _,x in paths})!=3:
