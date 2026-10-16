@@ -1,0 +1,33 @@
+name: Neon V1 Independent Postcommit Readonly
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/neon-v1-independent-postcommit.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --disable-pip-version-check 'psycopg[binary]>=3.2,<4'
+      - name: Inspect persisted shared ledger and role
+        env:
+          NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+        run: |
+          python - <<'PY'
+          import os,psycopg
+          with psycopg.connect(os.environ["NEON_DATABASE_URL"],connect_timeout=15,options="-c default_transaction_read_only=on") as db:
+              db.read_only=True
+              with db.cursor() as c:
+                  c.execute("SELECT to_regnamespace('tiktok_autopilot') IS NOT NULL,to_regclass('tiktok_autopilot.publication_reservations') IS NOT NULL,EXISTS(SELECT 1 FROM pg_roles WHERE rolname='tiktok_reservation_rw')")
+                  assert c.fetchone()==(True,True,True)
+                  c.execute("SELECT rolcanlogin,rolsuper,has_table_privilege('tiktok_reservation_rw','tiktok_autopilot.publication_reservations','SELECT'),has_table_privilege('tiktok_reservation_rw','tiktok_autopilot.publication_reservations','INSERT'),has_table_privilege('tiktok_reservation_rw','tiktok_autopilot.publication_reservations','UPDATE'),has_table_privilege('tiktok_reservation_rw','tiktok_autopilot.publication_reservations','DELETE') FROM pg_roles WHERE rolname='tiktok_reservation_rw'")
+                  assert c.fetchone()==(False,False,True,True,True,False)
+                  c.execute("SELECT count(*) FROM tiktok_autopilot.publication_reservations")
+                  assert c.fetchone()[0]==0
+          print("INDEPENDENT_NEON_POSTCOMMIT=PASS")
+          print("NO_DATABASE_WRITE=YES")
+          print("RESULT=PASS_SHARED_NEON_V1")
+          PY
