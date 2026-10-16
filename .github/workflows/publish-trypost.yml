@@ -6,6 +6,12 @@ on:
 permissions:
   contents: read
 
+# Reserved shared group for the future PlanVortex publisher.
+# This workflow remains disabled and has no publishing credentials.
+concurrency:
+  group: planvortex-single-publisher-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   disabled:
     runs-on: ubuntu-latest
