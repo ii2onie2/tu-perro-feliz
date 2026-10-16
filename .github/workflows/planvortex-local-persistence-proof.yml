@@ -1,0 +1,15 @@
+name: PlanVortex Local Persistent Reservation Proof
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-local-persistence-proof.yml]
+permissions:
+  contents: read
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile tools/planvortex_local_persistence_proof.py
+      - run: python tools/planvortex_local_persistence_proof.py
