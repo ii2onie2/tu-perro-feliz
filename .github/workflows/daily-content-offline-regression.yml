@@ -1,0 +1,48 @@
+name: Daily Content Generator Offline Regression
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/daily-content-offline-regression.yml]
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate synthetic triplet and rejection paths without publication
+        run: |
+          python - <<'PY'
+          import json,os,subprocess,sys,tempfile,pathlib
+          root=pathlib.Path(tempfile.mkdtemp(prefix='offline-content-'))
+          date='2099-12-20'
+          series=["Tu perro feliz","Buenos modales","¿Sabías esto de tu perro?"]
+          slots=['10:00','16:00','19:00']
+          items=[]
+          for i in range(3):
+              d=dict(series=series[i],date=date,slot=slots[i],title='Synthetic test '+str(i),hook='Prueba',narration='palabra '*72,caption='Ejemplo',cta='Síguenos para más',hashtags=['#test'],sources=[dict(name='Synthetic',url='https://example.org/test')],media=['synthetic-test'])
+              pass
+              items.append(d)
+          input_file=root/'draft.json'
+          input_file.write_text(json.dumps(dict(date=date,items=items)),encoding='utf-8')
+          cmd=[sys.executable,'scripts/p3_2_prepare_daily_content.py','--input',str(input_file),'--content-dir',str(root/'out')]
+          def run(args,success):
+              r=subprocess.run(args,capture_output=True,text=True)
+              assert (r.returncode==0)==success,(args,r.stdout,r.stderr)
+              return r
+          run(cmd,True)
+          assert not (root/'out').exists()
+          run(cmd+['--write'],True)
+          files=sorted((root/'out').glob('*.json'))
+          assert len(files)==3
+          run([sys.executable,'scripts/validate_content.py']+[str(p) for p in files],True)
+          run(cmd+['--write'],False)
+          assert len(list((root/'out').glob('*.json')))==3
+          print('TRIPLET_DRY_RUN=PASS')
+          print('TRIPLET_WRITE_TEMP_ONLY=PASS')
+          print('RENDER_VALIDATOR=PASS')
+          print('NO_OVERWRITE=PASS')
+          print('PUBLICATION=NO')
+          print('RESULT=PASS_OFFLINE_CONTENT_REGRESSION')
+          PY
