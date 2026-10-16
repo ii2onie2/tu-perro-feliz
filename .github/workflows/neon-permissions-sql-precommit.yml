@@ -12,8 +12,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python -m pip install --disable-pip-version-check 'psycopg[binary]>=3.2,<4'
-      - run: python -m py_compile tools/neon_permissions_sql_precommit.py
       - name: Inspect Neon database permissions and SQL hash without writes
         env:
           NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
-        run: python tools/neon_permissions_sql_precommit.py
+        run: |
+          python - <<'PY'
+          import hashlib,os,pathlib,psycopg
+          from psycopg.conninfo import conninfo_to_dict
+          sql=pathlib.Path("sql/neon_reservation_schema_v1.sql").read_bytes()
+          print("DDL_SHA256="+hashlib.sha256(sql).hexdigest())
+          dsn=os.environ["NEON_DATABASE_URL"]
+          assert conninfo_to_dict(dsn).get("sslmode") in ("require","verify-ca","verify-full")
+          with psycopg.connect(dsn,options="-c default_transaction_read_only=on") as db:
+              db.read_only=True
+              with db.cursor() as cur:
+                  cur.execute("SELECT current_setting('transaction_read_only'),has_database_privilege(current_user,current_database(),'CREATE'),to_regclass('tiktok_autopilot.publication_reservations') IS NOT NULL")
+                  mode,create,exists=cur.fetchone()
+                  assert mode=="on" and not exists
+                  print("ROLE_CAN_CREATE_IN_DB="+str(create).upper())
+                  print("TABLE_EXISTS="+str(exists).upper())
+          print("RESULT=PASS_READ_ONLY_PRECOMMIT")
+          PY
