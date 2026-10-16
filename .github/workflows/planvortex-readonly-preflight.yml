@@ -1,4 +1,5 @@
 name: PlanVortex GET-only Preflight
+# Recheck with configured repository secrets, 2026-10-16.
 on:
   push:
     branches: [integration/indiepost-premium-audit-20261015]
