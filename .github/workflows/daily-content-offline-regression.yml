@@ -46,3 +46,5 @@ jobs:
           print('PUBLICATION=NO')
           print('RESULT=PASS_OFFLINE_CONTENT_REGRESSION')
           PY
+
+# Re-run after JSON newline fix.
