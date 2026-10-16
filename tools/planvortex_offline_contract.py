@@ -28,7 +28,10 @@ class Tests(unittest.TestCase):
  def test_missing_approval_blocks_even_when_account_mock_pinned(self):
     # source-level invariant: no upload or publication code exists in this module.
     source=open(__file__,encoding="utf-8").read()
-    assert "urllib.request" not in source and "requests.post" not in source
+    import ast
+    tree=ast.parse(source)
+    imports=[node for node in ast.walk(tree) if isinstance(node,(ast.Import,ast.ImportFrom))]
+    assert all(not any(name.name.startswith(("urllib","requests")) for name in getattr(node,"names",[])) and not getattr(node,"module","").startswith(("urllib","requests")) for node in imports)
  def test_timezones_and_dst(self):
     for date,utc in (("2026-10-16","08:00"),("2026-11-16","09:00")):
       local=dt.datetime.combine(dt.date.fromisoformat(date),dt.time(10),tzinfo=ZoneInfo("Europe/Madrid"))
