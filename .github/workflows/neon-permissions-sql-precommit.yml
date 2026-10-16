@@ -1,0 +1,19 @@
+name: Neon Permissions and SQL Precommit Readonly
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/neon-permissions-sql-precommit.yml]
+permissions:
+  contents: read
+jobs:
+  precommit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --disable-pip-version-check 'psycopg[binary]>=3.2,<4'
+      - run: python -m py_compile tools/neon_permissions_sql_precommit.py
+      - name: Inspect Neon database permissions and SQL hash without writes
+        env:
+          NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+        run: python tools/neon_permissions_sql_precommit.py
