@@ -53,13 +53,19 @@ def main():
     if not a.write:
         print("RESULT=PASS_DRAFT_ONLY")
         return
-    # Exclusive create, never overwrite previously generated or published media.
-    # Warning: partial files may remain if filesystem errors occur; fail closed.
-    for path,item in paths:
-        path.parent.mkdir(parents=True,exist_ok=True)
-        with path.open("x",encoding="utf-8") as f:
-            json.dump(item,f,ensure_ascii=False,indent=2)
-            f.write("\n")
+    # Exclusively create three files. Remove only files created in this run on failure.
+    created=[]
+    try:
+        for path,item in paths:
+            path.parent.mkdir(parents=True,exist_ok=True)
+            with path.open("x",encoding="utf-8") as f:
+                created.append(path)
+                json.dump(item,f,ensure_ascii=False,indent=2)
+                f.write("\\n")
+    except Exception:
+        for path in created:
+            path.unlink(missing_ok=True)
+        raise
     print("RESULT=CREATED_UNPUBLISHED_JSON")
 
 if __name__=="__main__":
