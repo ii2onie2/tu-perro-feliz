@@ -1,0 +1,30 @@
+name: Editorial Daily Input Audit
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/editorial-daily-input-audit.yml]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inventory current date editorial prerequisites
+        run: |
+          python - <<'PY'
+          import datetime, pathlib, json, subprocess, sys
+          today=datetime.datetime.now(datetime.timezone.utc).astimezone(datetime.timezone(datetime.timedelta(hours=2))).date().isoformat()
+          evidence=pathlib.Path("evidence/approved")/(today+"-three-dossiers.json")
+          if evidence.exists():
+              proc=subprocess.run([sys.executable,"tools/daily_editorial_evidence_gate.py","--input",str(evidence),"--brand", "dogs" if pathlib.Path("content/2026-10-07-educacion.json").exists() else "history"],capture_output=True,text=True)
+              print("DOSSIER_GATE="+("PASS" if proc.returncode==0 else "BLOCKED"))
+          else:
+              print("DOSSIER_GATE=BLOCKED_MISSING_THREE_DOSSIERS")
+          result=subprocess.run([sys.executable,"scripts/p3_2_daily_preflight.py","--date",today],capture_output=True,text=True)
+          print("CONTENT_TRIPLET="+("PASS" if result.returncode==0 else "BLOCKED_MISSING_OR_INVALID"))
+          print("GEMINI_CALL=NO")
+          print("PUBLICATION=NO")
+          print("RESULT=INVENTORY_ONLY")
+          PY
