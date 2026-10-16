@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-17",
+  "dossiers": [
+    {
+      "date": "2026-10-17",
+      "slot": "10:00",
+      "topic": "Premiar a tiempo durante el adiestramiento positivo",
+      "evidence_review_approved": false,
+      "publication_approved": false,
+      "sources": [
+        {
+          "name": "AKC - Training rewards",
+          "organization": "American Kennel Club",
+          "url": "https://www.akc.org/expert-advice/training/training-rewards/",
+          "facts": [
+            "La rapidez de la recompensa ayuda a asociarla con la conducta."
+          ]
+        },
+        {
+          "name": "VCA - Reinforcement and rewards",
+          "organization": "VCA Animal Hospitals",
+          "url": "https://vcahospitals.com/tlc/know-your-pet/using-reinforcement-and-rewards-to-train-your-pet",
+          "facts": [
+            "El refuerzo debe seguir de cerca la conducta deseada."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "slot": "16:00",
+      "topic": "Pasear sin tirar de la correa: reforzar los pasos tranquilos",
+      "evidence_review_approved": false,
+      "publication_approved": false,
+      "sources": [
+        {
+          "name": "AKC - How to Stop Your Dog From Pulling on Leash",
+          "organization": "American Kennel Club",
+          "url": "https://www.akc.org/expert-advice/training/expert-tips-dog-leash-issues/",
+          "facts": [
+            "Reforzar la marcha con correa floja ayuda a aprender la conducta.",
+            "Parar cuando el perro tira evita premiar esa conducta con el avance."
+          ]
+        },
+        {
+          "name": "VCA - Controlling Pulling on Walks",
+          "organization": "VCA Animal Hospitals",
+          "url": "https://vcahospitals.com/lancaster/know-your-pet/controlling-pulling-on-walks",
+          "facts": [
+            "La enseñanza de caminar con correa floja requiere práctica y paciencia.",
+            "Se recomienda comenzar en un entorno con pocas distracciones."
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "slot": "19:00",
+      "topic": "Por qué olfatear y resolver juegos estimula a tu perro",
+      "evidence_review_approved": false,
+      "publication_approved": false,
+      "sources": [
+        {
+          "name": "VCA - Using Enrichment Predictability and Scheduling",
+          "organization": "VCA Animal Hospitals",
+          "url": "https://vcahospitals.com/know-your-pet/using-enrichment-predictability-and-scheduling-to-train-your-dog",
+          "facts": [
+            "Los rompecabezas y la enseñanza de nuevas habilidades son ejemplos de enriquecimiento cognitivo.",
+            "El trabajo olfativo se incluye entre actividades adaptables a distintos perros."
+          ]
+        },
+        {
+          "name": "AKC - 3 Ways To Improve Your Dog's Walk",
+          "organization": "American Kennel Club",
+          "url": "https://www.akc.org/expert-advice/training/improve-your-dogs-walk/",
+          "facts": [
+            "Las oportunidades de olfatear aportan estimulación mental durante el paseo.",
+            "El olfateo puede servir de recompensa por comportamientos deseados."
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "UNAPPROVED_CANDIDATE_BUNDLE",
+  "publication_approved": false
+}
