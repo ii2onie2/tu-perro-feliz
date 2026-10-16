@@ -1,0 +1,45 @@
+name: Three Editorial Dossiers Offline Gate
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/three-editorial-dossiers-offline.yml]
+permissions:
+  contents: read
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify independent sources and fail closed on duplicates
+        run: |
+          python - <<'PY'
+          import json,pathlib,subprocess,sys,tempfile
+          date='2099-01-01'
+          dossiers=[]
+          for i,slot in enumerate(['10:00','16:00','19:00']):
+              dossiers.append(dict(date=date,slot=slot,topic='Synthetic topic '+str(i),evidence_review_approved=True,publication_approved=False,sources=[dict(name='Synthetic Organization A',organization='Organization A',url='https://example.org/a',facts=['test']),dict(name='Synthetic Organization B',organization='Organization B',url='https://example.net/b',facts=['test'])]))
+          root=pathlib.Path(tempfile.mkdtemp())
+          p=root/'dossiers.json'
+          def check(document,expected):
+              p.write_text(json.dumps(document))
+              r=subprocess.run([sys.executable,'tools/daily_editorial_evidence_gate.py','--input',str(p),'--brand','history'],capture_output=True,text=True)
+              assert (r.returncode==0)==expected,(r.stdout,r.stderr)
+              return r
+          doc=dict(date=date,dossiers=dossiers)
+          good=check(doc,True)
+          assert 'RESULT=PASS_EDITORIAL_EVIDENCE_GATE' in good.stdout
+          dossiers[1]['topic']=dossiers[0]['topic']
+          check(doc,False)
+          dossiers[1]['topic']='Synthetic topic 1'
+          dossiers[2]['sources'][1]['organization']='Organization A'
+          check(doc,False)
+          dossiers[2]['sources'][1]['organization']='Organization B'
+          dossiers[0]['evidence_review_approved']=False
+          check(doc,False)
+          print('THREE_DOSSIERS_POSITIVE=PASS')
+          print('DUPLICATE_TOPIC_NEGATIVE=PASS')
+          print('SAME_ORGANIZATION_NEGATIVE=PASS')
+          print('UNAPPROVED_EVIDENCE_NEGATIVE=PASS')
+          print('NO_MODEL_NO_PUBLISH=PASS')
+          PY
