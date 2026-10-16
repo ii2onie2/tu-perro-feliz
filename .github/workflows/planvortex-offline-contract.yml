@@ -1,0 +1,14 @@
+name: PlanVortex Offline Contract and Duplicate Safety
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-offline-contract.yml]
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile tools/planvortex_offline_contract.py
+      - run: python tools/planvortex_offline_contract.py
