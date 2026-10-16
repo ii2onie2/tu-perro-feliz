@@ -1,0 +1,52 @@
+name: P3.31B.4 dogs - Offline Simulation Only
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  simulate:
+    if: github.ref == 'refs/heads/integration/indiepost-premium-audit-20261015'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout staging without persistent credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fail closed unless reviewed test scripts are committed
+        shell: bash
+        run: |
+          test -f tools/p331b3_orchestrator.py || { echo 'BLOCKED_ORCHESTRATOR_NOT_INSTALLED'; exit 1; }
+          test -f scripts/p3_2_prepare_daily_content.py || { echo 'BLOCKED_PREPARE_VALIDATOR_MISSING'; exit 1; }
+          test -f scripts/p3_2_daily_preflight.py || { echo 'BLOCKED_PREFLIGHT_VALIDATOR_MISSING'; exit 1; }
+      - name: Run isolated synthetic simulation
+        shell: bash
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python -B tools/p331b3_orchestrator.py \
+            --brand dogs \
+            --repo-dir "$GITHUB_WORKSPACE" \
+            --report "$RUNNER_TEMP/P331B4_DOGS_REPORT.json"
+          python - "$RUNNER_TEMP/P331B4_DOGS_REPORT.json" <<'PY_CHECK'
+          import json,sys
+          d=json.load(open(sys.argv[1],encoding='utf-8'))
+          assert d['result']=='PASS'
+          assert d['selected_brand']=='dogs'
+          assert d['synthetic_tests']['passed']==28 and d['synthetic_tests']['total']==28
+          assert len(d['brands'])==1 and d['brands'][0]['brand']=='dogs'
+          assert all(d[k]==0 for k in ('model_calls','network_calls','publications','github_writes'))
+          print('P331B4_RESULT=PASS_OFFLINE_ONLY')
+          PY_CHECK
+      - name: Upload synthetic report only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p331b4-dogs-synthetic-report
+          path: ${{ runner.temp }}/P331B4_DOGS_REPORT.json
+          if-no-files-found: ignore
+          retention-days: 7
