@@ -1,0 +1,32 @@
+name: PlanVortex Shared GitHub Concurrency Guard
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-shared-concurrency-guard.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: planvortex-single-publisher-${{ github.repository }}
+  cancel-in-progress: false
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert staged publishing remains disabled
+        run: |
+          python - <<'PY'
+          import pathlib
+          p=pathlib.Path("tools/planvortex_live_readonly_contract.py")
+          assert p.is_file()
+          s=p.read_text()
+          assert 'NO_UPLOAD=YES' in s and 'NO_PUBLICATION=YES' in s
+          print("GITHUB_CONCURRENCY_GROUP=CONFIGURED_REPO_WIDE")
+          print("CROSS_WORKFLOW_LOCK=NOT_ESTABLISHED")
+          print("DURABLE_RESERVATION=NOT_ESTABLISHED")
+          print("NO_UPLOAD=YES")
+          print("NO_PUBLICATION=YES")
+          print("RESULT=PASS_STAGING_SAFETY_CHECK")
+          PY
