@@ -1,0 +1,14 @@
+name: PlanVortex Offline Concurrency Rehearsal
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-concurrency-rehearsal.yml]
+permissions:
+  contents: read
+jobs:
+  concurrency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile tools/planvortex_concurrency_rehearsal.py
+      - run: python tools/planvortex_concurrency_rehearsal.py
