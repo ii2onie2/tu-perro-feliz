@@ -36,10 +36,12 @@ def main():
         print("BLOCKED_PUBLICATION_ENABLED");return 1
     gate=root/"tools"/"daily_editorial_evidence_gate.py"
     generator=root/"scripts"/"p3_2_prepare_daily_content.py"
-    if not gate.is_file() or not generator.is_file():
+    alignment=root/"tools"/"p332r6_evidence_alignment.py"
+    if not gate.is_file() or not generator.is_file() or not alignment.is_file():
         print("BLOCKED_MISSING_VALIDATORS");return 1
     steps=[
         ("DOSSIER_GATE",[sys.executable,"-B",str(gate),"--input",str(dossiers),"--brand",a.brand]),
+        ("EVIDENCE_ALIGNMENT",[sys.executable,"-B",str(alignment),"--draft",str(draft),"--dossiers",str(dossiers)]),
         ("GENERATOR_DRY_RUN",[sys.executable,"-B",str(generator),"--input",str(draft),"--content-dir",str(root/"content")]),
     ]
     for label,command in steps:
