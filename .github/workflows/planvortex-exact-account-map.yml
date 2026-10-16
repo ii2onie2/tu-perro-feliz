@@ -1,0 +1,20 @@
+name: PlanVortex Exact Account Mapping
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/planvortex-exact-account-map.yml]
+permissions:
+  contents: read
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify account mapping only
+        env:
+          PLANVORTEX_CLIENT_ID: ${{ secrets.PLANVORTEX_CLIENT_ID }}
+          PLANVORTEX_CLIENT_SECRET: ${{ secrets.PLANVORTEX_CLIENT_SECRET }}
+          PLANVORTEX_ORG_ID: ${{ secrets.PLANVORTEX_ORG_ID }}
+          BRAND: dogs
+        run: python tools/planvortex_exact_account_map.py
