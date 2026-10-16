@@ -1,0 +1,29 @@
+name: Flow Free Visual Pilot Static Gate
+on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths: [.github/workflows/flow-free-visual-pilot-gate.yml]
+permissions:
+  contents: read
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate safe visual plan without consuming Flow credits
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('visual_pilots/2026-10-17-google-flow-free-pilot.json'))
+          assert p['publication_approved'] is False
+          assert p['media_status']=='NOT_GENERATED'
+          assert p['aspect_ratio']=='9:16'
+          assert len(p['shots'])==3
+          assert all(s['prompt'] and s['duration_seconds']>0 for s in p['shots'])
+          assert p['flow_budget']['cost_unverified'] is True
+          assert p['flow_budget']['images_accepted']==0
+          print('VISUAL_PLAN=PASS')
+          print('FLOW_CREDITS_USED=0')
+          print('MEDIA_GENERATED=NO')
+          print('PUBLICATION=NO')
+          PY
