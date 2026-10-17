@@ -12,6 +12,7 @@ jobs:
       - name: Collect sources and optional model suggestions
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OLLAMA_API_TOKEN: ${{ secrets.OLLAMA_API_TOKEN }}
           OLLAMA_URL: ${{ vars.OLLAMA_URL }}
           OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL }}
           BRAND: dogs
