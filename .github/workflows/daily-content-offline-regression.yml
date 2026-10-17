@@ -2,7 +2,13 @@ name: Daily Content Generator Offline Regression
 on:
   push:
     branches: [integration/indiepost-premium-audit-20261015]
-    paths: [.github/workflows/daily-content-offline-regression.yml]
+    paths:
+      - '.github/workflows/daily-content-offline-regression.yml'
+      - 'tools/p332r5c_synthetic_tests.py'
+      - 'tools/p332r5_editorial_content_preflight.py'
+      - 'tools/p332r6_evidence_alignment.py'
+      - 'tools/daily_editorial_evidence_gate.py'
+      - 'scripts/p3_2_prepare_daily_content.py'
 permissions:
   contents: read
 jobs:
@@ -11,6 +17,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Verify eight editorial failure and success scenarios
+        run: python tools/p332r5c_synthetic_tests.py dogs
       - name: Validate synthetic triplet and rejection paths without publication
         run: |
           python - <<'PY'
