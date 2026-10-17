@@ -82,7 +82,14 @@ def main():
     (out/'candidates.json').write_text(json.dumps(candidates,ensure_ascii=False,indent=2)+'\n')
     for provider in ('gemini','ollama'):
         try: result=draft(candidates,provider)
-        except urllib.error.HTTPError as e:result={'status':'BLOCKED_PROVIDER_HTTP','http_status':e.code,'ideas':[]}
+        except urllib.error.HTTPError as e:
+            details={}
+            try:
+                payload=json.loads(e.read(8192))
+                info=payload.get('error',{})
+                details={'api_error_status':str(info.get('status',''))[:80],'api_error_message':str(info.get('message',''))[:500]}
+            except (ValueError,UnicodeError,AttributeError):pass
+            result={'status':'BLOCKED_PROVIDER_HTTP','http_status':e.code,'ideas':[],**details}
         except urllib.error.URLError as e:result={'status':'BLOCKED_PROVIDER_NETWORK','error_type':type(e.reason).__name__,'ideas':[]}
         except Exception as e:result={'status':'BLOCKED_PROVIDER_ERROR','error_type':type(e).__name__,'ideas':[]}
         result.update({'brand':args.brand,'date':day.isoformat(),'evidence_review_approved':False,'publication_approved':False})
