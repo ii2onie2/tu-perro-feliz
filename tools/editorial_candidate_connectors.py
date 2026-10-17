@@ -37,7 +37,7 @@ def draft(candidates, provider):
     if provider=='gemini':
         key=os.environ.get('GEMINI_API_KEY','')
         if not key:return {'status':'SKIPPED_NO_GEMINI_API_KEY','ideas':[]}
-        model=os.environ.get('GEMINI_MODEL','gemini-2.5-flash-lite')
+        model=os.environ.get('GEMINI_MODEL','gemini-3.8-flash')
         url='https://generativelanguage.googleapis.com/v1beta/models/'+urllib.parse.quote(model,safe='')+':generateContent'
         body={'contents':[{'parts':[{'text':instruction}]}],'generationConfig':{'responseMimeType':'application/json','temperature':0.2}}
         try:
@@ -47,8 +47,8 @@ def draft(candidates, provider):
             # Discover models supported by this key; do not guess an unavailable model.
             listing=json.loads(request('https://generativelanguage.googleapis.com/v1beta/models?pageSize=100',headers={'x-goog-api-key':key}))
             supported=[m['name'].removeprefix('models/') for m in listing.get('models',[]) if 'generateContent' in m.get('supportedGenerationMethods',[])]
-            preferred=[model,'gemini-2.5-flash-lite','gemini-2.5-flash','gemini-2.0-flash-lite','gemini-2.0-flash']
-            alternate=next((m for m in preferred if m!=model and m in supported),None)
+            preferred=[model,'gemini-3.8-flash','gemini-3.1-flash-lite','gemini-3-flash-preview','gemini-2.5-flash-lite','gemini-2.5-flash']
+            alternate=next((m for m in preferred if m!=model and m in supported),None) or next((m for m in supported if m!=model and 'flash' in m.lower()),None)
             if not alternate:
                 return {'status':'BLOCKED_GEMINI_MODEL_NOT_AVAILABLE','requested_model':model,'supported_models':supported[:30],'ideas':[]}
             url='https://generativelanguage.googleapis.com/v1beta/models/'+urllib.parse.quote(alternate,safe='')+':generateContent'
