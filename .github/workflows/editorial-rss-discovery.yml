@@ -1,0 +1,43 @@
+name: Editorial RSS Discovery - Unverified Candidates
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '25 4 * * *'
+permissions:
+  contents: read
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect candidate topics without editorial approval
+        env:
+          BRAND: dogs
+          SEARCH_TOPIC: 'bienestar perros consejos veterinarios'
+        run: |
+          python - <<'PY'
+          import datetime,json,os,pathlib,urllib.parse,urllib.request,xml.etree.ElementTree as ET
+          from zoneinfo import ZoneInfo
+          date=datetime.datetime.now(ZoneInfo('Europe/Madrid')).date().isoformat()
+          query=urllib.parse.urlencode({'q':os.environ['SEARCH_TOPIC'],'hl':'es','gl':'ES','ceid':'ES:es'})
+          url='https://news.google.com/rss/search?'+query
+          candidates=[]
+          try:
+              req=urllib.request.Request(url,headers={'User-Agent':'EditorialCandidateDiscovery/1.0'})
+              with urllib.request.urlopen(req,timeout=20) as response:
+                  root=ET.fromstring(response.read(300000))
+              candidates=[{'title':item.findtext('title'),'url':item.findtext('link')} for item in root.findall('.//item')[:25]]
+          except Exception as exc:
+              print('RSS_UNAVAILABLE='+type(exc).__name__)
+          out=pathlib.Path('out/editorial-candidates');out.mkdir(parents=True,exist_ok=True)
+          data={'date':date,'brand':os.environ['BRAND'],'status':'CANDIDATES_UNVERIFIED','evidence_review_approved':False,'publication_approved':False,'candidates':candidates}
+          (out/'candidates.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print('CANDIDATES='+str(len(candidates)))
+          print('APPROVAL=NO PUBLICATION=NO')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: editorial-rss-dogs-candidates
+          path: out/editorial-candidates/candidates.json
+          retention-days: 7
