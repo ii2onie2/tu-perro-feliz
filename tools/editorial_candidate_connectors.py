@@ -46,7 +46,8 @@ def draft(candidates, provider):
         # GitHub-hosted runners cannot access a local Ollama daemon; only explicitly configured endpoints.
         endpoint=os.environ.get('OLLAMA_URL','').strip()
         if not endpoint:return {'status':'SKIPPED_NO_OLLAMA_URL','ideas':[]}
-        token=os.environ.get('OLLAMA_API_TOKEN','').strip()\n        if not token:return {'status':'SKIPPED_NO_OLLAMA_API_TOKEN','ideas':[]}
+        token=os.environ.get('OLLAMA_API_TOKEN','').strip()
+        if not token:return {'status':'SKIPPED_NO_OLLAMA_API_TOKEN','ideas':[]}
         parsed=urllib.parse.urlparse(endpoint)
         if parsed.scheme!='https' or not parsed.hostname or parsed.username or parsed.password:
             return {'status':'SKIPPED_UNSAFE_OLLAMA_URL','ideas':[]}
@@ -66,12 +67,14 @@ def main():
     day=datetime.datetime.now(ZoneInfo('Europe/Madrid')).date()
     out=pathlib.Path(args.output_dir);out.mkdir(parents=True,exist_ok=True)
     candidates=discover(args.brand,day)
-    (out/'candidates.json').write_text(json.dumps(candidates,ensure_ascii=False,indent=2)+'\n')
+    (out/'candidates.json').write_text(json.dumps(candidates,ensure_ascii=False,indent=2)+'
+')
     for provider in ('gemini','ollama'):
         try: result=draft(candidates,provider)
         except Exception as e:result={'status':'BLOCKED_PROVIDER_ERROR','error_type':type(e).__name__,'ideas':[]}
         result.update({'brand':args.brand,'date':day.isoformat(),'evidence_review_approved':False,'publication_approved':False})
-        (out/(provider+'-ideas.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+        (out/(provider+'-ideas.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'
+')
         print(provider.upper()+'='+result['status'])
     print('PUBLICATION=NO EVIDENCE_APPROVAL=NO')
 if __name__=='__main__':main()
