@@ -20,6 +20,7 @@ jobs:
           OLLAMA_API_TOKEN: ${{ secrets.OLLAMA_API_TOKEN }}
           OLLAMA_URL: ${{ vars.OLLAMA_URL }}
           OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL }}
+          REQUIRE_GEMINI: '1'
           BRAND: dogs
         run: python tools/editorial_candidate_connectors.py --brand "$BRAND"
       - uses: actions/upload-artifact@v4
