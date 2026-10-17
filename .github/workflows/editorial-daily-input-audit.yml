@@ -28,5 +28,9 @@ jobs:
           print("CONTENT_TRIPLET="+("PASS" if result.returncode==0 else "BLOCKED_MISSING_OR_INVALID"))
           print("GEMINI_CALL=NO")
           print("PUBLICATION=NO")
+          if not evidence.exists() or result.returncode!=0:
+              print("EDITORIAL_READINESS=BLOCKED")
+          else:
+              print("EDITORIAL_READINESS=CHECK_DRAFT_ALIGNMENT_REQUIRED")
           print("RESULT=INVENTORY_ONLY")
           PY
