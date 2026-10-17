@@ -45,12 +45,12 @@ def draft(candidates, provider):
     else:
         # GitHub-hosted runners cannot access a local Ollama daemon; only explicitly configured endpoints.
         endpoint=os.environ.get('OLLAMA_URL','').strip()
-        if not endpoint:return {'status':'SKIPPED_NO_OLLAMA_URL','ideas':[]}
+        if not endpoint:return {'status':'SKIPPED_NO_OLLAMA_URL','ideas':[]}\n        token=os.environ.get('OLLAMA_API_TOKEN','').strip()\n        if not token:return {'status':'SKIPPED_NO_OLLAMA_API_TOKEN','ideas':[]}
         parsed=urllib.parse.urlparse(endpoint)
         if parsed.scheme!='https' or not parsed.hostname or parsed.username or parsed.password:
             return {'status':'SKIPPED_UNSAFE_OLLAMA_URL','ideas':[]}
         body={'model':os.environ.get('OLLAMA_MODEL','llama3.2'),'prompt':instruction,'stream':False,'format':'json'}
-        response=json.loads(request(endpoint.rstrip('/')+'/api/generate',json.dumps(body).encode(),{'Content-Type':'application/json'}))
+        response=json.loads(request(endpoint.rstrip('/')+'/api/generate',json.dumps(body).encode(),{'Content-Type':'application/json','Authorization':'Bearer '+token}))
         text=response.get('response','')
     parsed=json.loads(text)
     ideas=parsed.get('ideas',[])
