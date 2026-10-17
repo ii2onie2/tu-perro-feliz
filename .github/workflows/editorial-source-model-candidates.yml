@@ -1,5 +1,10 @@
 name: Editorial Source and Model Candidates
 on:
+  push:
+    branches: [integration/indiepost-premium-audit-20261015]
+    paths:
+      - 'tools/editorial_candidate_connectors.py'
+      - '.github/workflows/editorial-source-model-candidates.yml'
   workflow_dispatch:
 permissions:
   contents: read
