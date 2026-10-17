@@ -70,9 +70,13 @@ def main():
     (out/'candidates.json').write_text(json.dumps(candidates,ensure_ascii=False,indent=2)+'\n')
     for provider in ('gemini','ollama'):
         try: result=draft(candidates,provider)
+        except urllib.error.HTTPError as e:result={'status':'BLOCKED_PROVIDER_HTTP','http_status':e.code,'ideas':[]}
+        except urllib.error.URLError as e:result={'status':'BLOCKED_PROVIDER_NETWORK','error_type':type(e.reason).__name__,'ideas':[]}
         except Exception as e:result={'status':'BLOCKED_PROVIDER_ERROR','error_type':type(e).__name__,'ideas':[]}
         result.update({'brand':args.brand,'date':day.isoformat(),'evidence_review_approved':False,'publication_approved':False})
         (out/(provider+'-ideas.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
         print(provider.upper()+'='+result['status'])
     print('PUBLICATION=NO EVIDENCE_APPROVAL=NO')
+    if os.environ.get('REQUIRE_GEMINI')=='1' and json.loads((out/'gemini-ideas.json').read_text())['status']!='UNVERIFIED_MODEL_DRAFT':
+        raise SystemExit('BLOCKED_GEMINI_NOT_READY')
 if __name__=='__main__':main()
