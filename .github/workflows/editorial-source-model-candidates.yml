@@ -4,6 +4,7 @@ on:
     branches: [integration/indiepost-premium-audit-20261015]
     paths:
       - 'tools/editorial_candidate_connectors.py'
+      - 'tools/editorial_research_dossiers.py'
       - '.github/workflows/editorial-source-model-candidates.yml'
   workflow_dispatch:
 permissions:
@@ -23,6 +24,14 @@ jobs:
           REQUIRE_GEMINI: '1'
           BRAND: dogs
         run: python tools/editorial_candidate_connectors.py --brand "$BRAND"
+      - name: Build unapproved research dossiers
+        if: always()
+        run: |
+          if test -f out/editorial-discovery/candidates.json && test -f out/editorial-discovery/gemini-ideas.json; then
+            python tools/editorial_research_dossiers.py
+          else
+            echo 'RESEARCH_PACKET=BLOCKED_MISSING_CANDIDATES'
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
