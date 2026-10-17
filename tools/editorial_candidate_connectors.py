@@ -32,8 +32,27 @@ def discover(brand, day):
 
 def draft(candidates, provider):
     # Models only summarize candidate metadata; no unsupported facts become evidence.
-    raw=json.dumps(candidates,ensure_ascii=False)
-    instruction='En español, propone hasta tres temas de vídeo basados únicamente en los títulos y enlaces de entrada. No inventes hechos. Devuelve JSON con clave ideas (lista de objetos title, source_url, verification_needed=true). Son propuestas NO VERIFICADAS, no publicables. Entrada: '+raw[:12000]
+    # RAG-style closed catalog: model selects IDs, application owns canonical URLs.
+    catalog={}
+    source_rows=[]
+    for source_provider in candidates.get('providers',[]):
+        if source_provider.get('status')!='OK':continue
+        for item in source_provider.get('items',[]):
+            url=item.get('url','')
+            if not isinstance(url,str) or not url.startswith('https://'):continue
+            source_id='SRC_'+str(len(source_rows)+1).zfill(3)
+            catalog[source_id]=url
+            source_rows.append({'source_id':source_id,'title':str(item.get('title') or '')[:240],
+                                'provider':source_provider.get('name'),'date':item.get('date')})
+    instruction=('En español, selecciona hasta tres temas basados EXCLUSIVAMENTE en el catálogo. '
+                 'Devuelve JSON con ideas: objetos title, source_id, verification_needed=true. '
+                 'source_id debe ser exactamente uno de los identificadores proporcionados; '
+                 'NO escribas URL ni inventes identificadores. '
+                 + ('Solo eventos históricos de España ocurridos el '+candidates['date'][8:10]+'/'+candidates['date'][5:7]+
+                    ' de cualquier año. Solo selecciona entradas Wikidata con fecha del día correcto; '
+                    'excluye televisión, estrenos y otras fechas. ' if candidates['brand']=='history' else '') +
+                 'Si no hay candidatos adecuados, devuelve ideas vacías. Catálogo: '+
+                 json.dumps(source_rows,ensure_ascii=False)[:12000])
     if provider=='gemini':
         key=os.environ.get('GEMINI_API_KEY','')
         if not key:return {'status':'SKIPPED_NO_GEMINI_API_KEY','ideas':[]}
@@ -69,7 +88,27 @@ def draft(candidates, provider):
     parsed=json.loads(text)
     ideas=parsed.get('ideas',[])
     if not isinstance(ideas,list):raise ValueError('INVALID_IDEAS')
-    return {'status':'UNVERIFIED_MODEL_DRAFT','ideas':[{'title':str(i.get('title',''))[:240],'source_url':str(i.get('source_url',''))[:500],'verification_needed':True} for i in ideas[:3] if isinstance(i,dict)]}
+    eligible=None
+    if candidates['brand']=='history':
+        eligible={str(item.get('url','')) for p in candidates['providers'] if p['name']=='wikidata' and p['status']=='OK' for item in p['items'] if str(item.get('date',''))[5:10]==candidates['date'][5:10]}
+    accepted=[]
+    rejected=[]
+    for index,item in enumerate(ideas):
+        if not isinstance(item,dict):
+            rejected.append({'index':index,'reason':'INVALID_IDEA'});continue
+        source_id=str(item.get('source_id',''))
+        if source_id not in catalog:
+            rejected.append({'index':index,'reason':'UNKNOWN_SOURCE_ID'});continue
+        canonical_url=catalog[source_id]
+        if eligible is not None and canonical_url not in eligible:
+            rejected.append({'index':index,'reason':'NOT_DATE_VERIFIED_WIKIDATA'});continue
+        title=str(item.get('title','')).strip()[:240]
+        if not title:
+            rejected.append({'index':index,'reason':'EMPTY_TITLE'});continue
+        accepted.append({'title':title,'source_id':source_id,'source_url':canonical_url,'verification_needed':True})
+        if len(accepted)==3:break
+    return {'status':'UNVERIFIED_MODEL_DRAFT','ideas':accepted,
+            'model_idea_count':len(ideas),'rejected_ideas':rejected,'source_catalog_size':len(catalog)}
 
 def main():
     p=argparse.ArgumentParser()
