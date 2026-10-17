@@ -67,14 +67,12 @@ def main():
     day=datetime.datetime.now(ZoneInfo('Europe/Madrid')).date()
     out=pathlib.Path(args.output_dir);out.mkdir(parents=True,exist_ok=True)
     candidates=discover(args.brand,day)
-    (out/'candidates.json').write_text(json.dumps(candidates,ensure_ascii=False,indent=2)+'
-')
+    (out/'candidates.json').write_text(json.dumps(candidates,ensure_ascii=False,indent=2)+'\n')
     for provider in ('gemini','ollama'):
         try: result=draft(candidates,provider)
         except Exception as e:result={'status':'BLOCKED_PROVIDER_ERROR','error_type':type(e).__name__,'ideas':[]}
         result.update({'brand':args.brand,'date':day.isoformat(),'evidence_review_approved':False,'publication_approved':False})
-        (out/(provider+'-ideas.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'
-')
+        (out/(provider+'-ideas.json')).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
         print(provider.upper()+'='+result['status'])
     print('PUBLICATION=NO EVIDENCE_APPROVAL=NO')
 if __name__=='__main__':main()
