@@ -2,7 +2,11 @@ name: Editorial Daily Input Audit
 on:
   push:
     branches: [integration/indiepost-premium-audit-20261015]
-    paths: [.github/workflows/editorial-daily-input-audit.yml]
+    paths:
+      - .github/workflows/editorial-daily-input-audit.yml
+      - evidence/approved/**
+      - content/**
+      - scripts/p3_2_daily_preflight.py
 permissions:
   contents: read
 jobs:
@@ -32,5 +36,12 @@ jobs:
               print("EDITORIAL_READINESS=BLOCKED")
           else:
               print("EDITORIAL_READINESS=CHECK_DRAFT_ALIGNMENT_REQUIRED")
-          print("RESULT=INVENTORY_ONLY")
+          print("RESULT="+("BLOCKED_MISSING_INPUTS" if not evidence.exists() or result.returncode!=0 else "INVENTORY_REQUIRES_ALIGNMENT_REVIEW"))
+          with open(__import__('os').environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as summary:
+              summary.write(f'## Editorial readiness {today}\n')
+              summary.write(f'- Approved dossiers: {"present" if evidence.exists() else "MISSING"}\n')
+              summary.write(f'- Daily content triplet: {"PASS" if result.returncode==0 else "MISSING_OR_INVALID"}\n')
+              summary.write('- This audit does not publish or approve content.\n')
+          if not evidence.exists() or result.returncode!=0:
+              sys.exit(1)
           PY
