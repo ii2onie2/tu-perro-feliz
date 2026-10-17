@@ -30,22 +30,6 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Install FFmpeg and fonts
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg fonts-dejavu-core
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install Python dependencies and Piper
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install piper-tts
-
       - name: Resolve content files
         id: content
         shell: bash
@@ -75,6 +59,22 @@ jobs:
           echo "files<<EOF" >> "$GITHUB_OUTPUT"
           cat render_list.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Install FFmpeg and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies and Piper
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install piper-tts
 
       - name: Validate content quality
         if: steps.content.outputs.files != ''
