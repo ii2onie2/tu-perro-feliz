@@ -40,7 +40,19 @@ def draft(candidates, provider):
         model=os.environ.get('GEMINI_MODEL','gemini-2.5-flash-lite')
         url='https://generativelanguage.googleapis.com/v1beta/models/'+urllib.parse.quote(model,safe='')+':generateContent'
         body={'contents':[{'parts':[{'text':instruction}]}],'generationConfig':{'responseMimeType':'application/json','temperature':0.2}}
-        response=json.loads(request(url,json.dumps(body).encode(),{'x-goog-api-key':key,'Content-Type':'application/json'}))
+        try:
+            response=json.loads(request(url,json.dumps(body).encode(),{'x-goog-api-key':key,'Content-Type':'application/json'}))
+        except urllib.error.HTTPError as error:
+            if error.code!=404:raise
+            # Discover models supported by this key; do not guess an unavailable model.
+            listing=json.loads(request('https://generativelanguage.googleapis.com/v1beta/models?pageSize=100',headers={'x-goog-api-key':key}))
+            supported=[m['name'].removeprefix('models/') for m in listing.get('models',[]) if 'generateContent' in m.get('supportedGenerationMethods',[])]
+            preferred=[model,'gemini-2.5-flash-lite','gemini-2.5-flash','gemini-2.0-flash-lite','gemini-2.0-flash']
+            alternate=next((m for m in preferred if m!=model and m in supported),None)
+            if not alternate:
+                return {'status':'BLOCKED_GEMINI_MODEL_NOT_AVAILABLE','requested_model':model,'supported_models':supported[:30],'ideas':[]}
+            url='https://generativelanguage.googleapis.com/v1beta/models/'+urllib.parse.quote(alternate,safe='')+':generateContent'
+            response=json.loads(request(url,json.dumps(body).encode(),{'x-goog-api-key':key,'Content-Type':'application/json'}))
         text=''.join(x.get('text','') for x in response.get('candidates',[{}])[0].get('content',{}).get('parts',[]))
     else:
         # GitHub-hosted runners cannot access a local Ollama daemon; only explicitly configured endpoints.
