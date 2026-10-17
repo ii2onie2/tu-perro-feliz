@@ -11,6 +11,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: P3.32R6 synthetic editorial regression
+        run: python -B tools/p332r5c_synthetic_tests.py dogs
       - name: Inventory current date editorial prerequisites
         run: |
           python - <<'PY'
