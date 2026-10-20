@@ -117,11 +117,11 @@
         "source": "commons-desc-page"
       },
       "Credit": {
-        "value": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/photos/sonstroem/29961307572/\">Dog Toy Bliss</a>",
+        "value": "<a rel=\"mw:ExtLink nofollow\" href=\"https://www.flickr.com/photos/sonstroem/29961307572/\" class=\"external text\">Dog Toy Bliss</a>",
         "source": "commons-desc-page"
       },
       "Artist": {
-        "value": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/96964826@N05\">Eric Sonstroem</a> from California, USA",
+        "value": "<a rel=\"mw:ExtLink nofollow\" href=\"https://www.flickr.com/people/96964826@N05\" class=\"external text\">Eric Sonstroem</a> from California, USA",
         "source": "commons-desc-page"
       },
       "LicenseShortName": {
