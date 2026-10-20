@@ -23,8 +23,13 @@ jobs:
         run: |
           python -B scripts/p3_2_prepare_daily_content.py --input "evidence/approved/$DAY-daily-draft.json" --write
           python -B scripts/p3_2_daily_preflight.py --date "$DAY"
-      - uses: actions/upload-artifact@v4
+      - name: Upload only requested date
+        uses: actions/upload-artifact@v4
         with:
-          name: prepared-dogs-json
-          path: content/20*.json
+          name: prepared-dogs-json-${{ inputs.date }}
+          path: |
+            content/${{ inputs.date }}.json
+            content/${{ inputs.date }}-educacion.json
+            content/${{ inputs.date }}-sabias.json
+          if-no-files-found: error
           retention-days: 7
