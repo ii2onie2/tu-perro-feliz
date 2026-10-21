@@ -1,0 +1,35 @@
+name: Approved Content Preparation
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: Editorial date YYYY-MM-DD
+        required: true
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify approved inputs
+        env:
+          DAY: ${{ inputs.date }}
+        run: |
+          python -B tools/p332r5_editorial_content_preflight.py --brand dogs --repo-dir . --date "$DAY" --draft "evidence/approved/$DAY-daily-draft.json" --dossiers "evidence/approved/$DAY-three-dossiers.json"
+      - name: Generate offline JSON triplet
+        env:
+          DAY: ${{ inputs.date }}
+        run: |
+          python -B scripts/p3_2_prepare_daily_content.py --input "evidence/approved/$DAY-daily-draft.json" --write
+          python -B scripts/p3_2_daily_preflight.py --date "$DAY"
+      - name: Upload only requested date
+        uses: actions/upload-artifact@v4
+        with:
+          name: prepared-dogs-json-${{ inputs.date }}
+          path: |
+            content/${{ inputs.date }}.json
+            content/${{ inputs.date }}-educacion.json
+            content/${{ inputs.date }}-sabias.json
+          if-no-files-found: error
+          retention-days: 7
