@@ -65,3 +65,11 @@ jobs:
                   raise ValueError(f"{path}: invalid sources")
               print(f"JSON_CHECK=PASS FILE={path}")
           PY
+      - name: Run canonical editorial content validator
+        env:
+          REQUESTED_DATE: ${{ inputs.date }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DAY="${REQUESTED_DATE:-$(TZ=Europe/Madrid date +%F)}"
+          python scripts/validate_content.py "content/$DAY.json" "content/$DAY-educacion.json" "content/$DAY-sabias.json"
