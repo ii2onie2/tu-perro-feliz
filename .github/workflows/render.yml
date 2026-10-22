@@ -66,10 +66,19 @@ jobs:
             fi
           else
             TODAY=$(TZ=Europe/Madrid date +%F)
+            MISSING=0
             for FILE in "content/${TODAY}.json" "content/${TODAY}-educacion.json" "content/${TODAY}-sabias.json"; do
-              test -f "$FILE"
-              printf '%s\n' "$FILE" >> render_list.txt
+              if [ ! -s "$FILE" ]; then
+                echo "::error file=$FILE::Missing or empty daily editorial JSON. No fallback to older content."
+                MISSING=1
+              else
+                printf '%s\n' "$FILE" >> render_list.txt
+              fi
             done
+            if [ "$MISSING" -ne 0 ]; then
+              echo "::error::Daily rendering blocked: incomplete content triplet for ${TODAY} (Europe/Madrid)."
+              exit 1
+            fi
           fi
           sort -u -o render_list.txt render_list.txt
           echo "files<<EOF" >> "$GITHUB_OUTPUT"
