@@ -1,0 +1,38 @@
+name: TikTok Studio Manual Upload Pack
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: Date of three rendered videos (YYYY-MM-DD)
+        required: true
+permissions:
+  contents: read
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify all three rendered videos and captions
+        env:
+          DAY: ${{ inputs.date }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$DAY" =~ ^20[0-9]{2}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+          mkdir -p studio-pack
+          for STEM in "$DAY" "$DAY-educacion" "$DAY-sabias"; do
+            test -s "videos/$STEM.mp4"
+            test -s "videos/$STEM.caption.txt"
+            test -s "videos/$STEM.sources.json"
+            cp "videos/$STEM.mp4" "studio-pack/$STEM.mp4"
+            cp "videos/$STEM.caption.txt" "studio-pack/$STEM.caption.txt"
+            cp "videos/$STEM.sources.json" "studio-pack/$STEM.sources.json"
+          done
+          printf '%s\n' 'Upload manually in TikTok Studio. These files have NOT been published to TikTok.' > studio-pack/README.txt
+      - name: Upload Studio pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: tu-perro-feliz-studio-${{ inputs.date }}
+          path: studio-pack/
+          if-no-files-found: error
+          retention-days: 30
