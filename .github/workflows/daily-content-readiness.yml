@@ -1,0 +1,38 @@
+name: Daily Content Readiness
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: Local date YYYY-MM-DD
+        required: true
+  schedule:
+    - cron: '15 6 * * *'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check all three daily JSON files
+        env:
+          REQUESTED_DATE: ${{ inputs.date }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DAY="${REQUESTED_DATE:-$(TZ=Europe/Madrid date +%F)}"
+          [[ "$DAY" =~ ^20[0-9]{2}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+          missing=0
+          for FILE in "content/$DAY.json" "content/$DAY-educacion.json" "content/$DAY-sabias.json"; do
+            if [ ! -s "$FILE" ]; then
+              echo "::error file=$FILE::Missing daily editorial JSON. No fallback to old content."
+              missing=1
+            else
+              echo "FOUND=$FILE"
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "RESULT=BLOCKED_MISSING_EDITORIAL_INPUTS"
+            exit 1
+          fi
+          echo "RESULT=READY_FOR_CONTENT_VALIDATION"
