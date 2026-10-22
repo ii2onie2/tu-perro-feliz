@@ -36,3 +36,32 @@ jobs:
             exit 1
           fi
           echo "RESULT=READY_FOR_CONTENT_VALIDATION"
+      - name: Validate present daily JSONs and editorial sources
+        env:
+          REQUESTED_DATE: ${{ inputs.date }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DAY="${REQUESTED_DATE:-$(TZ=Europe/Madrid date +%F)}"
+          python - "$DAY" <<'PY'
+          import datetime
+          import json
+          import pathlib
+          import sys
+          date = datetime.date.fromisoformat(sys.argv[1]).isoformat()
+          suffixes = ("", "-educacion", "-sabias")
+          for suffix in suffixes:
+              path = pathlib.Path("content") / (date + suffix + ".json")
+              with path.open(encoding="utf-8") as stream:
+                  data = json.load(stream)
+              if not isinstance(data, dict):
+                  raise ValueError(f"{path}: expected object")
+              if data.get("date") != date:
+                  raise ValueError(f"{path}: mismatched date")
+              for key in ("title", "narration", "sources"):
+                  if not data.get(key):
+                      raise ValueError(f"{path}: missing {key}")
+              if not isinstance(data["sources"], list) or not all(isinstance(s, (str, dict)) for s in data["sources"]):
+                  raise ValueError(f"{path}: invalid sources")
+              print(f"JSON_CHECK=PASS FILE={path}")
+          PY
