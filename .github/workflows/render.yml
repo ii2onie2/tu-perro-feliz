@@ -8,6 +8,8 @@ on:
         required: true
         default: content/example.json
   push:
+    branches:
+      - main
     paths:
       - "content/*.json"
       - "scripts/**"
