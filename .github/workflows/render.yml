@@ -71,7 +71,7 @@ jobs:
                 echo "::error file=$FILE::Missing or empty daily JSON."
                 MISSING=1
               else
-                printf '%s\\n' "$FILE" >> render_list.txt
+                printf '%s\n' "$FILE" >> render_list.txt
               fi
             done
             if [ "$MISSING" -ne 0 ]; then
