@@ -1,0 +1,38 @@
+name: P3.17 bundled handoff gate
+on:
+  pull_request:
+    paths:
+      - 'scripts/metricool_handoff_package.py'
+      - 'scripts/metricool_payload_dry_run.py'
+      - 'scripts/metricool_transfer_preflight.py'
+      - '.github/workflows/p317-handoff-gate.yml'
+permissions:
+  contents: read
+jobs:
+  handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exercise complete offline handoff and deny unsafe transfer
+        run: |
+          python - <<'PY'
+          import json,pathlib,sys,tempfile
+          sys.path.insert(0,"scripts")
+          from metricool_handoff_package import prepare
+          from metricool_payload_dry_run import build
+          with tempfile.TemporaryDirectory() as d:
+              p=pathlib.Path(d)
+              for name,body in {"video.mp4":b"test-fixture","caption.txt":b"caption","sources.json":b'["reference"]',"credits.json":b'["credit"]'}.items():
+                  (p/name).write_bytes(body)
+              args=[p/"video.mp4",p/"caption.txt",p/"sources.json",p/"credits.json","2026-10-25","10:00"]
+              x=prepare(*args)
+              assert x["status"]=="HANDOFF_READY_NO_UPLOAD" and not x["uploaded"] and not x["scheduled"],x
+              assert build(x["manifest"],[])["status"]=="BLOCKED","Missing public video URL must block"
+              y=prepare(*args,public_url="https://media.example.org/video.mp4")
+              z=build(y["manifest"],[])
+              assert z["status"]=="DRY_RUN_READY_NOT_SENT" and z["posts_created"]==0,z
+              assert build(y["manifest"],[{"editorial_date":"2026-10-25","slot":"10:00"}])["status"]=="BLOCKED"
+              (p/"credits.json").unlink()
+              assert prepare(*args)["status"]=="BLOCKED"
+          print("P317_HANDOFF_GATE=PASS; NO_UPLOAD=YES; NO_SCHEDULE=YES")
+          PY
