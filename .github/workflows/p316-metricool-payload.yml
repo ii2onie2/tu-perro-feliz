@@ -1,0 +1,32 @@
+name: P3.16 Metricool payload dry-run
+on:
+  pull_request:
+    paths:
+      - 'scripts/metricool_payload_dry_run.py'
+      - 'scripts/metricool_transfer_preflight.py'
+      - '.github/workflows/p316-metricool-payload.yml'
+permissions:
+  contents: read
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exercise no-network payload and duplicate fail-closed
+        run: |
+          python - <<'PY'
+          import sys, hashlib
+          sys.path.insert(0,"scripts")
+          from metricool_payload_dry_run import build
+          m={"brand_id":"7173924","account":"tuperrofelizofficial","editorial_date":"2026-10-25","slot":"10:00","video_url":"https://media.example.org/video.mp4","video_sha256":hashlib.sha256(b"fixture").hexdigest(),"caption":"Prueba","sources":["reference"],"credits":["attribution"]}
+          x=build(m,[])
+          assert x["status"]=="DRY_RUN_READY_NOT_SENT",x
+          assert x["payload"]["autoPublish"] is False
+          assert x["payload"]["draft"] is True
+          assert x["payload"]["tiktokData"]["privacyOption"]=="SELF_ONLY"
+          assert x["network_calls"]==0 and x["posts_created"]==0
+          assert build(m,[{"editorial_date":"2026-10-25","slot":"10:00"}])["status"]=="BLOCKED"
+          bad=dict(m,account="taldiacomohoy09")
+          assert build(bad,[])["status"]=="BLOCKED"
+          print("P316_DRY_RUN=PASS NO_NETWORK=YES NO_POSTS=YES")
+          PY

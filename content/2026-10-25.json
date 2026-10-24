@@ -1,0 +1,43 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Cómo preparar un juego de olfato sencillo y seguro en casa",
+  "date": "2026-10-25",
+  "slot": "10:00",
+  "hook": "¿Tu perro termina de comer en segundos? Prueba un juego de olfato sencillo y supervisado.",
+  "narration": "¿Tu perro termina de comer en segundos? Puedes transformar parte de su ración diaria en un pequeño juego de búsqueda. El olfato es una forma natural de explorar el entorno, y las actividades de enriquecimiento pueden ofrecer oportunidades de elección y descubrimiento. Empieza en una habitación tranquila. Coloca unas pocas croquetas a la vista, separadas entre sí, y anima a tu perro a buscarlas a su ritmo. Cuando entienda el juego, esconde algunas en lugares fáciles y seguros, sin obligarlo a participar. Evita objetos pequeños que pueda tragar, superficies peligrosas y rincones donde pueda quedarse atrapado. Supervisa siempre la actividad y adapta la dificultad a su edad, tamaño y capacidades. Utiliza parte de su comida habitual para evitar añadir calorías innecesarias. Si pierde interés o se frustra, vuelve a una versión más fácil o termina la sesión. No todos los perros disfrutan de los mismos juegos, y eso está bien. Lo importante es observar sus señales y ofrecerle una experiencia tranquila. Síguenos para descubrir ideas prácticas para el bienestar de tu perro.",
+  "caption": "Convierte parte de la comida de tu perro en una búsqueda sencilla. Empieza fácil, supervisa y adapta el juego a sus necesidades.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#EnriquecimientoCanino",
+    "#OlfatoCanino",
+    "#BienestarCanino",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "RSPCA Knowledgebase - Why is enrichment important for dogs?",
+      "url": "https://kb.rspca.org.au/categories/companion-animals/dogs/caring-for-my-dog/why-is-enrichment-important-for-dogs"
+    },
+    {
+      "name": "Dogs Trust - Muffin tin munchies",
+      "url": "https://www.dogstrust.ie/dog-advice/life-with-your-dog/enrichment/muffin-game"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Schnauzer with a ball.jpg",
+      "role": "Perro explorando un juguete",
+      "license_note": "Wikimedia Commons; conservar atribución y condiciones de la página del archivo"
+    },
+    {
+      "commons_title": "File:Dog Toy Bliss (29961307572).jpg",
+      "role": "Perro jugando con un objeto de enriquecimiento",
+      "license_note": "Wikimedia Commons; conservar atribución y condiciones de la página del archivo"
+    }
+  ],
+  "cta": "Síguenos para descubrir ideas prácticas para el bienestar de tu perro.",
+  "format": "step_by_step",
+  "hook_pattern": "simple_safe_enrichment",
+  "topic_family": "busqueda_de_comida_en_casa",
+  "duration_target": "45-60s"
+}
