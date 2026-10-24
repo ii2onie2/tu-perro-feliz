@@ -22,7 +22,7 @@ jobs:
           match=re.search(r"      - name: Resolve content files\n.*?        run: \|\n(.*?)(?=\n      - name: |\Z)",raw,re.S)
           assert match, "Production resolver not found"
           body="\n".join(line[10:] if line.startswith("          ") else line for line in match.group(1).splitlines())
-          body=body.replace("${{ github.event_name }}", "${EVENT_NAME}").replace("${{ inputs.content_file }}", "${INPUT_FILE}")
+          body=body.replace("$"+"{{ github.event_name }}", "${EVENT_NAME}").replace("$"+"{{ inputs.content_file }}", "${INPUT_FILE}")
           assert "LATEST_MAIN" not in body, "Historical fallback present"
           with tempfile.TemporaryDirectory() as root:
               d=pathlib.Path(root)
