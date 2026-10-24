@@ -7,6 +7,11 @@ on:
         description: JSON content file to render
         required: true
         default: content/example.json
+      publish_to_repo:
+        description: Explicitly allow repository write after successful rendering (not TikTok publication)
+        type: boolean
+        required: true
+        default: false
   push:
     branches:
       - main
@@ -18,7 +23,7 @@ on:
     - cron: "45 6 * * *"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: tu-perro-feliz-render
@@ -121,8 +126,37 @@ jobs:
             test -s "$OUT_DIR/sources.json"
           done
 
+      - name: Upload video packages
+        if: always() && steps.content.outputs.files != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: tu-perro-feliz-${{ github.run_id }}
+          path: |
+            out/
+            media/
+            render_list.txt
+          retention-days: 30
+
+  publish:
+    needs: render
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.publish_to_repo == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 2
+      - uses: actions/download-artifact@v4
+        with:
+          name: tu-perro-feliz-${{ github.run_id }}
+          path: .
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Publish rendered MP4s in repository
-        if: steps.content.outputs.files != '' && github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         shell: bash
         run: |
           mkdir -p videos
@@ -151,12 +185,3 @@ jobs:
             git push origin HEAD:main
           fi
 
-      - name: Upload video packages
-        if: always() && steps.content.outputs.files != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: tu-perro-feliz-${{ github.run_id }}
-          path: |
-            out/
-            media/
-          retention-days: 30
