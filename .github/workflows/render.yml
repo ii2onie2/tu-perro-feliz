@@ -6,7 +6,6 @@ on:
       content_file:
         description: JSON content file to render
         required: true
-        default: content/example.json
       publish_to_repo:
         description: Explicitly allow repository write after successful rendering (not TikTok publication)
         type: boolean
@@ -60,6 +59,10 @@ jobs:
           : > render_list.txt
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             FILE="${{ inputs.content_file }}"
+            if [[ ! "$FILE" =~ ^content/[0-9]{4}-[0-9]{2}-[0-9]{2}(-[A-Za-z0-9_-]+)?[.]json$ ]]; then
+              echo "::error::Manual input must be a dated content JSON path."
+              exit 1
+            fi
             test -s "$FILE"
             printf '%s\n' "$FILE" >> render_list.txt
           elif [ "${{ github.event_name }}" = "push" ]; then
