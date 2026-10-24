@@ -1,0 +1,67 @@
+name: P3.11 isolated MP4 smoke test
+on:
+  pull_request:
+    paths:
+      - 'scripts/render.py'
+      - '.github/workflows/render.yml'
+      - '.github/workflows/p311-render-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rendering prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+      - name: Create isolated synthetic input and offline Piper substitute
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p311-bin /tmp/p311-out
+          python - <<'PY'
+          import json,pathlib
+          pathlib.Path('/tmp/p311-content.json').write_text(json.dumps({
+              'series':'Tu Perro Feliz',
+              'hook':'Prueba técnica aislada',
+              'narration':'Esta es una prueba técnica de generación de vídeo.',
+              'cta':'Síguenos para más consejos.',
+              'caption':'Prueba técnica',
+              'hashtags':['#prueba'],
+              'sources':[{'url':'https://example.org'}],
+              'media':[]
+          },ensure_ascii=False))
+          PY
+          cat > /tmp/p311-bin/piper <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          OUT=''
+          while [ "$#" -gt 0 ]; do
+            if [ "$1" = "--output_file" ]; then OUT="$2"; shift 2; else shift; fi
+          done
+          test -n "$OUT"
+          ffmpeg -nostdin -hide_banner -loglevel error -y -f lavfi -i sine=frequency=440:duration=2 -ac 1 -ar 22050 "$OUT"
+          SH
+          chmod 755 /tmp/p311-bin/piper
+      - name: Render MP4 offline and validate outputs
+        shell: bash
+        env:
+          PIPER_VOICE_MODEL: /tmp/p311-fake-model
+        run: |
+          set -euo pipefail
+          export PATH="/tmp/p311-bin:$PATH"
+          python scripts/render.py --content /tmp/p311-content.json --out /tmp/p311-out
+          test -s /tmp/p311-out/video.mp4
+          test -s /tmp/p311-out/caption.txt
+          test -s /tmp/p311-out/sources.json
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json /tmp/p311-out/video.mp4 > /tmp/p311-probe.json
+          python - <<'PY'
+          import json,pathlib
+          d=json.loads(pathlib.Path('/tmp/p311-probe.json').read_text())
+          assert any(s.get('codec_name')=='h264' and s.get('width')==1080 and s.get('height')==1920 for s in d['streams']),d
+          print('PASS: isolated MP4 H.264 1080x1920, caption and sources; synthetic audio, no repository writes or TikTok publication')
+          PY
