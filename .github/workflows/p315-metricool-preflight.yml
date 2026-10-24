@@ -1,0 +1,34 @@
+name: P3.15 offline Metricool transfer contract
+on:
+  pull_request:
+    paths:
+      - 'scripts/metricool_transfer_preflight.py'
+      - '.github/workflows/p315-metricool-preflight.yml'
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test no-network transfer contract, account and anti-duplicates
+        run: |
+          python - <<'PY'
+          import hashlib
+          import importlib.util
+          import pathlib
+          s=importlib.util.spec_from_file_location("preflight","scripts/metricool_transfer_preflight.py")
+          m=importlib.util.module_from_spec(s)
+          s.loader.exec_module(m)
+          sha=hashlib.sha256(b"isolated test only").hexdigest()
+          base=dict(brand_id="7173924",account="tuperrofelizofficial",editorial_date="2026-10-25",slot="10:00",video_url="https://media.example.org/video.mp4",video_sha256=sha,caption="Test",sources=["source"],credits=["credit"])
+          ok=m.check(base,[])
+          assert ok["status"]=="PREFLIGHT_PASS_NO_TRANSFER" and ok["network_calls"]==0 and ok["posts_created"]==0,ok
+          assert m.check(base,[dict(editorial_date="2026-10-25",slot="10:00")])["status"]=="BLOCKED"
+          assert m.check(base,[dict(idempotency_key=ok["idempotency_key"])])["status"]=="BLOCKED"
+          for field,value in [("brand_id","7147530"),("account","taldiacomohoy09"),("video_url","https://github.com/x/video.mp4"),("video_sha256","bad"),("credits",[])]:
+              bad=dict(base);bad[field]=value
+              assert m.check(bad,[])["status"]=="BLOCKED",(field,m.check(bad,[]))
+          assert m.check(base,None)["status"]=="BLOCKED"
+          print("P315_OFFLINE_PREFLIGHT=PASS; NO_NETWORK=YES; NO_PUBLICATION=YES")
+          PY
