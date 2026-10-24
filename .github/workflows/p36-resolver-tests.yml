@@ -46,7 +46,7 @@ jobs:
                   assert (result.returncode==0)==success, (event,result.stdout,result.stderr)
                   if success:
                       actual=(d/"render_list.txt").read_text().splitlines()
-                      assert actual==list(expected),(event,actual,expected)
+                      assert actual==sorted(set(expected)),(event,actual,expected)
               from datetime import datetime
               from zoneinfo import ZoneInfo
               today=datetime.now(ZoneInfo("Europe/Madrid")).strftime("%Y-%m-%d")
