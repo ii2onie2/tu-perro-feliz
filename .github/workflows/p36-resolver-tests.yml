@@ -1,0 +1,63 @@
+name: P3.6 isolated render resolver tests
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/render.yml'
+      - '.github/workflows/p36-resolver-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  resolver:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exercise production resolver without rendering or publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib, subprocess, tempfile, os, re
+          raw=pathlib.Path(".github/workflows/render.yml").read_text()
+          match=re.search(r"      - name: Resolve content files\n.*?        run: \|\n(.*?)(?=\n      - name: |\Z)",raw,re.S)
+          assert match, "Production resolver not found"
+          body="\n".join(line[10:] if line.startswith("          ") else line for line in match.group(1).splitlines())
+          body=body.replace("$"+"{{ github.event_name }}", "${EVENT_NAME}").replace("$"+"{{ inputs.content_file }}", "${INPUT_FILE}")
+          assert "LATEST_MAIN" not in body, "Historical fallback present"
+          with tempfile.TemporaryDirectory() as root:
+              d=pathlib.Path(root)
+              (d/"content").mkdir()
+              (d/"bin").mkdir()
+              git=d/"bin/git"
+              git.write_text('#!/bin/sh\nif [ "$1" = "diff-tree" ]; then printf "%s\\n" "$CHANGED_FILES"; else exit 77; fi\n')
+              git.chmod(0o755)
+              env=os.environ.copy()
+              env["PATH"]=str(d/"bin")+os.pathsep+env["PATH"]
+              env["GITHUB_SHA"]="test-sha"
+              def run(event,files=(),changed="",input_file="content/example.json",success=True,expected=()):
+                  for p in (d/"content").glob("*"): p.unlink()
+                  for name,data in files:
+                      p=d/name
+                      p.parent.mkdir(parents=True,exist_ok=True)
+                      p.write_text(data)
+                  (d/"output").write_text("")
+                  e=dict(env,EVENT_NAME=event,INPUT_FILE=input_file,CHANGED_FILES=changed,GITHUB_OUTPUT=str(d/"output"))
+                  result=subprocess.run(["bash","-e","-o","pipefail","-c",body],cwd=d,env=e,capture_output=True,text=True)
+                  assert (result.returncode==0)==success, (event,result.stdout,result.stderr)
+                  if success:
+                      actual=(d/"render_list.txt").read_text().splitlines()
+                      assert actual==sorted(set(expected)),(event,actual,expected)
+              from datetime import datetime
+              from zoneinfo import ZoneInfo
+              today=datetime.now(ZoneInfo("Europe/Madrid")).strftime("%Y-%m-%d")
+              names=[f"content/{today}.json",f"content/{today}-educacion.json",f"content/{today}-sabias.json"]
+              run("schedule",success=False)
+              run("schedule",files=[(names[0],"{}"),(names[1],"{}"),(names[2],"")],success=False)
+              run("schedule",files=[(x,"{}") for x in names],expected=names)
+              run("push",files=[("content/2026-10-09.json","{}")],changed="scripts/render.py",expected=())
+              run("push",files=[("content/2026-10-09.json","{}")],changed="content/2026-10-09.json",expected=("content/2026-10-09.json",))
+              run("workflow_dispatch",input_file="content/2026-10-24.json",success=False)
+              run("workflow_dispatch",files=[("content/example.json","{}")],success=False)
+              run("workflow_dispatch",files=[("content/2026-10-24.json","{}")],input_file="content/2026-10-24.json",expected=("content/2026-10-24.json",))
+              print("PASS: 7 resolver cases from actual render.yml shell block; no render, git writes or publishing")
+          PY
