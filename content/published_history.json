@@ -142,5 +142,14 @@
     "format": "step_by_step",
     "hook_pattern": "low_cost_enrichment",
     "duration_target": "45-60s"
+  },
+  {
+    "date": "2026-10-25",
+    "series": "Tu perro feliz",
+    "title": "Cómo preparar un juego de olfato sencillo y seguro en casa",
+    "topic_family": "busqueda_de_comida_en_casa",
+    "format": "step_by_step",
+    "hook_pattern": "simple_safe_enrichment",
+    "duration_target": "45-60s"
   }
 ]
