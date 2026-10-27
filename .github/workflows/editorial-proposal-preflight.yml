@@ -4,6 +4,7 @@ on:
     paths:
       - 'editorial/proposals/*.json'
       - 'scripts/check_editorial_proposal.py'
+      - 'scripts/test_editorial_proposal.py'
       - '.github/workflows/editorial-proposal-preflight.yml'
 permissions:
   contents: read
@@ -15,6 +16,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Run isolated regression cases
+        run: python scripts/test_editorial_proposal.py
       - name: Validate proposal metadata without publication
         shell: bash
         run: |
