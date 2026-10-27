@@ -1,0 +1,23 @@
+name: Stage approved daily editorial (no publication)
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: Date YYYY-MM-DD to validate
+        required: true
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check approved editorial staging without writes
+        env:
+          REQUESTED_DATE: ${{ inputs.date }}
+        run: |
+          set -euo pipefail
+          python scripts/stage_daily_content.py --date "$REQUESTED_DATE" --dry-run
