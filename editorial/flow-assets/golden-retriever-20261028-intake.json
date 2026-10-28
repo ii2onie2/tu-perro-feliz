@@ -4,7 +4,7 @@
   "target_slot": "10:00",
   "series": "Tu perro feliz",
   "source_tool": "Google Flow / Nano Banana 2.1",
-  "source_tool_confirmation": "PENDING_USER_CONFIRMATION",
+  "source_tool_confirmation": "CONFIRMED_BY_USER_2026-10-28",
   "asset_status": "USER_PROVIDED_IN_CHAT_NOT_IMPORTED",
   "original_filename": "Golden_retriever_walking_in_park_20261028111843(1).jpg",
   "sha256": "af3381991929f5ea0f8a8ecc32df2dcbb4e27f1db662821cfa02351715875d39",
@@ -16,5 +16,5 @@
   "rights_review": "PENDING",
   "repository_asset_path": null,
   "render_authorized": false,
-  "notes": "Exact image file provided in chat; binary not yet uploaded to GitHub. Must confirm provenance and rights, import binary, then run offline gate before render."
+  "notes": "User confirmed image generated in their own Google Flow account. Binary not imported; rights review still pending, no render authorized."
 }
