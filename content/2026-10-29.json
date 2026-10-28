@@ -1,0 +1,34 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Paseos de olfato: deja que tu perro explore a su ritmo",
+  "date": "2026-10-29",
+  "slot": "10:00",
+  "hook": "¿Tu perro se detiene a oler todo durante el paseo? No siempre es una pérdida de tiempo.",
+  "narration": "¿Tu perro se detiene a oler todo durante el paseo? Para muchos perros, explorar olores es una parte importante de conocer su entorno. En lugar de convertir cada salida en una carrera, prueba a reservar unos minutos para que pueda olfatear con calma. Elige un lugar seguro, mantén una correa cómoda y deja que se acerque a los olores que le interesan, siempre que no haya basura, sustancias peligrosas ni otros riesgos. Observa su lenguaje corporal: si está relajado y muestra curiosidad, puedes darle tiempo para investigar. Si se asusta, se tensa o quiere alejarse, respeta su decisión. Evita tirar de la correa para apresurarlo y adapta el recorrido a su edad, salud y energía. Un paseo agradable no depende solamente de cuántos kilómetros recorréis. También puede incluir pausas, exploración y oportunidades para elegir. ¿Tu perro tiene un lugar favorito para olfatear? Cuéntanoslo en los comentarios. Síguenos para descubrir más ideas sencillas sobre el bienestar de tu perro.",
+  "caption": "Deja espacio para explorar olores durante los paseos, siempre con seguridad y a su ritmo.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#PaseosConPerros",
+    "#OlfatoCanino",
+    "#BienestarCanino",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "RSPCA Knowledgebase - Why is enrichment important for dogs?",
+      "url": "https://kb.rspca.org.au/categories/companion-animals/dogs/caring-for-my-dog/why-is-enrichment-important-for-dogs"
+    }
+  ],
+  "media": [
+    {
+      "flow_asset": {
+        "manifest": "editorial/flow-assets/golden-retriever-20261028-intake.json"
+      },
+      "role": "Golden Retriever explorando olores en un paseo"
+    }
+  ],
+  "cta": "Síguenos para descubrir más ideas sencillas sobre el bienestar de tu perro.",
+  "format": "educational",
+  "hook_pattern": "curiosity",
+  "duration_target": "45-60s"
+}
