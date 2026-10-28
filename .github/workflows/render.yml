@@ -74,7 +74,7 @@ jobs:
           else
             TODAY=$(TZ=Europe/Madrid date +%F)
             MISSING=0
-            for FILE in "content/${TODAY}.json"; do
+            for FILE in "content/${TODAY}.json" "content/${TODAY}-educacion.json" "content/${TODAY}-sabias.json"; do
               if [ ! -s "$FILE" ]; then
                 echo "::error file=$FILE::Missing or empty daily JSON."
                 MISSING=1

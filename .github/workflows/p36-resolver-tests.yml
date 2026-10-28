@@ -50,14 +50,15 @@ jobs:
               from datetime import datetime
               from zoneinfo import ZoneInfo
               today=datetime.now(ZoneInfo("Europe/Madrid")).strftime("%Y-%m-%d")
-              names=[f"content/{today}.json"]
+              names=[f"content/{today}{suffix}.json" for suffix in ("", "-educacion", "-sabias")]
               run("schedule",success=False)
               run("schedule",files=[(names[0],"")],success=False)
-              run("schedule",files=[(names[0],"{}")],expected=names)
+              run("schedule",files=[(names[0],"{}")],success=False)
+              run("schedule",files=[(name,"{}") for name in names],expected=names)
               run("push",files=[("content/2026-10-09.json","{}")],changed="scripts/render.py",expected=())
               run("push",files=[("content/2026-10-09.json","{}")],changed="content/2026-10-09.json",expected=("content/2026-10-09.json",))
               run("workflow_dispatch",input_file="content/2026-10-24.json",success=False)
               run("workflow_dispatch",files=[("content/example.json","{}")],success=False)
               run("workflow_dispatch",files=[("content/2026-10-24.json","{}")],input_file="content/2026-10-24.json",expected=("content/2026-10-24.json",))
-              print("PASS: 7 single-daily-video resolver cases from actual render.yml shell block; no render, git writes or publishing")
+              print("PASS: 8 three-daily-video resolver cases from actual render.yml shell block; no render, git writes or publishing")
           PY
