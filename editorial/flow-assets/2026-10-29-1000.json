@@ -1,0 +1,16 @@
+{
+  "channel": "tuperrofelizofficial",
+  "editorial_date": "2026-10-29",
+  "slot": "10:00",
+  "editorial_title": "Paseos de olfato: deja que tu perro explore a su ritmo",
+  "source_tool": "Google Flow / Nano Banana 2.1",
+  "source_asset_filename": "Golden_retriever_walking_in_park_20261028111843.jpg",
+  "asset_status": "USER_PROVIDED_IN_CHAT_NOT_IN_REPOSITORY",
+  "visual_review": "PASS",
+  "rights_review": "PENDING",
+  "credit_cost": "UNVERIFIED",
+  "credit_budget_daily": 50,
+  "asset_location": "Conversation attachment; binary asset not yet uploaded to repository or public media hosting",
+  "next_gate": "Import original image into controlled media storage; verify usage terms and file hash before render",
+  "publication": "NOT_AUTHORIZED_BY_THIS_MANIFEST"
+}
