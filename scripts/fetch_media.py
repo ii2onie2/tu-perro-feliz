@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse, json, pathlib, requests, urllib.parse
+import argparse, hashlib, json, pathlib, requests, urllib.parse
 
 API="https://commons.wikimedia.org/w/api.php"
 HEADERS={"User-Agent":"TuPerroFeliz/1.0 (https://github.com/ii2onie2/tu-perro-feliz)"}
@@ -20,6 +20,26 @@ def main():
         session.headers.update(HEADERS)
         for i,item in enumerate(data.get("media") or [],1):
             if not isinstance(item,dict):
+                continue
+            local=item.get("flow_asset")
+            if local:
+                if not isinstance(local,dict):
+                    raise ValueError("flow_asset must be an object")
+                manifest=pathlib.Path(local["manifest"])
+                metadata=json.loads(manifest.read_text(encoding="utf-8"))
+                if metadata.get("asset_status")!="IMPORTED" or metadata.get("rights_review")!="PASS" or metadata.get("visual_review")!="PASS":
+                    raise ValueError("Flow asset gate not passed")
+                src=pathlib.Path(metadata["repository_asset_path"])
+                if src.is_absolute() or ".." in src.parts or not src.is_file():
+                    raise ValueError("Flow asset path invalid or missing")
+                if src.suffix.lower() not in (".jpg",".jpeg",".png",".webp"):
+                    raise ValueError("Unsupported Flow asset extension")
+                if hashlib.sha256(src.read_bytes()).hexdigest()!=metadata["sha256"]:
+                    raise ValueError("Flow asset SHA256 mismatch")
+                dest=out/f"{i:02d}{src.suffix.lower()}"
+                dest.write_bytes(src.read_bytes())
+                item["path"]=str(dest)
+                downloaded.append({"path":str(dest),"source":"local_google_flow_asset","manifest":str(manifest),"sha256":metadata["sha256"]})
                 continue
             title=item.get("commons_title")
             if not title:
