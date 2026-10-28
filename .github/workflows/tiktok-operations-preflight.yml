@@ -1,0 +1,30 @@
+name: TikTok operations preflight
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 7 * * *'
+permissions:
+  contents: read
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check UTC clock and today's content manifests without publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import datetime, pathlib, json
+          from zoneinfo import ZoneInfo
+          today=datetime.datetime.now(ZoneInfo('Europe/Madrid')).date().isoformat()
+          print('EDITORIAL_DATE='+today)
+          print('MODE=READ_ONLY')
+          print('BUFFER_POSTS_CREATED=0')
+          p=pathlib.Path('content')
+          matches=sorted(x.name for x in p.glob(today+'*.json')) if p.exists() else []
+          print('CONTENT_FILES='+json.dumps(matches))
+          print('CONTENT_COUNT='+str(len(matches)))
+          print('CONTENT_READY='+('YES' if len(matches)>=3 else 'NO'))
+          PY
