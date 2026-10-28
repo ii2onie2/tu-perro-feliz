@@ -1,0 +1,24 @@
+name: Flow asset offline gate
+on:
+  workflow_dispatch:
+    inputs:
+      asset_path:
+        description: Repository-relative image path
+        required: true
+      manifest_path:
+        description: Repository-relative manifest path
+        required: true
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate manually imported image and provenance
+        env:
+          ASSET_PATH: ${{ inputs.asset_path }}
+          MANIFEST_PATH: ${{ inputs.manifest_path }}
+        run: |
+          python scripts/flow_asset_gate.py --asset "$ASSET_PATH" --manifest "$MANIFEST_PATH"
