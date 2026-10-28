@@ -13,8 +13,9 @@
   "height": 1376,
   "mime_type": "image/jpeg",
   "visual_review": "PASS",
-  "rights_review": "PENDING",
+  "rights_review": "PASS",
   "repository_asset_path": "Golden_retriever_walking_in_park_20261028111843.jpg",
   "render_authorized": false,
-  "notes": "Original JPEG imported by user and verified byte-identical using Git blob SHA 93ebd59be731156f9f46708a0d534cdd77d216c2. Rights review pending; render remains blocked."
+  "notes": "User confirms permission for commercial TikTok use; no independent review of Google Flow terms. Image byte-verified on branch. Render remains gated pending full editorial readiness.",
+  "rights_basis": "USER_CONFIRMED_AUTHORIZATION_FOR_COMMERCIAL_TIKTOK_USE_2026-10-28"
 }
