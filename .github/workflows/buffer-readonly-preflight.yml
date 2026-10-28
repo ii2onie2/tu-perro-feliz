@@ -1,0 +1,59 @@
+name: Buffer API read-only preflight - Tu Perro Feliz
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-buffer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify account and connected TikTok channels (read-only)
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, sys, urllib.request, urllib.error
+          key = os.environ.get("BUFFER_API_KEY", "")
+          if not key:
+              sys.exit("FAIL: BUFFER_API_KEY missing")
+          endpoint = "https://api.buffer.com"
+          def query(graphql, variables=None):
+              payload = json.dumps({"query": graphql, "variables": variables or {}}).encode()
+              req = urllib.request.Request(endpoint, data=payload, headers={
+                  "Authorization": "Bearer " + key,
+                  "Content-Type": "application/json",
+              }, method="POST")
+              try:
+                  with urllib.request.urlopen(req, timeout=20) as response:
+                      result = json.load(response)
+              except urllib.error.HTTPError as exc:
+                  sys.exit("FAIL: Buffer API HTTP " + str(exc.code))
+              except Exception as exc:
+                  sys.exit("FAIL: Buffer API request failed: " + type(exc).__name__)
+              if result.get("errors"):
+                  sys.exit("FAIL: Buffer GraphQL errors (details suppressed)")
+              return result.get("data") or {}
+          organizations = query("query { account { organizations { id name } } }").get("account", {}).get("organizations", [])
+          print("BUFFER_AUTH=PASS")
+          print("ORGANIZATION_COUNT=" + str(len(organizations)))
+          found = set()
+          for org in organizations:
+              data = query("query ($input: ChannelsInput!) { channels(input: $input) { id name service } }",
+                           {"input": {"organizationId": org["id"]}})
+              for channel in data.get("channels", []):
+                  if str(channel.get("service", "")).lower() != "tiktok":
+                      continue
+                  name = str(channel.get("name") or "")
+                  print("TIKTOK_CHANNEL=" + json.dumps({"name": name, "id": channel.get("id")}, ensure_ascii=False))
+                  found.add(name.lower().lstrip("@"))
+          print("TIKTOK_CHANNEL_COUNT=" + str(len(found)))
+          if "tuperrofelizofficial" not in found:
+              sys.exit("FAIL: Tu Perro Feliz TikTok channel not connected to Buffer")
+          print("MODE=READ_ONLY")
+          print("POSTS_CREATED=0")
+          PY
