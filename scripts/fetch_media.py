@@ -29,6 +29,10 @@ def main():
                 metadata=json.loads(manifest.read_text(encoding="utf-8"))
                 if metadata.get("asset_status")!="IMPORTED" or metadata.get("rights_review")!="PASS" or metadata.get("visual_review")!="PASS":
                     raise ValueError("Flow asset gate not passed")
+                # Asset provenance checks do not constitute render authorization.
+                # Only the literal JSON boolean true permits use in a rendered video.
+                if metadata.get("render_authorized") is not True:
+                    raise ValueError("Flow asset rendering not authorized")
                 src=pathlib.Path(metadata["repository_asset_path"])
                 if src.is_absolute() or ".." in src.parts or not src.is_file():
                     raise ValueError("Flow asset path invalid or missing")
