@@ -4,7 +4,9 @@ from pathlib import Path
 import re
 
 workflow = Path(".github/workflows/render.yml").read_text(encoding="utf-8")
-steps = re.split(r"(?=^      - name: )", workflow, flags=re.MULTILINE)
+# The publish job has its own Python setup; inspect the render job only.
+render_job = workflow.split("\n  publish:\n", 1)[0]
+steps = re.split(r"(?=^      - name: )", render_job, flags=re.MULTILINE)
 names = []
 by_name = {}
 for step in steps:
