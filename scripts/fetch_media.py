@@ -122,12 +122,17 @@ def main():
                 url = info.get("url", "")
                 parsed = urlsplit(url)
                 if (parsed.scheme != "https" or parsed.hostname != "upload.wikimedia.org"
-                        or parsed.username or parsed.password or parsed.query or parsed.fragment
-                        or not parsed.path.startswith("/wikipedia/commons/")):
+                        or parsed.username or parsed.password or parsed.port is not None
+                        or parsed.fragment or not parsed.path.startswith("/wikipedia/commons/")):
                     raise RuntimeError("Rejected non-Commons media source URL:"
                         f" scheme={parsed.scheme!r} host={parsed.hostname!r}"
                         f" path_prefix={parsed.path[:90]!r}"
                         f" has_query={bool(parsed.query)} has_fragment={bool(parsed.fragment)}")
+                # The MediaWiki API may append query parameters. Discard them
+                # rather than executing opaque query instructions or claiming
+                # they were validated. The canonical original file path on the
+                # strict Wikimedia upload host is fetched, and redirects fail.
+                url = parsed._replace(query="", fragment="").geturl()
                 ext = Path(parsed.path).suffix.lower()
                 if ext not in ALLOWED_EXTENSIONS:
                     raise RuntimeError(f"Unsupported Commons media extension: {ext!r}")
