@@ -13,6 +13,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 CC_LICENSES = {
+    "cc by 2.0": "/licenses/by/2.0",
     "cc by 3.0": "/licenses/by/3.0",
     "cc by 4.0": "/licenses/by/4.0",
     "cc by sa 3.0": "/licenses/by-sa/3.0",
