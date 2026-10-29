@@ -5,6 +5,7 @@ on:
       - '.github/workflows/p312-full-render.yml'
       - 'scripts/render.py'
       - 'scripts/fetch_media.py'
+      - 'scripts/audit_commons_licenses.py'
       - 'content/2026-10-09.json'
 permissions:
   contents: read
