@@ -85,6 +85,14 @@ class CommonsFetchTests(unittest.TestCase):
         self.assertEqual(credit["path"], "media/episode/01.jpg")
         self.assertEqual(json.loads(self.content_path.read_text())["media"][0]["path"], credit["path"])
 
+    def test_api_query_is_stripped_before_audited_download(self):
+        canonical = "https://upload.wikimedia.org/wikipedia/commons/a/ab/Example.jpg"
+        fake = FakeSession(download_url=canonical + "?token=untrusted", final_url=canonical)
+        self.fetch(fake)
+        credit = json.loads(Path("media/episode/credits.json").read_text())[0]
+        self.assertEqual(credit["source"], canonical)
+        self.assertNotIn("?", credit["source"])
+
     def test_unapproved_license_fails_without_publishing_media_or_content(self):
         with self.assertRaisesRegex(RuntimeError, "LICENSE_NOT_ALLOWLISTED"):
             self.fetch(FakeSession(license_name="All rights reserved"))
