@@ -36,22 +36,6 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Install FFmpeg and fonts
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg fonts-dejavu-core
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install Python dependencies and Piper
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install piper-tts
-
       - name: Resolve content files
         id: content
         shell: bash
@@ -91,6 +75,12 @@ jobs:
           cat render_list.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
+      - name: Set up Python
+        if: steps.content.outputs.files != ''
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Validate content quality
         if: steps.content.outputs.files != ''
         shell: bash
@@ -100,6 +90,19 @@ jobs:
           for FILE in "${FILES[@]}"; do
             python scripts/select_format.py "$FILE"
           done
+
+      - name: Install FFmpeg and fonts
+        if: steps.content.outputs.files != ''
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+
+      - name: Install Python dependencies and Piper
+        if: steps.content.outputs.files != ''
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install piper-tts
 
       - name: Download Spanish Piper voice
         if: steps.content.outputs.files != ''
