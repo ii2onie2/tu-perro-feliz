@@ -1,0 +1,17 @@
+name: Render fail-fast preflight tests
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/render.yml'
+      - 'tests/test_render_preflight_order.py'
+      - '.github/workflows/render-preflight-order.yml'
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify safety and fail-fast ordering without render
+        run: python3 tests/test_render_preflight_order.py
