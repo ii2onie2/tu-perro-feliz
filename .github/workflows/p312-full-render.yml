@@ -5,6 +5,7 @@ on:
       - '.github/workflows/p312-full-render.yml'
       - 'scripts/render.py'
       - 'scripts/fetch_media.py'
+      - 'scripts/audit_commons_licenses.py'
       - 'content/2026-10-09.json'
 permissions:
   contents: read
@@ -14,12 +15,32 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
-      - name: Install FFmpeg and Python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install lightweight media checks
+        run: python -m pip install -r requirements.txt
+      - name: Validate, fetch and audit Commons before heavy dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p312-run media/p312-run /tmp/p312-out
+          cp content/2026-10-09.json /tmp/p312-run/2026-10-09.json
+          python scripts/validate_content.py /tmp/p312-run/2026-10-09.json
+          python scripts/select_format.py /tmp/p312-run/2026-10-09.json
+          python scripts/fetch_media.py --content /tmp/p312-run/2026-10-09.json --out media/p312-run
+          test -s media/p312-run/credits.json
+          python - <<'PY'
+          import json,pathlib
+          d=json.loads(pathlib.Path('media/p312-run/credits.json').read_text())
+          assert len(d)>=1,'No real Wikimedia media fetched'
+          print('MEDIA_AUDIT=PASS',len(d),'NOT_PUBLICATION_CLEARANCE')
+          PY
+      - name: Install FFmpeg and Piper after media checks
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg fonts-dejavu-core
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt piper-tts
+          python -m pip install piper-tts
       - name: Download genuine Spanish Piper voice
         shell: bash
         run: |
@@ -29,25 +50,13 @@ jobs:
           curl --retry 3 -L --fail -o /tmp/p312-voices/es.onnx.json https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx.json
           test -s /tmp/p312-voices/es.onnx
           test -s /tmp/p312-voices/es.onnx.json
-      - name: Validate, fetch real Wikimedia media and render in temporary directory
+      - name: Render the audited media in isolation
         shell: bash
         env:
           PIPER_VOICE_MODEL: /tmp/p312-voices/es.onnx
           PIPER_VOICE_CONFIG: /tmp/p312-voices/es.onnx.json
         run: |
           set -euo pipefail
-          mkdir -p /tmp/p312-run /tmp/p312-media /tmp/p312-out
-          cp content/2026-10-09.json /tmp/p312-run/2026-10-09.json
-          python scripts/validate_content.py /tmp/p312-run/2026-10-09.json
-          python scripts/select_format.py /tmp/p312-run/2026-10-09.json
-          python scripts/fetch_media.py --content /tmp/p312-run/2026-10-09.json --out /tmp/p312-media
-          test -s /tmp/p312-media/credits.json
-          python - <<'PY'
-          import json,pathlib
-          d=json.loads(pathlib.Path('/tmp/p312-media/credits.json').read_text())
-          assert len(d)>=1,'No real Wikimedia media fetched'
-          print('MEDIA_FETCH=PASS',len(d))
-          PY
           python scripts/render.py --content /tmp/p312-run/2026-10-09.json --out /tmp/p312-out
           test -s /tmp/p312-out/video.mp4
           test -s /tmp/p312-out/caption.txt
@@ -59,7 +68,7 @@ jobs:
           streams=d['streams']
           assert any(s.get('codec_name')=='h264' and s.get('width')==1080 and s.get('height')==1920 for s in streams),streams
           assert any(s.get('codec_name')=='aac' for s in streams),streams
-          print('FULL_RENDER=PASS real Piper, real Wikimedia media, H264/AAC, 1080x1920')
+          print('FULL_RENDER=PASS real Piper, audited Commons media, H264/AAC, 1080x1920')
           PY
       - name: Upload QA report only, never MP4
         if: always()
