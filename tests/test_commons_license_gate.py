@@ -28,6 +28,11 @@ class CommonsGateTests(unittest.TestCase):
                 },
             }
             self.assertTrue(check(entry, root)[0])
+            cc2 = dict(entry, metadata=dict(entry["metadata"], **{
+                "LicenseShortName": {"value": "CC BY 2.0"},
+                "LicenseUrl": {"value": "https://creativecommons.org/licenses/by/2.0/"},
+            }))
+            self.assertTrue(check(cc2, root)[0], "CC BY 2.0 with attribution is supported")
             for field, replacement in [
                 ("sha256", "0" * 64),
                 ("source", "https://upload.wikimedia.org.evil.test/x.jpg"),
