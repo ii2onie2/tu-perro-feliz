@@ -124,7 +124,10 @@ def main():
                 if (parsed.scheme != "https" or parsed.hostname != "upload.wikimedia.org"
                         or parsed.username or parsed.password or parsed.query or parsed.fragment
                         or not parsed.path.startswith("/wikipedia/commons/")):
-                    raise RuntimeError("Rejected non-Commons media source URL")
+                    raise RuntimeError("Rejected non-Commons media source URL:"
+                        f" scheme={parsed.scheme!r} host={parsed.hostname!r}"
+                        f" path_prefix={parsed.path[:90]!r}"
+                        f" has_query={bool(parsed.query)} has_fragment={bool(parsed.fragment)}")
                 ext = Path(parsed.path).suffix.lower()
                 if ext not in ALLOWED_EXTENSIONS:
                     raise RuntimeError(f"Unsupported Commons media extension: {ext!r}")
