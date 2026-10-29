@@ -1,0 +1,23 @@
+name: Secondary editorial research drafts (offline, never render)
+on:
+  pull_request:
+    paths:
+      - "editorial/research/*.json"
+      - "scripts/check_secondary_editorial_draft.py"
+      - ".github/workflows/secondary-editorial-research.yml"
+permissions:
+  contents: read
+jobs:
+  structural-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check two original research drafts and unresolved media status
+        run: |
+          python scripts/check_secondary_editorial_draft.py \
+            editorial/research/2026-10-29-educacion.json \
+            editorial/research/2026-10-29-sabias.json
