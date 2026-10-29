@@ -36,15 +36,15 @@ jobs:
           PIPER_VOICE_CONFIG: /tmp/p312-voices/es.onnx.json
         run: |
           set -euo pipefail
-          mkdir -p /tmp/p312-run /tmp/p312-media /tmp/p312-out
+          mkdir -p /tmp/p312-run media/p312-run /tmp/p312-out
           cp content/2026-10-09.json /tmp/p312-run/2026-10-09.json
           python scripts/validate_content.py /tmp/p312-run/2026-10-09.json
           python scripts/select_format.py /tmp/p312-run/2026-10-09.json
-          python scripts/fetch_media.py --content /tmp/p312-run/2026-10-09.json --out /tmp/p312-media
-          test -s /tmp/p312-media/credits.json
+          python scripts/fetch_media.py --content /tmp/p312-run/2026-10-09.json --out media/p312-run
+          test -s media/p312-run/credits.json
           python - <<'PY'
           import json,pathlib
-          d=json.loads(pathlib.Path('/tmp/p312-media/credits.json').read_text())
+          d=json.loads(pathlib.Path('media/p312-run/credits.json').read_text())
           assert len(d)>=1,'No real Wikimedia media fetched'
           print('MEDIA_FETCH=PASS',len(d))
           PY
