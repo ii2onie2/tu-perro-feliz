@@ -22,7 +22,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/p311-bin /tmp/p311-out
+          mkdir -p /tmp/p311-bin /tmp/p311-out media
+          # Synthetic local visual fixture; no external media, licensing or publishing.
+          ffmpeg -nostdin -hide_banner -loglevel error -y -f lavfi -i color=c=blue:s=1080x1920 -frames:v 1 -update 1 media/p311-ci-fixture.png
           python - <<'PY'
           import json,pathlib
           pathlib.Path('/tmp/p311-content.json').write_text(json.dumps({
@@ -33,7 +35,7 @@ jobs:
               'caption':'Prueba técnica',
               'hashtags':['#prueba'],
               'sources':[{'url':'https://example.org'}],
-              'media':[]
+              'media':[{'path':'media/p311-ci-fixture.png'}]
           },ensure_ascii=False))
           PY
           cat > /tmp/p311-bin/piper <<'SH'
