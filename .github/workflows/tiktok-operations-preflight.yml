@@ -11,20 +11,35 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Check UTC clock and today's content manifests without publishing
+      - name: Fail closed on missing or unapproved editorial inputs
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import datetime, pathlib, json
-          from zoneinfo import ZoneInfo
-          today=datetime.datetime.now(ZoneInfo('Europe/Madrid')).date().isoformat()
-          print('EDITORIAL_DATE='+today)
-          print('MODE=READ_ONLY')
-          print('BUFFER_POSTS_CREATED=0')
-          p=pathlib.Path('content')
-          matches=sorted(x.name for x in p.glob(today+'*.json')) if p.exists() else []
-          print('CONTENT_FILES='+json.dumps(matches))
-          print('CONTENT_COUNT='+str(len(matches)))
-          print('CONTENT_READY='+('YES' if len(matches)>=3 else 'NO'))
+          DAY="$(TZ=Europe/Madrid date +%F)"
+          echo "EDITORIAL_DATE=$DAY"
+          echo "MODE=READ_ONLY"
+          echo "PUBLISH_ATTEMPTS=0"
+          python - "$DAY" <<'PY'
+          import json, pathlib, sys
+          day=sys.argv[1]
+          expected=[
+              (f"content/{day}.json","Tu perro feliz","10:00"),
+              (f"content/{day}-educacion.json","Buenos modales","16:00"),
+              (f"content/{day}-sabias.json","¿Sabías esto de tu perro?","19:00"),
+          ]
+          for name,series,slot in expected:
+              p=pathlib.Path(name)
+              if not p.is_file() or p.stat().st_size==0:
+                  sys.exit(f"BLOCKED_MISSING_EDITORIAL_INPUT={name}")
+              data=json.loads(p.read_text(encoding="utf-8"))
+              if not isinstance(data,dict) or any((data.get("date")!=day,data.get("series")!=series,data.get("slot")!=slot)):
+                  sys.exit(f"BLOCKED_WRONG_DATE_SERIES_OR_SLOT={name}")
+              for key in ("editorial_status","media_rights_status","publishing_status"):
+                  v=str(data.get(key,"")).upper()
+                  if any(token in v for token in ("UNAPPROVED","NOT_VERIFIED","FORBIDDEN","PENDING")):
+                      sys.exit(f"BLOCKED_UNAPPROVED={name}:{key}")
+          print("DAILY_INPUT_METADATA=PASS")
           PY
+          python scripts/validate_content.py "content/$DAY.json" "content/$DAY-educacion.json" "content/$DAY-sabias.json"
+          echo "SCHEMA_PREFLIGHT=PASS_NOT_PUBLICATION_CLEARANCE"
+          echo "MEDIA_RIGHTS_AND_METRICOOL_GATES=NOT_VERIFIED"
