@@ -1,0 +1,42 @@
+{
+  "series": "Buenos modales",
+  "title": "Enséñale a tocar tu mano con la nariz, paso a paso",
+  "date": "2026-10-30",
+  "slot": "16:00",
+  "hook": "Un gesto sencillo puede convertirse en un juego útil para comunicarte con tu perro.",
+  "narration": "¿Quieres enseñarle una habilidad sencilla a tu perro sin empujarlo ni moverlo a la fuerza? Prueba el juego de tocar la mano. Dogs Trust propone el entrenamiento con una diana, que puede ser tu palma o un objeto, usando recompensas. Busca primero un lugar tranquilo. Presenta una mano abierta a poca distancia del hocico, sin acercarla bruscamente. Si tu perro se aproxima y la toca con la nariz, marca ese instante con una palabra breve y ofrécele un premio adecuado. Repítelo varias veces con pausas. Cuando lo haga con facilidad, incorpora una señal corta, por ejemplo, “toca”. Después puedes mover la mano ligeramente a distintas posiciones, siempre respetando su comodidad. Si se confunde, retrocede a un paso más sencillo; si no quiere participar, termina la sesión. Este juego permite dirigir la atención de forma amable y puede formar parte de otros aprendizajes cotidianos. No es una solución mágica para situaciones de miedo intenso. ¿Lo probarías en casa? Síguenos para aprender con paciencia y refuerzo positivo.",
+  "caption": "Enséñale a tocar tu mano con la nariz, paso a paso — borrador de investigación; sin autorización para publicar.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BienestarCanino",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust — Train your dog to touch a target",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/tips-tricks/target-training"
+    },
+    {
+      "name": "San Francisco SPCA — Touch Command",
+      "url": "https://www.sfspca.org/resource/touch-command/"
+    }
+  ],
+  "media": [
+    {
+      "role": "Ilustración sin seleccionar; se requiere revisión de derechos y atribución",
+      "asset_status": "NOT_SELECTED",
+      "license_note": "RIGHTS_UNVERIFIED_NO_RENDER"
+    }
+  ],
+  "cta": "Síguenos para descubrir más ideas responsables sobre perros.",
+  "format": "mini_lesson",
+  "hook_pattern": "curiosity",
+  "topic_family": "target_touch_nariz_a_mano_entrenamiento",
+  "duration_target": "60-75s",
+  "editorial_status": "RESEARCH_DRAFT_UNAPPROVED",
+  "fact_reference_status": "SOURCE_LINKS_CHECKED_EDITORIAL_REVIEW_PENDING",
+  "media_rights_status": "NOT_VERIFIED",
+  "publishing_status": "FORBIDDEN_UNTIL_RIGHTS_AND_EDITORIAL_GATES",
+  "ai_assistance_used": true,
+  "ai_disclosure_status": "PENDING_PLATFORM_CLASSIFICATION_REVIEW"
+}
