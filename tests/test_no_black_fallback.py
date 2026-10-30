@@ -59,4 +59,6 @@ exercise([{"path": "../outside.jpg"}], expected="RENDER_BLOCKED_UNSAFE_MEDIA")
 exercise([{"path": "/tmp/outside.jpg"}], expected="RENDER_BLOCKED_UNSAFE_MEDIA")
 exercise([{"path": "media/file.txt"}], {"file.txt": b"not an image"}, "RENDER_BLOCKED_UNSAFE_MEDIA")
 exercise([{"path": "media/valid.png"}], {"valid.png": b"test fixture"})
+# Legacy P3.11 uses media=[] and must be updated to provide a local visual fixture.
+# This test explicitly preserves the rejection contract until that workflow is corrected.
 print("NO_BLACK_FALLBACK_BEHAVIOR=PASS")
