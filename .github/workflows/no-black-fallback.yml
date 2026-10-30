@@ -1,0 +1,19 @@
+name: No black video fallback regression
+on:
+  pull_request:
+    paths:
+      - 'scripts/render.py'
+      - 'tests/test_no_black_fallback.py'
+      - '.github/workflows/no-black-fallback.yml'
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify fail-closed video guard
+        run: |
+          python3 -m py_compile scripts/render.py
+          python3 tests/test_no_black_fallback.py

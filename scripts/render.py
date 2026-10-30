@@ -69,11 +69,28 @@ def main():
     for name,text in [("series.txt",series),("hook.txt",hook),("cta.txt",cta)]:
         (out/name).write_text(text+"\n",encoding="utf-8")
 
+    # Fail closed: never silently render a black-background video when
+    # a declared visual is missing, empty, or outside the media directory.
     bgs=[]
-    for item in data.get("media") or []:
+    media_items=data.get("media")
+    if not isinstance(media_items,list) or not media_items:
+        raise SystemExit("RENDER_BLOCKED_NO_MEDIA: no visual asset declared")
+    media_root=(pathlib.Path.cwd()/"media").resolve()
+    for i,item in enumerate(media_items,1):
         pth=item.get("path") if isinstance(item,dict) else None
-        if pth and pathlib.Path(pth).exists():
-            bgs.append(pth)
+        if not isinstance(pth,str) or not pth.strip():
+            raise SystemExit(f"RENDER_BLOCKED_NO_MEDIA: unresolved media {i}")
+        candidate=pathlib.Path(pth)
+        if candidate.is_absolute():
+            raise SystemExit(f"RENDER_BLOCKED_UNSAFE_MEDIA: absolute path {i}")
+        resolved=candidate.resolve()
+        if not resolved.is_relative_to(media_root):
+            raise SystemExit(f"RENDER_BLOCKED_UNSAFE_MEDIA: outside media/ {i}")
+        if resolved.suffix.lower() not in {".jpg",".jpeg",".png",".webp"}:
+            raise SystemExit(f"RENDER_BLOCKED_UNSAFE_MEDIA: invalid extension {i}")
+        if not resolved.is_file() or resolved.stat().st_size == 0:
+            raise SystemExit(f"RENDER_BLOCKED_NO_MEDIA: missing or empty asset {i}")
+        bgs.append(str(resolved))
     bgs=bgs[:5]
 
     video=str(out/"video.mp4")
@@ -128,15 +145,6 @@ def main():
             "-c:a","aac","-b:a","192k","-pix_fmt","yuv420p","-movflags","+faststart",video
         ]
         run(cmd)
-    else:
-        vf=f"{subtitle_filter}{branding}{hook_overlay}{cta_overlay}"
-        run([
-            "ffmpeg","-y","-f","lavfi","-i",f"color=c=0x111111:s={W}x{H}:r={FPS}",
-            "-i",wav,"-t",f"{duration:.3f}","-vf",vf,
-            "-c:v","libx264","-preset","medium","-crf","21",
-            "-c:a","aac","-b:a","192k","-pix_fmt","yuv420p","-movflags","+faststart",video
-        ])
-
     (out/"caption.txt").write_text(
         (data.get("caption","")+"\n\n"+" ".join(data.get("hashtags",[]))).strip()+"\n",
         encoding="utf-8"
