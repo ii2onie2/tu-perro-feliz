@@ -1,0 +1,38 @@
+{
+  "series": "¿Sabías esto de tu perro?",
+  "title": "Los bigotes de tu perro son sensores, no simples adornos",
+  "date": "2026-10-30",
+  "slot": "19:00",
+  "hook": "¿Sabías que los pelos largos del hocico ayudan a percibir el espacio cercano?",
+  "narration": "¿Has observado los pelos más largos y rígidos que tiene tu perro alrededor del hocico y sobre los ojos? Se llaman vibrisas o bigotes, y no son simplemente un detalle estético. Según la información veterinaria de VCA Animal Hospitals, nacen de folículos con una gran sensibilidad y ayudan a detectar contactos y movimientos del aire cerca de la cara. Esa información complementa los otros sentidos del perro cuando explora su entorno. No hace falta decir que los bigotes funcionan como un radar perfecto: son una ayuda sensorial, no una garantía de que nunca chocará con un objeto. También pueden intervenir en respuestas protectoras cuando algo se aproxima a una zona delicada. Por eso no conviene tirar de ellos ni cortarlos por motivos decorativos sin considerar su función. Si notas molestias en la cara o cambios en la piel, consulta a tu veterinario. La próxima vez que mires el hocico de tu perro, recuerda que parte de su manera de conocer el mundo está ahí. ¿Te habías fijado en sus vibrisas? Síguenos para descubrir más detalles de la vida canina.",
+  "caption": "Los bigotes de tu perro son sensores, no simples adornos — borrador de investigación; sin autorización para publicar.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BienestarCanino",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "VCA Animal Hospitals — Why Do Dogs Have Whiskers?",
+      "url": "https://vcahospitals.com/know-your-pet/why-do-dogs-have-whiskers"
+    }
+  ],
+  "media": [
+    {
+      "role": "Ilustración sin seleccionar; se requiere revisión de derechos y atribución",
+      "asset_status": "NOT_SELECTED",
+      "license_note": "RIGHTS_UNVERIFIED_NO_RENDER"
+    }
+  ],
+  "cta": "Síguenos para descubrir más ideas responsables sobre perros.",
+  "format": "animal_science",
+  "hook_pattern": "curiosity",
+  "topic_family": "vibrisas_sensoriales_perros",
+  "duration_target": "60-75s",
+  "editorial_status": "RESEARCH_DRAFT_UNAPPROVED",
+  "fact_reference_status": "SOURCE_LINKS_CHECKED_EDITORIAL_REVIEW_PENDING",
+  "media_rights_status": "NOT_VERIFIED",
+  "publishing_status": "FORBIDDEN_UNTIL_RIGHTS_AND_EDITORIAL_GATES",
+  "ai_assistance_used": true,
+  "ai_disclosure_status": "PENDING_PLATFORM_CLASSIFICATION_REVIEW"
+}
