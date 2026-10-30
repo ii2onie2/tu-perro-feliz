@@ -1,0 +1,38 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Un perro mayor también necesita juegos, pero a su ritmo",
+  "date": "2026-10-30",
+  "slot": "10:00",
+  "hook": "¿Tu perro se hace mayor? No tiene por qué dejar de aprender y disfrutar.",
+  "narration": "Cuando un perro cumple años, quizá prefiera descansar más y caminar sin tanta prisa. Pero eso no significa que haya dejado de necesitar actividades interesantes. Dogs Trust recomienda adaptar el ejercicio a cada perro mayor y ofrecerle estimulación mental adecuada. En lugar de exigirle saltos o carreras, puedes proponerle momentos cortos de exploración, juegos tranquilos y búsquedas sencillas en lugares seguros. Empieza con una actividad que ya disfrute. Observa si participa con interés o si prefiere alejarse y descansar. Dale tiempo, evita superficies resbaladizas y no le obligues a competir con un perro joven. También puedes repartir sus paseos en salidas más cortas si eso encaja con sus capacidades. Si aparecen cambios de movilidad, apetito o comportamiento, consulta al veterinario antes de aumentar el esfuerzo. El objetivo no es cansarlo a cualquier precio, sino mantener oportunidades agradables de descubrir, relacionarse y elegir. Cada perro envejece de manera diferente. ¿Qué juego tranquilo disfruta más el tuyo? Síguenos para conocer ideas responsables sobre bienestar canino.",
+  "caption": "Un perro mayor también necesita juegos, pero a su ritmo — borrador de investigación; sin autorización para publicar.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BienestarCanino",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust — Looking after an older dog",
+      "url": "https://www.dogstrust.org.uk/dog-advice/life-with-your-dog/at-home/looking-after-an-older-dog"
+    }
+  ],
+  "media": [
+    {
+      "role": "Ilustración sin seleccionar; se requiere revisión de derechos y atribución",
+      "asset_status": "NOT_SELECTED",
+      "license_note": "RIGHTS_UNVERIFIED_NO_RENDER"
+    }
+  ],
+  "cta": "Síguenos para descubrir más ideas responsables sobre perros.",
+  "format": "senior_wellbeing",
+  "hook_pattern": "curiosity",
+  "topic_family": "enriquecimiento_adaptado_perros_senior",
+  "duration_target": "60-75s",
+  "editorial_status": "RESEARCH_DRAFT_UNAPPROVED",
+  "fact_reference_status": "SOURCE_LINKS_CHECKED_EDITORIAL_REVIEW_PENDING",
+  "media_rights_status": "NOT_VERIFIED",
+  "publishing_status": "FORBIDDEN_UNTIL_RIGHTS_AND_EDITORIAL_GATES",
+  "ai_assistance_used": true,
+  "ai_disclosure_status": "PENDING_PLATFORM_CLASSIFICATION_REVIEW"
+}
