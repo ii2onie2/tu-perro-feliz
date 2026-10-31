@@ -90,7 +90,7 @@ jobs:
           print("BUFFER_QUEUE_CREATED=YES")
           print("BUFFER_POST_ID="+str(post["id"]))
           with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as output:
-              output.write("post_id="+str(post["id"])+"\\n")
+              output.write("post_id="+str(post["id"])+"\n")
           print("CHANNEL=tuperrofelizofficial")
           print("TIKTOK_PUBLICATION_CONFIRMED=NO")
           PY
@@ -121,7 +121,7 @@ jobs:
               "recorded_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "note":"GitHub workflow Buffer API response; not TikTok publication proof"
           }
-          path.write_text(json.dumps(payload,indent=2)+"\\n",encoding="utf-8")
+          path.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
           print("BUFFER_RECEIPT_STATE="+state)
           PY
           git config user.name "github-actions[bot]"
