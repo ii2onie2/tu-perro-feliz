@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json, pathlib, sys
 
-HISTORY=pathlib.Path("content/published_history.json")
+HISTORY=pathlib.Path("content/rendered_history.json")
 FORMATS=[
     "step_by_step","three_mistakes","before_after","myth_vs_fact",
     "body_language","do_this_not_that","checklist","mini_lesson",
