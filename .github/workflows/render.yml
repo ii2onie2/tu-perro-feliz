@@ -148,7 +148,7 @@ jobs:
 
   publish:
     needs: render
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.publish_to_repo == true
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.publish_to_repo == true))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -165,6 +165,21 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Reject historical or incomplete scheduled packages
+        if: github.event_name == 'schedule'
+        shell: bash
+        run: |
+          set -euo pipefail
+          DAY=$(TZ=Europe/Madrid date +%F)
+          test "$DAY" \> "2026-10-31"
+          mapfile -t FILES < render_list.txt
+          test "${#FILES[@]}" -eq 3
+          for STEM in "$DAY" "$DAY-educacion" "$DAY-sabias"; do
+            test -s "out/$STEM/video.mp4"
+            test -s "out/$STEM/caption.txt"
+            test -s "out/$STEM/sources.json"
+            test ! -e "videos/$STEM.mp4"
+          done
       - name: Publish rendered MP4s in repository
         shell: bash
         run: |
