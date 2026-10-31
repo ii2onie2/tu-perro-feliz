@@ -34,10 +34,17 @@ jobs:
               data=json.loads(p.read_text(encoding="utf-8"))
               if not isinstance(data,dict) or any((data.get("date")!=day,data.get("series")!=series,data.get("slot")!=slot)):
                   sys.exit(f"BLOCKED_WRONG_DATE_SERIES_OR_SLOT={name}")
-              for key in ("editorial_status","media_rights_status","publishing_status"):
-                  v=str(data.get(key,"")).upper()
-                  if any(token in v for token in ("UNAPPROVED","NOT_VERIFIED","FORBIDDEN","PENDING")):
-                      sys.exit(f"BLOCKED_UNAPPROVED={name}:{key}")
+              # Explicit positive approval is required. Missing or unknown
+              # values must never be interpreted as approval.
+              approved={
+                  "editorial_status":"APPROVED",
+                  "media_rights_status":"VERIFIED",
+                  "publishing_status":"READY",
+              }
+              for key,required in approved.items():
+                  value=data.get(key)
+                  if not isinstance(value,str) or value.strip().upper()!=required:
+                      sys.exit(f"BLOCKED_APPROVAL_NOT_PROVEN={name}:{key}")
           print("DAILY_INPUT_METADATA=PASS")
           PY
           python scripts/validate_content.py "content/$DAY.json" "content/$DAY-educacion.json" "content/$DAY-sabias.json"
