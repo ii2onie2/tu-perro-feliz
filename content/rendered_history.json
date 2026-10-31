@@ -1,0 +1,189 @@
+[
+  {
+    "date": "2026-10-03",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro sin gritos ni castigos",
+    "topic_family": "educacion_con_refuerzo",
+    "format": "mini_lesson",
+    "hook_pattern": "do_this_not_that",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-03",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Tu perro puede estar pidiendo espacio sin gruñir",
+    "topic_family": "lenguaje_corporal",
+    "format": "body_language",
+    "hook_pattern": "surprising_fact",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-03",
+    "series": "Tu perro feliz",
+    "title": "Tu cachorro llega hoy a casa: las 5 primeras cosas que debes hacer",
+    "topic_family": "llegada_del_cachorro",
+    "format": "checklist",
+    "hook_pattern": "problem_first",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-04",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro a volver cuando lo llamas",
+    "topic_family": "llamada_y_retorno",
+    "format": "mini_lesson",
+    "hook_pattern": "common_mistake",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-04",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Olfatear durante el paseo no es perder el tiempo",
+    "topic_family": "olfato_y_enriquecimiento",
+    "format": "curiosity_explainer",
+    "hook_pattern": "reframe_common_behavior",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-04",
+    "series": "Tu perro feliz",
+    "title": "Paseo seguro: agua, sombra y suelo antes de salir",
+    "topic_family": "paseo_seguro",
+    "format": "safety_checklist",
+    "hook_pattern": "three_checks",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-05",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro a caminar sin tirar de la correa",
+    "topic_family": "correa_sin_tirones",
+    "format": "mini_lesson",
+    "hook_pattern": "behavior_consequence",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-05",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Rotar los juguetes puede hacer que vuelvan a parecer nuevos",
+    "topic_family": "rotacion_de_juguetes",
+    "format": "enrichment_curiosity",
+    "hook_pattern": "simple_rotation",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-05",
+    "series": "Tu perro feliz",
+    "title": "El rincón seguro que tu perro debería tener en casa",
+    "topic_family": "espacio_seguro_en_casa",
+    "format": "home_care_tip",
+    "hook_pattern": "need_not_attention",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-06",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro a no saltar sobre las personas",
+    "topic_family": "saludos_sin_saltar",
+    "format": "mini_lesson",
+    "hook_pattern": "behavior_consequence",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-06",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Aprender a relajarse también se puede entrenar",
+    "topic_family": "calma_y_descanso",
+    "format": "behavior_curiosity",
+    "hook_pattern": "surprising_fact",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-06",
+    "series": "Tu perro feliz",
+    "title": "Una rutina sencilla puede ayudar a tu perro a sentirse más seguro",
+    "topic_family": "rutina_y_seguridad",
+    "format": "daily_routine",
+    "hook_pattern": "predictability_first",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-07",
+    "series": "Buenos modales",
+    "title": "Cómo enseñar a tu perro a soltar objetos sin perseguirlo ni quitárselos a la fuerza",
+    "topic_family": "soltar_e_intercambiar_objetos",
+    "format": "mini_lesson",
+    "hook_pattern": "swap_not_take",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-07",
+    "series": "¿Sabías esto de tu perro?",
+    "title": "Un bostezo no siempre significa sueño: también puede ser una señal de estrés",
+    "topic_family": "bostezos_y_estres",
+    "format": "body_language",
+    "hook_pattern": "context_changes_meaning",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-07",
+    "series": "Tu perro feliz",
+    "title": "Enséñale a quedarse solo poco a poco antes de que realmente lo necesites",
+    "topic_family": "tiempo_a_solas_y_separacion",
+    "format": "home_training",
+    "hook_pattern": "prevent_before_problem",
+    "duration_target": "35-50s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-09",
+    "series": "Tu perro feliz",
+    "title": "Un molde de magdalenas puede convertirse en un juego de olfato para tu perro",
+    "topic_family": "juego_de_olfato_con_molde",
+    "format": "step_by_step",
+    "hook_pattern": "low_cost_enrichment",
+    "duration_target": "45-60s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  },
+  {
+    "date": "2026-10-25",
+    "series": "Tu perro feliz",
+    "title": "Cómo preparar un juego de olfato sencillo y seguro en casa",
+    "topic_family": "busqueda_de_comida_en_casa",
+    "format": "step_by_step",
+    "hook_pattern": "simple_safe_enrichment",
+    "duration_target": "45-60s",
+    "publication_verification": "UNVERIFIED_LEGACY_RENDER",
+    "migration_note": "Legacy published_history entry lacks TikTok video ID, public URL and remote publication evidence; classification is unverified, not proof of rendering."
+  }
+]
