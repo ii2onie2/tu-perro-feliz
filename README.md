@@ -4,7 +4,7 @@ Cadena de producción gratuita para generar vídeos verticales para TikTok @tupe
 
 ## Arquitectura
 
-Contenido verificado -> GitHub -> GitHub Actions -> Piper TTS -> FFmpeg -> MP4 1080x1920 -> publicación mediante Metricool.
+Contenido verificado -> GitHub -> GitHub Actions -> Piper TTS -> FFmpeg -> MP4 1080x1920 -> programación y publicación mediante Buffer tras los controles obligatorios.
 
 ## Principios
 
@@ -40,3 +40,12 @@ videos/YYYY-MM-DD-sabias.mp4
 
 GitHub Actions + Piper + FFmpeg + Wikimedia Commons.
 No requiere VPS ni suscripción de generación de vídeo.
+
+## Buffer — canal de programmation et publication
+
+- Buffer est la seule destination cible de programmation et de publication TikTok pour ce projet.
+- La connexion des deux chaînes et l'autorisation de programmation/publication ont été confirmées par le propriétaire.
+- La mise en production dépend toujours de contrôles réussis : contenu exact, provenance et droits des médias, crédits, mentions IA, qualité du MP4, détection de doublons et confirmation de l'état distant.
+- Ne pas créer de brouillon, programmer ou publier un contenu qui échoue à un contrôle; ne jamais présenter un rendu local comme une publication distante.
+- Préserver l'idempotence, tracer les identifiants distants et permettre une reprise sans double publication.
+- Aucun secret ou identifiant n'est consigné dans ce dépôt.
