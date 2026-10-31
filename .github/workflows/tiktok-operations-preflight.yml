@@ -49,4 +49,4 @@ jobs:
           PY
           python scripts/validate_content.py "content/$DAY.json" "content/$DAY-educacion.json" "content/$DAY-sabias.json"
           echo "SCHEMA_PREFLIGHT=PASS_NOT_PUBLICATION_CLEARANCE"
-          echo "MEDIA_RIGHTS_AND_METRICOOL_GATES=NOT_VERIFIED"
+          echo "BUFFER_REMOTE_PUBLICATION=NOT_VERIFIED"
