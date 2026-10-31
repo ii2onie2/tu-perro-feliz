@@ -23,4 +23,20 @@ jobs:
         env:
           TARGET_DATE: ${{ inputs.date || '2026-11-01' }}
         run: |
-          python3 scripts/media_gate_audit.py --date "$TARGET_DATE" --channel tu_perro
+          python3 - <<'PY'
+          import json,os,pathlib,subprocess,sys
+          day=os.environ["TARGET_DATE"]
+          path=pathlib.Path("editorial/research")/(day+"-scripts.json")
+          data=json.loads(path.read_text(encoding="utf-8"))
+          approved=(data.get("status")=="APPROVED" and data.get("fact_check")=="COMPLETED"
+                    and data.get("media_rights")=="VERIFIED"
+                    and data.get("render_authorized") is True
+                    and data.get("buffer_authorized") is True)
+          result=subprocess.run([sys.executable,"scripts/media_gate_audit.py",
+                                 "--date",day,"--channel","tu_perro"])
+          if approved and result.returncode!=0:
+              sys.exit("FAIL: approved content failed media audit")
+          if not approved and result.returncode==0:
+              sys.exit("FAIL: unapproved content passed media audit")
+          print("MEDIA_AUDIT_CONTRACT=PASS", "APPROVED" if approved else "BLOCKED_AS_REQUIRED")
+          PY
