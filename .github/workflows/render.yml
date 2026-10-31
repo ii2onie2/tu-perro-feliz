@@ -130,6 +130,9 @@ jobs:
             test -s "$OUT_DIR/video.mp4"
             test -s "$OUT_DIR/caption.txt"
             test -s "$OUT_DIR/sources.json"
+          DURATION=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$OUT_DIR/video.mp4")
+          echo "VIDEO_DURATION_SECONDS=$DURATION FILE=$FILE"
+          awk -v d="$DURATION" 'BEGIN { exit !(d >= 61.0) }' || { echo "::error::Video shorter than 61 seconds"; exit 1; }
           done
 
       - name: Upload video packages
