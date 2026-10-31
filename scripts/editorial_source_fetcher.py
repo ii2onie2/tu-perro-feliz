@@ -6,6 +6,7 @@ import ipaddress
 import json
 from pathlib import Path
 import socket
+import http.client
 import ssl
 import sys
 from urllib.parse import urlsplit
@@ -30,20 +31,42 @@ def validate_url(url):
         raise ValueError("non-public address")
     return url
 
+class PinnedHTTPSConnection(http.client.HTTPSConnection):
+    """Connect to a previously checked IP while verifying TLS against original hostname."""
+    def __init__(self, hostname, ip, timeout=12):
+        super().__init__(hostname, timeout=timeout, context=ssl.create_default_context())
+        self._pinned_ip = ip
+
+    def connect(self):
+        raw = socket.create_connection((self._pinned_ip, self.port), self.timeout)
+        try:
+            self.sock = self._context.wrap_socket(raw, server_hostname=self.host)
+        except BaseException:
+            raw.close()
+            raise
+
 def fetch(url):
     validate_url(url)
-    # DNS re-resolution between validation and connect is a residual SSRF risk.
-    # Do not run with access to internal networks or privileged credentials.
-    opener = build_opener(HTTPSHandler(context=ssl.create_default_context()), NoRedirect())
-    request = Request(url, headers={"User-Agent": "EditorialEvidenceFetcher/0.1", "Accept": "text/html,text/plain,application/pdf"})
-    with opener.open(request, timeout=12) as response:
-        kind = response.headers.get_content_type()
+    u = urlsplit(url)
+    addresses = [ipaddress.ip_address(r[4][0]) for r in socket.getaddrinfo(u.hostname, 443, type=socket.SOCK_STREAM)]
+    if not addresses or not all(a.is_global for a in addresses):
+        raise ValueError("non-public address")
+    conn = PinnedHTTPSConnection(u.hostname, str(addresses[0]))
+    try:
+        path = (u.path or "/") + (("?" + u.query) if u.query else "")
+        conn.request("GET", path, headers={"User-Agent": "EditorialEvidenceFetcher/0.2", "Accept": "text/html,text/plain,application/pdf", "Host": u.hostname})
+        response = conn.getresponse()
+        if response.status != 200:
+            raise ValueError("unexpected HTTP status " + str(response.status))
+        kind = response.getheader("Content-Type", "").split(";", 1)[0].strip().lower()
         if kind not in ("text/html", "text/plain", "application/pdf"):
             raise ValueError("unsupported document type")
         data = response.read(MAX_BYTES + 1)
         if len(data) > MAX_BYTES:
             raise ValueError("source exceeds byte limit")
         return {"url": url, "content_type": kind, "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data), "retrieved": True}
+    finally:
+        conn.close()
 
 def main():
     p = argparse.ArgumentParser()
