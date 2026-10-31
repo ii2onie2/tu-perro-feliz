@@ -1,0 +1,26 @@
+name: Scheduled render persistence contract
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/render.yml'
+      - '.github/workflows/scheduled-persistence-test.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify scheduled persistence guard
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path(".github/workflows/render.yml").read_text()
+          required=["github.event_name == 'schedule'", "github.ref == 'refs/heads/main'", "Reject historical or incomplete scheduled packages", 'test "${#FILES[@]}" -eq 3', 'test ! -e "videos/$STEM.mp4"', "needs: render"]
+          for item in required:
+              assert item in s, item
+          assert s.index("Reject historical or incomplete scheduled packages") < s.index("Publish rendered MP4s in repository")
+          print("SCHEDULED_PERSISTENCE_STATIC_CONTRACT=PASS")
+          PY
