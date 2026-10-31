@@ -75,8 +75,12 @@ def audit(day, channel):
             errors.append("Image not in manifest: " + str(slot) + " " + repr(image))
         elif digest != by_path[image].get("sha256"):
             errors.append("Script/manifest SHA mismatch: " + str(slot))
+        if data.get("render_authorized") is not True or item["render_authorized"] is not True:
+            errors.append("Render authorization missing: " + str(slot))
         if item["render_authorized"] is not True:
             print("SKIP: render_authorized=false pour " + str(slot) + ", attente approbation éditoriale")
+        if data.get("buffer_authorized") is not True or item["buffer_authorized"] is not True:
+            errors.append("Buffer authorization missing: " + str(slot))
         if item["buffer_authorized"] is not True:
             print("SKIP: buffer_authorized=false pour " + str(slot) + ", attente approbation éditoriale")
     if data.get("fact_check") != "COMPLETED" or data.get("media_rights") != "VERIFIED" or data.get("status") != "APPROVED":
