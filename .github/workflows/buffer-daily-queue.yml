@@ -45,6 +45,7 @@ jobs:
           git push origin HEAD:main
           echo "reserved=true" >> "$GITHUB_OUTPUT"
       - name: Queue new video in Buffer (never historical)
+        id: buffer_queue
         if: steps.reserve.outputs.reserved == 'true'
         env:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
@@ -88,6 +89,44 @@ jobs:
           if not post.get("id"): sys.exit("FAIL: Buffer did not confirm queued post "+str(action.get("message","unknown")))
           print("BUFFER_QUEUE_CREATED=YES")
           print("BUFFER_POST_ID="+str(post["id"]))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as output:
+              output.write("post_id="+str(post["id"])+"\n")
           print("CHANNEL=tuperrofelizofficial")
           print("TIKTOK_PUBLICATION_CONFIRMED=NO")
           PY
+
+      - name: Persist Buffer API outcome without retry
+        if: always() && steps.reserve.outputs.reserved == 'true'
+        env:
+          VIDEO_DATE: ${{ steps.reserve.outputs.day }}
+          CHANNEL: tuperrofelizofficial
+          QUEUE_RESULT: ${{ steps.buffer_queue.outcome }}
+          BUFFER_POST_ID: ${{ steps.buffer_queue.outputs.post_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .buffer-queue-receipts
+          python3 - <<'PY'
+          import datetime,json,os,pathlib
+          day=os.environ["VIDEO_DATE"]
+          path=pathlib.Path(".buffer-queue-receipts")/(day+".json")
+          if path.exists():
+              raise SystemExit("Refusing to overwrite existing Buffer receipt")
+          post_id=os.environ.get("BUFFER_POST_ID","")
+          state="QUEUED" if os.environ.get("QUEUE_RESULT")=="success" and post_id else "FAILED_UNCERTAIN"
+          payload={
+              "date":day,"channel":os.environ["CHANNEL"],"state":state,
+              "buffer_post_id":post_id or None,
+              "tiktok_post_id":None,
+              "recorded_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "note":"GitHub workflow Buffer API response; not TikTok publication proof"
+          }
+          path.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
+          print("BUFFER_RECEIPT_STATE="+state)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ".buffer-queue-receipts/$VIDEO_DATE.json"
+          git commit -m "Record Buffer queue outcome $VIDEO_DATE"
+          git pull --rebase origin main
+          git push origin HEAD:main
