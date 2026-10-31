@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-01",
+  "profile": "tu-perro",
+  "status": "RESEARCH_ONLY_NOT_APPROVED",
+  "theme": "Educación canina amable basada en recompensas",
+  "slots": [
+    {
+      "slot": "principal",
+      "title": "Educar con premios: por qué funciona mejor",
+      "angle": "AVSAB recomienda métodos basados en recompensas y desaconseja los métodos aversivos.",
+      "sources": [
+        "https://avsab.org/resources/position-statements/"
+      ]
+    },
+    {
+      "slot": "educacion",
+      "title": "Enseña una alternativa antes de corregir",
+      "angle": "La educación amable refuerza la conducta deseada y organiza el entorno para reducir comportamientos problemáticos.",
+      "sources": [
+        "https://www.canadianveterinarians.net/policy-and-outreach/position-statements/statements/humane-training-of-dogs/"
+      ]
+    },
+    {
+      "slot": "sabias",
+      "title": "El castigo puede afectar al bienestar del perro",
+      "angle": "La asociación veterinaria británica advierte de efectos no deseados de técnicas aversivas y favorece el refuerzo positivo.",
+      "sources": [
+        "https://bsava.com/position-statement/aversive-training-methods/"
+      ]
+    }
+  ],
+  "fact_check": "REQUIRES_CLAIM_LEVEL_REVIEW",
+  "media_rights": "NOT_VERIFIED",
+  "media": [],
+  "narrations": [],
+  "approved": false,
+  "render_authorized": false,
+  "buffer_authorized": false,
+  "notes": "Research dossier only. No invented media provenance; no automatic publication."
+}
