@@ -28,10 +28,10 @@ jobs:
           assert "QUEUED" in receipt["run"]
           assert "git push origin HEAD:main" in receipt["run"]
           assert "steps.buffer_queue.outputs.post_id" in str(receipt["env"])
+          import re,textwrap
           for step in steps:
               script=step.get("run","")
-              for part in script.split("python3 - <<'PY'")[1:]:
-                  code=part.split("\n          PY",1)[0]
-                  ast.parse("\n".join(line[10:] if line.startswith("          ") else line for line in code.splitlines()))
+              for match in re.finditer(r"python3 - <<'PY'\\n(.*?)\\nPY(?:\\n|$)",script,re.S):
+                  ast.parse(textwrap.dedent(match.group(1)))
           print("BUFFER_DURABLE_RECEIPT_CONTRACT=PASS")
           PY
