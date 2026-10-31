@@ -1,0 +1,20 @@
+name: Editorial engine offline contract tests
+on:
+  pull_request:
+    paths:
+      - 'scripts/editorial_engine.py'
+      - 'scripts/test_editorial_engine.py'
+      - '.github/workflows/editorial-engine-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run editorial contract tests
+        run: python scripts/test_editorial_engine.py tu-perro
