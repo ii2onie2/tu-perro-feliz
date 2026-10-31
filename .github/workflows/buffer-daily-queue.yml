@@ -17,13 +17,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: Resolve Madrid date
         id: date
-        run: |\n          DAY=$(TZ=Europe/Madrid date +%F)\n          if [[ "$DAY" < "2026-11-01" ]]; then echo "BLOCKED: historical date"; exit 1; fi\n          echo "day=$DAY" >> "$GITHUB_OUTPUT"
+        run: |
+          DAY=$(TZ=Europe/Madrid date +%F)
+          if [[ "$DAY" < "2026-11-01" ]]; then echo "BLOCKED: historical date"; exit 1; fi
+          echo "day=$DAY" >> "$GITHUB_OUTPUT"
       - name: Validate three-variant media and editorial authorization
         env:
           DAY: ${{ steps.date.outputs.day }}
         run: |
           set -euo pipefail
-          if [[ "$DAY" < "2026-11-01" ]]; then echo "BLOCKED: historical date"; exit 1; fi\n          python3 scripts/media_gate_audit.py --date "$DAY" --channel tu_perro
+          if [[ "$DAY" < "2026-11-01" ]]; then echo "BLOCKED: historical date"; exit 1; fi
+          python3 scripts/media_gate_audit.py --date "$DAY" --channel tu_perro
           python3 - <<'PY'
           import json,os,pathlib,subprocess
           day=os.environ["DAY"]
@@ -68,9 +72,13 @@ jobs:
           if [ "$SLOT" != principal ]; then STEM="$DAY-$SLOT"; fi
           for ext in .mp4 .caption.txt .sources.json; do test -s "videos/$STEM$ext"; done
           test ! -e ".buffer-queue-reservations/$STEM"
-          test ! -e ".buffer-queue-receipts/$STEM.json"\n          python3 scripts/buffer_duplicate_guard.py --date "$STEM"
+          test ! -e ".buffer-queue-receipts/$STEM.json"
+          python3 scripts/buffer_duplicate_guard.py --date "$STEM"
           mkdir -p .buffer-queue-reservations
-          printf 'RESERVED=%s\nCHANNEL=tuperrofelizofficial\nSLOT=%s\n' "$DAY" "$SLOT" > ".buffer-queue-reservations/$STEM"
+          printf 'RESERVED=%s
+CHANNEL=tuperrofelizofficial
+SLOT=%s
+' "$DAY" "$SLOT" > ".buffer-queue-reservations/$STEM"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add ".buffer-queue-reservations/$STEM"
@@ -106,7 +114,8 @@ jobs:
           with urllib.request.urlopen(req,timeout=30) as resp: data=json.load(resp)
           post=((data.get("data") or {}).get("createPost") or {}).get("post") or {}
           if data.get("errors") or not post.get("id"): raise SystemExit("BLOCKED: Buffer did not confirm post id")
-          with open(os.environ["GITHUB_OUTPUT"],"a") as f: f.write("post_id="+str(post["id"])+"\n")
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f: f.write("post_id="+str(post["id"])+"
+")
           print("BUFFER_POST_ID="+str(post["id"]))
           print("TIKTOK_PUBLICATION_CONFIRMED=NO")
           PY
@@ -126,7 +135,8 @@ jobs:
           path.write_text(json.dumps({"stem":stem,"buffer_post_id":pid,
             "state":"QUEUED" if pid else "FAILED_UNCERTAIN",
             "tiktok_publication_confirmed":False,
-            "recorded_at":datetime.datetime.now(datetime.timezone.utc).isoformat()},indent=2)+"\n")
+            "recorded_at":datetime.datetime.now(datetime.timezone.utc).isoformat()},indent=2)+"
+")
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
