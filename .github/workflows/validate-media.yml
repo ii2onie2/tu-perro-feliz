@@ -1,0 +1,26 @@
+name: Media editorial audit (read-only)
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: Editorial date YYYY-MM-DD
+        required: true
+        default: '2026-11-01'
+  pull_request:
+    paths:
+      - 'editorial/research/**'
+      - 'media/images/**'
+      - 'scripts/media_gate_audit.py'
+      - '.github/workflows/validate-media.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit local media and editorial gates
+        env:
+          TARGET_DATE: ${{ inputs.date || '2026-11-01' }}
+        run: |
+          python3 scripts/media_gate_audit.py --date "$TARGET_DATE" --channel tu_perro
