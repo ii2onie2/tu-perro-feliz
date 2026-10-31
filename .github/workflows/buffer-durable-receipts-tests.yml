@@ -1,0 +1,37 @@
+name: Buffer durable receipt contract tests
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/buffer-daily-queue.yml'
+      - '.github/workflows/buffer-durable-receipts-tests.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m pip install pyyaml
+          python - <<'PY'
+          import ast,pathlib,yaml
+          text=pathlib.Path(".github/workflows/buffer-daily-queue.yml").read_text()
+          data=yaml.safe_load(text)
+          steps=data["jobs"]["queue"]["steps"]
+          assert any(s.get("id")=="buffer_queue" for s in steps)
+          receipt=next(s for s in steps if s.get("name")=="Persist Buffer API outcome without retry")
+          assert "always()" in receipt["if"]
+          assert "FAILED_UNCERTAIN" in receipt["run"]
+          assert "QUEUED" in receipt["run"]
+          assert "git push origin HEAD:main" in receipt["run"]
+          assert "steps.buffer_queue.outputs.post_id" in str(receipt["env"])
+          for step in steps:
+              script=step.get("run","")
+              for part in script.split("python3 - <<'PY'")[1:]:
+                  code=part.split("\n          PY",1)[0]
+                  ast.parse("\n".join(line[10:] if line.startswith("          ") else line for line in code.splitlines()))
+          print("BUFFER_DURABLE_RECEIPT_CONTRACT=PASS")
+          PY
