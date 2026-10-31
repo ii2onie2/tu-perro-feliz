@@ -1,0 +1,26 @@
+name: Editorial candidate intake tests
+on:
+  pull_request:
+    paths:
+      - 'scripts/editorial_candidate_intake.py'
+      - '.github/workflows/editorial-candidate-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile and reject absent editorial inputs
+        shell: bash
+        run: |
+          python -m py_compile scripts/editorial_candidate_intake.py
+          if python scripts/editorial_candidate_intake.py --profile tu-perro --date 2099-01-01; then
+            echo "::error::Missing candidate inputs must fail closed"
+            exit 1
+          fi
+          echo "CANDIDATE_INTAKE_NEGATIVE_TEST=PASS"
