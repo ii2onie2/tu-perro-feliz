@@ -1,0 +1,34 @@
+{
+  "series": "Tu perro feliz",
+  "title": "Paseos de olfato: deja que tu perro explore a su ritmo",
+  "date": "2026-10-29",
+  "slot": "10:00",
+  "hook": "¿Tu perro se detiene a oler cada esquina? No siempre necesita caminar más rápido.",
+  "narration": "¿Tu perro se detiene a oler cada esquina durante el paseo? A veces, en lugar de avanzar deprisa, podemos darle tiempo para explorar con la nariz. Los perros utilizan el olfato para conocer su entorno, y ofrecer oportunidades seguras de exploración forma parte del enriquecimiento cotidiano. Elige un recorrido tranquilo, con poco tráfico y suficiente espacio. Usa una correa adecuada y observa qué lugares le interesan. Si se detiene a olfatear un árbol o una zona de hierba segura, espera unos segundos sin tirar de la correa. No hace falta convertir cada paseo en un ejercicio de obediencia. Alterna momentos de exploración con desplazamientos normales y respeta las señales de tu perro. Evita basura, restos de comida, plantas desconocidas y zonas que puedan resultar peligrosas. Si parece incómodo o demasiado excitado, cambia de lugar o termina la actividad. Cada perro tiene sus preferencias y capacidades. Lo importante es ofrecer opciones, supervisar y mantener el paseo agradable para ambos. Síguenos para más ideas sencillas sobre bienestar canino.",
+  "caption": "Un paseo tranquilo también puede ser una oportunidad para explorar con el olfato. Respeta su ritmo y prioriza siempre la seguridad.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#PaseoCanino",
+    "#OlfatoCanino",
+    "#BienestarCanino",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "RSPCA Knowledgebase - Why is enrichment important for dogs?",
+      "url": "https://kb.rspca.org.au/categories/companion-animals/dogs/caring-for-my-dog/why-is-enrichment-important-for-dogs"
+    }
+  ],
+  "media": [
+    {
+      "commons_title": "File:Schnauzer with a ball.jpg",
+      "role": "Imagen ilustrativa de perro; confirmar correspondencia visual y licencia antes del render",
+      "license_note": "CANDIDATE_ONLY: verificar página Wikimedia Commons, autor, licencia y atribución antes de usar"
+    }
+  ],
+  "cta": "Síguenos para más ideas sencillas sobre bienestar canino.",
+  "format": "step_by_step",
+  "hook_pattern": "sniff_walk",
+  "topic_family": "paseo_olfativo",
+  "duration_target": "45-60s"
+}
