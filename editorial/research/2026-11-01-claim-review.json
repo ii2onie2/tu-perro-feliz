@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-01",
+  "slot": "principal",
+  "review_status": "CORE_CLAIMS_VERIFIED_REMAINING_CLAIMS_PENDING",
+  "source": "American Veterinary Society of Animal Behavior (AVSAB)",
+  "sources": [
+    "https://avsab.org/resources/position-statements/",
+    "https://avsab.org/wp-content/uploads/2024/12/AVSAB-Humane-Dog-Training-Position-Statement-2021.pdf"
+  ],
+  "claims": [
+    {
+      "claim": "AVSAB recomienda metodos basados en recompensas para entrenar perros",
+      "result": "VERIFIED",
+      "source_index": 0
+    },
+    {
+      "claim": "AVSAB desaconseja metodos aversivos",
+      "result": "VERIFIED",
+      "source_index": 0
+    },
+    {
+      "claim": "Se recomienda reforzar conductas deseables y gestionar el entorno",
+      "result": "VERIFIED",
+      "source_index": 1
+    },
+    {
+      "claim": "El refuerzo positivo no implica ausencia de limites",
+      "result": "SUPPORTED_AS_INTERPRETATION",
+      "source_index": 1
+    },
+    {
+      "claim": "Consejos individualizados sobre perros con miedo o agresividad",
+      "result": "REQUIRES_SCRIPT_LEVEL_REVIEW",
+      "source_index": 1
+    }
+  ],
+  "media_rights": "NOT_VERIFIED",
+  "editorial_approved": false,
+  "render_authorized": false,
+  "buffer_authorized": false,
+  "notes": "Verificacion parcial, sin afirmar licencia de fotografia o archivo audiovisual."
+}
