@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-01",
+  "status": "SCRIPT_DRAFT_NOT_FACT_CHECKED",
+  "fact_check": "NOT_COMPLETED",
+  "media_rights": "NOT_VERIFIED",
+  "render_authorized": false,
+  "buffer_authorized": false,
+  "scripts": [
+    {
+      "slot": "principal",
+      "title": "Educar con premios no significa dejar hacer todo",
+      "narration": "¿Crees que educar con premios es consentir a tu perro? En realidad, el entrenamiento basado en recompensas consiste en enseñar de forma clara qué comportamiento queremos repetir. Cuando tu perro se sienta, vuelve a tu lado o espera tranquilo, puedes reforzar esa acción con comida, juego o atención, según lo que más le motive. Lo importante es elegir el momento adecuado y practicar en situaciones que pueda gestionar. Las recomendaciones veterinarias sobre comportamiento favorecen los métodos basados en recompensas frente a técnicas aversivas. Eso no significa renunciar a los límites. Significa enseñar alternativas, prevenir situaciones difíciles y avanzar poco a poco. Si tu perro tiene miedo, agresividad o problemas persistentes, busca ayuda de un profesional cualificado. ¿Qué premio le gusta más a tu perro? Sigue la cuenta para aprender juntos.",
+      "word_count": 130
+    },
+    {
+      "slot": "educacion",
+      "title": "Enseña qué hacer, no solo qué evitar",
+      "narration": "Si tu perro salta cuando llegas a casa, repetir no, no, no puede dejarlo confundido. Una estrategia más útil es preparar una conducta alternativa que sí pueda realizar, como mantener las cuatro patas en el suelo o ir a su manta. Practica primero en un momento tranquilo, recompensa el comportamiento deseado y aumenta la dificultad gradualmente. También ayuda organizar el entorno para que el perro no ensaye constantemente la conducta que quieres cambiar. No todos los perros aprenden al mismo ritmo y el estrés puede dificultar el entrenamiento. Evita forzarlo cuando está asustado. Si hay mordidas, miedo intenso o riesgo para personas u otros animales, consulta a un profesional de comportamiento canino. ¿Qué conducta te gustaría enseñarle esta semana? Sigue la cuenta para más ideas de educación amable.",
+      "word_count": 128
+    },
+    {
+      "slot": "sabias",
+      "title": "El miedo no es una herramienta de aprendizaje ideal",
+      "narration": "¿Sabías que una corrección que parece funcionar en el momento puede tener efectos no deseados? Los métodos aversivos pueden interrumpir una conducta, pero también aumentar el miedo, el estrés o deteriorar la relación entre el perro y su cuidador. Por eso varias organizaciones veterinarias recomiendan priorizar el entrenamiento basado en recompensas. Una sesión útil empieza con objetivos pequeños, un entorno adecuado y descansos. Observa si tu perro puede concentrarse y si acepta el premio con normalidad. Si se bloquea, se esconde o intenta escapar, conviene reducir la dificultad y revisar el contexto. La educación no consiste en ganar una lucha de poder. Consiste en construir habilidades que hagan más segura y agradable la convivencia. ¿Tu perro aprende mejor con comida, juego o caricias? Sigue la cuenta para más consejos responsables.",
+      "word_count": 130
+    }
+  ]
+}
