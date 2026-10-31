@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-01",
+  "topic": "Educacion canina",
+  "review_type": "PRODUCTION_BLOCKER_REMEDIATION",
+  "script_assessment": "Main narration has 130 words; content validator minimum 65, but spoken duration must be measured.",
+  "media_assessment": "Need image binary SHA256, Moshe Blank attribution, CC BY-SA 3.0 derivative/share-alike review.",
+  "editorial_caution": "Do not claim veterinary diagnosis or guaranteed training results.",
+  "completed": [
+    "Core claims reviewed against official reference list",
+    "License candidates identified",
+    "Production gates preserved"
+  ],
+  "pending": [
+    "Full three-script sentence-level source audit",
+    "Download final media and record SHA256",
+    "Check attribution and commercial/derivative compatibility",
+    "Narrated 1080x1920 MP4 render and QA",
+    "Buffer remote scheduling receipt"
+  ],
+  "production_authorized": false,
+  "publishing_authorized": false
+}
