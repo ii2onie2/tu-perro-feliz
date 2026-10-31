@@ -1,0 +1,42 @@
+name: Buffer reservation reconciliation audit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/buffer_reservation_audit.py'
+      - '.github/workflows/buffer-reconciliation-audit.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax and state contract
+        run: |
+          python -m py_compile scripts/buffer_reservation_audit.py
+          python - <<'PY'
+          import importlib.util, tempfile, pathlib, json
+          s=importlib.util.spec_from_file_location("a","scripts/buffer_reservation_audit.py")
+          m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+          with tempfile.TemporaryDirectory() as d:
+              root=pathlib.Path(d)
+              r=root/"2026-11-01";r.write_text("RESERVED=2026-11-01\nCHANNEL=test\n")
+              state,_=m.audit(r,root/"missing.json")
+              assert state=="FAILED_UNCERTAIN"
+              receipt=root/"receipt.json"
+              receipt.write_text(json.dumps({"date":"2026-11-01","channel":"test","state":"QUEUED","buffer_post_id":"post1"}))
+              state,_=m.audit(r,receipt)
+              assert state=="QUEUED"
+              receipt.write_text(json.dumps({"date":"2026-11-01","channel":"test","state":"PUBLISHED_CONFIRMED","buffer_post_id":"post1"}))
+              try: m.audit(r,receipt)
+              except ValueError: pass
+              else: raise AssertionError("TikTok ID required")
+          print("BUFFER_RECONCILIATION_STATE_TESTS=PASS")
+          PY
+      - name: Read-only reservation report
+        if: github.event_name == 'workflow_dispatch'
+        run: python scripts/buffer_reservation_audit.py
