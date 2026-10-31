@@ -31,6 +31,7 @@ jobs:
           for suffix in .mp4 .caption.txt .sources.json; do
             test -s "videos/$DAY$suffix" || { echo "SKIP=missing new package videos/$DAY$suffix"; exit 0; }
           done
+          python3 scripts/buffer_duplicate_guard.py --date "$DAY"
           mkdir -p .buffer-queue-reservations
           if test -e ".buffer-queue-reservations/$DAY"; then
             echo "SKIP=already reserved; no duplicate request"

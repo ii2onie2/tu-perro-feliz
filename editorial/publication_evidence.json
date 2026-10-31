@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "known_publications": [
+    {
+      "date": "2026-10-25",
+      "status": "previously_reported_published",
+      "tiktok_post_id": null,
+      "video_sha256": null,
+      "caption_sha256": null
+    }
+  ],
+  "note": "Not a complete independently verified TikTok publication history."
+}

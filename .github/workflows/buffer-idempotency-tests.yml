@@ -1,0 +1,22 @@
+name: Buffer duplicate guard tests
+on:
+  pull_request:
+    paths:
+      - 'scripts/buffer_duplicate_guard.py'
+      - 'editorial/publication_evidence.json'
+      - '.github/workflows/buffer-daily-queue.yml'
+      - '.github/workflows/buffer-idempotency-tests.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m py_compile scripts/buffer_duplicate_guard.py
+          if python scripts/buffer_duplicate_guard.py --date 2099-01-01; then exit 1; fi
+          python -c 'import json; x=json.load(open("editorial/publication_evidence.json")); assert x["schema_version"]==1'
