@@ -1,0 +1,68 @@
+name: Buffer first video draft - Tu Perro Feliz
+on:
+  workflow_dispatch:
+    inputs:
+      video_date:
+        description: Existing video date (YYYY-MM-DD)
+        required: true
+        default: '2026-10-25'
+permissions:
+  contents: read
+jobs:
+  create-buffer-draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Submit existing MP4 as Buffer draft (no TikTok publication)
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          VIDEO_DATE: ${{ inputs.video_date }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import datetime,json,os,pathlib,sys,urllib.request,urllib.error
+          key=os.environ.get("BUFFER_API_KEY")
+          if not key: sys.exit("FAIL: missing BUFFER_API_KEY")
+          day=os.environ["VIDEO_DATE"]
+          if datetime.date.fromisoformat(day).isoformat()!=day: sys.exit("FAIL: invalid date")
+          root=pathlib.Path("videos")/day
+          video=pathlib.Path(str(root)+".mp4")
+          caption=pathlib.Path(str(root)+".caption.txt")
+          sources=pathlib.Path(str(root)+".sources.json")
+          if any(not p.is_file() or p.stat().st_size==0 for p in (video,caption,sources)): sys.exit("FAIL: missing video package")
+          text=caption.read_text(encoding="utf-8").strip()
+          if not text: sys.exit("FAIL: empty caption")
+          json.loads(sources.read_text(encoding="utf-8"))
+          url="https://raw.githubusercontent.com/ii2onie2/tu-perro-feliz/main/videos/"+day+".mp4"
+          req=urllib.request.Request(url,headers={"Range":"bytes=0-31","User-Agent":"BufferVideoDraft/1.0"})
+          with urllib.request.urlopen(req,timeout=25) as response:
+              if response.status not in (200,206) or b"ftyp" not in response.read(32): sys.exit("FAIL: MP4 URL not publicly accessible")
+          query="""mutation CreateDraftVideo($text: String!, $url: String!) {
+            createPost(input: {
+              text: $text
+              channelId: "6ae072482f1f5ed648e82143"
+              schedulingType: automatic
+              mode: addToQueue
+              saveToDraft: true
+              assets: [{video: {url: $url}}]
+            }) {
+              ... on PostActionSuccess { post { id text } }
+              ... on MutationError { message }
+            }
+          }"""
+          payload=json.dumps({"query":query,"variables":{"text":text,"url":url}}).encode()
+          req=urllib.request.Request("https://api.buffer.com",data=payload,headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"},method="POST")
+          try:
+              with urllib.request.urlopen(req,timeout=30) as response: result=json.load(response)
+          except urllib.error.HTTPError as exc: sys.exit("FAIL: Buffer HTTP "+str(exc.code))
+          if result.get("errors"): sys.exit("FAIL: Buffer GraphQL errors: "+json.dumps([x.get("message") for x in result["errors"]]))
+          action=(result.get("data") or {}).get("createPost") or {}
+          post=action.get("post") or {}
+          if not post.get("id"): sys.exit("FAIL: Buffer did not return post ID: "+str(action.get("message","unknown")))
+          print("BUFFER_DRAFT_CREATED=YES")
+          print("BUFFER_POST_ID="+str(post["id"]))
+          print("TARGET_CHANNEL=tuperrofelizofficial")
+          print("TIKTOK_PUBLICATION_CONFIRMED=NO")
+          PY
