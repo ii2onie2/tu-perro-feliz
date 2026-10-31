@@ -1,132 +1,136 @@
-name: Buffer daily queue - tuperrofelizofficial
+name: Buffer queue - tuperrofelizofficial (fail closed)
 on:
   schedule:
     - cron: '30 11 * * *'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
-  group: buffer-daily-queue-tuperrofelizofficial
+  group: buffer-queue-tuperrofelizofficial
   cancel-in-progress: false
 jobs:
-  queue:
+  preflight:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    outputs:
+      day: ${{ steps.date.outputs.day }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve Madrid date
+        id: date
+        run: echo "day=$(TZ=Europe/Madrid date +%F)" >> "$GITHUB_OUTPUT"
+      - name: Validate three-variant media and editorial authorization
+        env:
+          DAY: ${{ steps.date.outputs.day }}
+        run: |
+          set -euo pipefail
+          python3 scripts/media_gate_audit.py --date "$DAY" --channel tu_perro
+          python3 - <<'PY'
+          import json,os,pathlib,subprocess
+          day=os.environ["DAY"]
+          slots=["principal","educacion","sabias"]
+          data=json.loads((pathlib.Path("editorial/research")/(day+"-scripts.json")).read_text())
+          assert data.get("render_authorized") is True and data.get("buffer_authorized") is True
+          for slot in slots:
+              stem=day if slot=="principal" else day+"-"+slot
+              for ext in (".mp4",".caption.txt",".sources.json"):
+                  path=pathlib.Path("videos")/(stem+ext)
+                  if not path.is_file() or not path.stat().st_size:
+                      raise SystemExit("BLOCKED: missing package "+str(path))
+              duration=float(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","default=nw=1:nk=1",str(pathlib.Path("videos")/(stem+".mp4"))],text=True).strip())
+              if duration<61: raise SystemExit("BLOCKED: short video "+stem)
+              json.loads((pathlib.Path("videos")/(stem+".sources.json")).read_text())
+          print("PREFLIGHT=PASS THREE_VARIANTS")
+          PY
+  queue:
+    needs: preflight
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      max-parallel: 1
+      fail-fast: true
+      matrix:
+        slot: ["principal","educacion","sabias"]
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 2
-      - name: Reserve unique new video before Buffer mutation
+      - name: Reserve per variant before Buffer API
         id: reserve
-        shell: bash
+        env:
+          DAY: ${{ needs.preflight.outputs.day }}
+          SLOT: ${{ matrix.slot }}
         run: |
           set -euo pipefail
-          DAY=$(TZ=Europe/Madrid date +%F)
-          echo "day=$DAY" >> "$GITHUB_OUTPUT"
-          if [[ "$DAY" < "2026-11-01" ]]; then
-            echo "SKIP=historical videos excluded"
-            exit 0
-          fi
-          for suffix in .mp4 .caption.txt .sources.json; do
-            test -s "videos/$DAY$suffix" || { echo "SKIP=missing new package videos/$DAY$suffix"; exit 0; }
-          done
-          python3 scripts/buffer_duplicate_guard.py --date "$DAY"
+          python3 scripts/media_gate_audit.py --date "$DAY" --channel tu_perro
+          STEM="$DAY"
+          if [ "$SLOT" != principal ]; then STEM="$DAY-$SLOT"; fi
+          for ext in .mp4 .caption.txt .sources.json; do test -s "videos/$STEM$ext"; done
+          test ! -e ".buffer-queue-reservations/$STEM"
+          test ! -e ".buffer-queue-receipts/$STEM.json"
           mkdir -p .buffer-queue-reservations
-          if test -e ".buffer-queue-reservations/$DAY"; then
-            echo "SKIP=already reserved; no duplicate request"
-            exit 0
-          fi
-          printf 'RESERVED=%s\nCHANNEL=tuperrofelizofficial\n' "$DAY" > ".buffer-queue-reservations/$DAY"
+          printf 'RESERVED=%s\nCHANNEL=tuperrofelizofficial\nSLOT=%s\n' "$DAY" "$SLOT" > ".buffer-queue-reservations/$STEM"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ".buffer-queue-reservations/$DAY"
-          git commit -m "Reserve Buffer queue tuperrofelizofficial $DAY"
+          git add ".buffer-queue-reservations/$STEM"
+          git commit -m "Reserve tuperrofelizofficial $STEM"
           git push origin HEAD:main
-          echo "reserved=true" >> "$GITHUB_OUTPUT"
-      - name: Queue new video in Buffer (never historical)
-        id: buffer_queue
-        if: steps.reserve.outputs.reserved == 'true'
+          echo "stem=$STEM" >> "$GITHUB_OUTPUT"
+      - name: Queue to Buffer once (never auto retry uncertain requests)
+        id: buffer
         env:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
-          VIDEO_DATE: ${{ steps.reserve.outputs.day }}
-        shell: bash
+          STEM: ${{ steps.reserve.outputs.stem }}
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json,os,pathlib,sys,urllib.request,urllib.error
+          import json,os,pathlib,urllib.request
           key=os.environ.get("BUFFER_API_KEY")
-          if not key: sys.exit("FAIL: Buffer key missing; reservation retained to prevent duplicates")
-          day=os.environ["VIDEO_DATE"]
-          base=pathlib.Path("videos")/day
-          caption=pathlib.Path(str(base)+".caption.txt").read_text(encoding="utf-8").strip()
-          if not caption: sys.exit("FAIL: empty caption")
-          json.loads(pathlib.Path(str(base)+".sources.json").read_text(encoding="utf-8"))
-          url="https://raw.githubusercontent.com/ii2onie2/tu-perro-feliz/main/videos/"+day+".mp4"
-          req=urllib.request.Request(url,headers={"Range":"bytes=0-31","User-Agent":"BufferDailyQueue/1.0"})
-          with urllib.request.urlopen(req,timeout=25) as resp:
-              if resp.status not in (200,206) or b"ftyp" not in resp.read(32): sys.exit("FAIL: public MP4 unavailable")
+          if not key: raise SystemExit("BLOCKED: missing Buffer credential; reservation retained")
+          stem=os.environ["STEM"]
+          caption=(pathlib.Path("videos")/(stem+".caption.txt")).read_text().strip()
+          if not caption: raise SystemExit("BLOCKED: empty caption")
+          url="https://raw.githubusercontent.com/ii2onie2/tu-perro-feliz/main/videos/"+stem+".mp4"
           query="""mutation CreateQueuedVideo($text: String!, $url: String!) {
-            createPost(input: {
-              text: $text
-              channelId: "6ae072482f1f5ed648e82143"
-              schedulingType: automatic
-              mode: addToQueue
-              saveToDraft: false
-              assets: [{video: {url: $url}}]
-            }) {
+            createPost(input: {text: $text, channelId: "6ae072482f1f5ed648e82143",
+              schedulingType: automatic, mode: addToQueue, saveToDraft: false,
+              assets: [{video: {url: $url}}]}) {
               ... on PostActionSuccess { post { id text } }
               ... on MutationError { message }
             }
           }"""
-          req=urllib.request.Request("https://api.buffer.com",data=json.dumps({"query":query,"variables":{"text":caption,"url":url}}).encode(),headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"},method="POST")
-          try:
-              with urllib.request.urlopen(req,timeout=30) as response: data=json.load(response)
-          except urllib.error.HTTPError as exc: sys.exit("FAIL: Buffer HTTP "+str(exc.code))
-          if data.get("errors"): sys.exit("FAIL: Buffer GraphQL "+str([e.get("message") for e in data["errors"]]))
-          action=(data.get("data") or {}).get("createPost") or {}
-          post=action.get("post") or {}
-          if not post.get("id"): sys.exit("FAIL: Buffer did not confirm queued post "+str(action.get("message","unknown")))
-          print("BUFFER_QUEUE_CREATED=YES")
+          req=urllib.request.Request("https://api.buffer.com",
+            data=json.dumps({"query":query,"variables":{"text":caption,"url":url}}).encode(),
+            headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"},method="POST")
+          with urllib.request.urlopen(req,timeout=30) as resp: data=json.load(resp)
+          post=((data.get("data") or {}).get("createPost") or {}).get("post") or {}
+          if data.get("errors") or not post.get("id"): raise SystemExit("BLOCKED: Buffer did not confirm post id")
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f: f.write("post_id="+str(post["id"])+"\n")
           print("BUFFER_POST_ID="+str(post["id"]))
-          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as output:
-              output.write("post_id="+str(post["id"])+"\n")
-          print("CHANNEL=tuperrofelizofficial")
           print("TIKTOK_PUBLICATION_CONFIRMED=NO")
           PY
-
-      - name: Persist Buffer API outcome without retry
-        if: always() && steps.reserve.outputs.reserved == 'true'
+      - name: Record outcome (including uncertainty)
+        if: always() && steps.reserve.outputs.stem != ''
         env:
-          VIDEO_DATE: ${{ steps.reserve.outputs.day }}
-          CHANNEL: tuperrofelizofficial
-          QUEUE_RESULT: ${{ steps.buffer_queue.outcome }}
-          BUFFER_POST_ID: ${{ steps.buffer_queue.outputs.post_id }}
-        shell: bash
+          STEM: ${{ steps.reserve.outputs.stem }}
+          POST_ID: ${{ steps.buffer.outputs.post_id }}
         run: |
           set -euo pipefail
           mkdir -p .buffer-queue-receipts
           python3 - <<'PY'
-          import datetime,json,os,pathlib
-          day=os.environ["VIDEO_DATE"]
-          path=pathlib.Path(".buffer-queue-receipts")/(day+".json")
-          if path.exists():
-              raise SystemExit("Refusing to overwrite existing Buffer receipt")
-          post_id=os.environ.get("BUFFER_POST_ID","")
-          state="QUEUED" if os.environ.get("QUEUE_RESULT")=="success" and post_id else "FAILED_UNCERTAIN"
-          payload={
-              "date":day,"channel":os.environ["CHANNEL"],"state":state,
-              "buffer_post_id":post_id or None,
-              "tiktok_post_id":None,
-              "recorded_at":datetime.datetime.now(datetime.timezone.utc).isoformat(),
-              "note":"GitHub workflow Buffer API response; not TikTok publication proof"
-          }
-          path.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
-          print("BUFFER_RECEIPT_STATE="+state)
+          import json,os,pathlib,datetime
+          stem=os.environ["STEM"]; pid=os.environ.get("POST_ID") or None
+          path=pathlib.Path(".buffer-queue-receipts")/(stem+".json")
+          if path.exists(): raise SystemExit("Receipt already exists")
+          path.write_text(json.dumps({"stem":stem,"buffer_post_id":pid,
+            "state":"QUEUED" if pid else "FAILED_UNCERTAIN",
+            "tiktok_publication_confirmed":False,
+            "recorded_at":datetime.datetime.now(datetime.timezone.utc).isoformat()},indent=2)+"\n")
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ".buffer-queue-receipts/$VIDEO_DATE.json"
-          git commit -m "Record Buffer queue outcome $VIDEO_DATE"
+          git add ".buffer-queue-receipts/$STEM.json"
+          git commit -m "Record Buffer outcome $STEM"
           git pull --rebase origin main
           git push origin HEAD:main
