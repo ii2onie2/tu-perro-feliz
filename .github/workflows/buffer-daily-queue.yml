@@ -1,0 +1,92 @@
+name: Buffer daily queue - tuperrofelizofficial
+on:
+  schedule:
+    - cron: '30 11 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: buffer-daily-queue-tuperrofelizofficial
+  cancel-in-progress: false
+jobs:
+  queue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 2
+      - name: Reserve unique new video before Buffer mutation
+        id: reserve
+        shell: bash
+        run: |
+          set -euo pipefail
+          DAY=$(TZ=Europe/Madrid date +%F)
+          echo "day=$DAY" >> "$GITHUB_OUTPUT"
+          if [[ "$DAY" < "2026-11-01" ]]; then
+            echo "SKIP=historical videos excluded"
+            exit 0
+          fi
+          for suffix in .mp4 .caption.txt .sources.json; do
+            test -s "videos/$DAY$suffix" || { echo "SKIP=missing new package videos/$DAY$suffix"; exit 0; }
+          done
+          mkdir -p .buffer-queue-reservations
+          if test -e ".buffer-queue-reservations/$DAY"; then
+            echo "SKIP=already reserved; no duplicate request"
+            exit 0
+          fi
+          printf 'RESERVED=%s\nCHANNEL=tuperrofelizofficial\n' "$DAY" > ".buffer-queue-reservations/$DAY"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ".buffer-queue-reservations/$DAY"
+          git commit -m "Reserve Buffer queue tuperrofelizofficial $DAY"
+          git push origin HEAD:main
+          echo "reserved=true" >> "$GITHUB_OUTPUT"
+      - name: Queue new video in Buffer (never historical)
+        if: steps.reserve.outputs.reserved == 'true'
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          VIDEO_DATE: ${{ steps.reserve.outputs.day }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,pathlib,sys,urllib.request,urllib.error
+          key=os.environ.get("BUFFER_API_KEY")
+          if not key: sys.exit("FAIL: Buffer key missing; reservation retained to prevent duplicates")
+          day=os.environ["VIDEO_DATE"]
+          base=pathlib.Path("videos")/day
+          caption=pathlib.Path(str(base)+".caption.txt").read_text(encoding="utf-8").strip()
+          if not caption: sys.exit("FAIL: empty caption")
+          json.loads(pathlib.Path(str(base)+".sources.json").read_text(encoding="utf-8"))
+          url="https://raw.githubusercontent.com/ii2onie2/tu-perro-feliz/main/videos/"+day+".mp4"
+          req=urllib.request.Request(url,headers={"Range":"bytes=0-31","User-Agent":"BufferDailyQueue/1.0"})
+          with urllib.request.urlopen(req,timeout=25) as resp:
+              if resp.status not in (200,206) or b"ftyp" not in resp.read(32): sys.exit("FAIL: public MP4 unavailable")
+          query="""mutation CreateQueuedVideo($text: String!, $url: String!) {
+            createPost(input: {
+              text: $text
+              channelId: "6ae072482f1f5ed648e82143"
+              schedulingType: automatic
+              mode: addToQueue
+              saveToDraft: false
+              assets: [{video: {url: $url}}]
+            }) {
+              ... on PostActionSuccess { post { id text } }
+              ... on MutationError { message }
+            }
+          }"""
+          req=urllib.request.Request("https://api.buffer.com",data=json.dumps({"query":query,"variables":{"text":caption,"url":url}}).encode(),headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"},method="POST")
+          try:
+              with urllib.request.urlopen(req,timeout=30) as response: data=json.load(response)
+          except urllib.error.HTTPError as exc: sys.exit("FAIL: Buffer HTTP "+str(exc.code))
+          if data.get("errors"): sys.exit("FAIL: Buffer GraphQL "+str([e.get("message") for e in data["errors"]]))
+          action=(data.get("data") or {}).get("createPost") or {}
+          post=action.get("post") or {}
+          if not post.get("id"): sys.exit("FAIL: Buffer did not confirm queued post "+str(action.get("message","unknown")))
+          print("BUFFER_QUEUE_CREATED=YES")
+          print("BUFFER_POST_ID="+str(post["id"]))
+          print("CHANNEL=tuperrofelizofficial")
+          print("TIKTOK_PUBLICATION_CONFIRMED=NO")
+          PY
