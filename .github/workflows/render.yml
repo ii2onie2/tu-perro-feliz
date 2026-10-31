@@ -81,6 +81,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Enforce editorial and media render preflight
+        if: steps.content.outputs.files != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t FILES < render_list.txt
+          python3 scripts/render_media_preflight.py "${FILES[@]}"
+
       - name: Validate content quality
         if: steps.content.outputs.files != ''
         shell: bash
