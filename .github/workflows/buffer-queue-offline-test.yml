@@ -1,0 +1,31 @@
+name: Offline duplicate guard verification
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/buffer-daily-queue.yml'
+      - '.github/workflows/buffer-queue-offline-test.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check safety gates without Buffer credentials
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path(".github/workflows/buffer-daily-queue.yml").read_text()
+          checks={
+              "future_only": 'if [[ "$DAY" < "2026-11-01" ]]' in s,
+              "package_required": 'videos/$DAY$suffix' in s,
+              "duplicate_guard": 'if test -e ".buffer-queue-reservations/$DAY"' in s,
+              "reservation_precedes_api": s.index("git push origin HEAD:main") < s.index("https://api.buffer.com"),
+              "queue_not_draft": "saveToDraft: false" in s,
+          }
+          for name,passed in checks.items():
+              print(name, "PASS" if passed else "FAIL")
+          assert all(checks.values())
+          print("BUFFER_MUTATIONS=0")
+          PY
