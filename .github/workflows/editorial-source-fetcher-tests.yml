@@ -1,0 +1,32 @@
+name: Editorial source fetcher offline tests
+on:
+  pull_request:
+    paths:
+      - 'scripts/editorial_source_fetcher.py'
+      - '.github/workflows/editorial-source-fetcher-tests.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile and negative-case checks without network
+        run: |
+          python -m py_compile scripts/editorial_source_fetcher.py
+          python - <<'PY'
+          import importlib.util
+          s=importlib.util.spec_from_file_location("f","scripts/editorial_source_fetcher.py")
+          m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+          for url in ("http://example.org","https://localhost/","https://127.0.0.1/"):
+              try:
+                  m.validate_url(url)
+              except (ValueError,OSError):
+                  continue
+              raise AssertionError("unsafe URL accepted")
+          print("SOURCE_FETCHER_NEGATIVE_TESTS=PASS")
+          PY
