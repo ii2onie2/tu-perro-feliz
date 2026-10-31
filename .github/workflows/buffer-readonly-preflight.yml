@@ -52,7 +52,7 @@ jobs:
                   print("TIKTOK_CHANNEL=" + json.dumps({"name": name, "id": channel.get("id")}, ensure_ascii=False))
                   found.add(name.lower().lstrip("@"))
           print("TIKTOK_CHANNEL_COUNT=" + str(len(found)))
-          if "tuperrofelizofficial" not in found:
+          if "tuperrofeliz" not in found:
               sys.exit("FAIL: Tu Perro Feliz TikTok channel not connected to Buffer")
           print("MODE=READ_ONLY")
           print("POSTS_CREATED=0")
