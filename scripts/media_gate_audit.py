@@ -31,7 +31,7 @@ def audit(day, channel):
             errors.append("Invalid manifest entry")
             continue
         name = media.get("filename")
-        if not isinstance(name, str) or not re.fullmatch(r"media/images/[A-Za-z0-9_.-]+\\.(jpg|jpeg|png)", name):
+        if not isinstance(name, str) or not re.fullmatch(r"media/images/[A-Za-z0-9_.-]+\.(jpg|jpeg|png)", name):
             errors.append("Invalid local media path: " + repr(name))
             continue
         if name in by_path:
