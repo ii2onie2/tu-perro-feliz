@@ -1,0 +1,40 @@
+name: Editorial evidence metadata gate
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: Date YYYY-MM-DD of verified editorial package
+        required: true
+  pull_request:
+    paths:
+      - 'scripts/editorial_evidence_gate.py'
+      - '.github/workflows/editorial-evidence-gate.yml'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax and isolated negative-case tests
+        run: |
+          python -m py_compile scripts/editorial_evidence_gate.py
+          python - <<'PY'
+          import importlib.util
+          spec=importlib.util.spec_from_file_location("gate","scripts/editorial_evidence_gate.py")
+          module=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          assert not module.public_https("http://example.org/")
+          assert not module.public_https("https://127.0.0.1/")
+          assert not module.public_https("https://localhost/")
+          assert not module.public_https("https://user:password@example.org/")
+          print("EVIDENCE_GATE_NEGATIVE_TESTS=PASS")
+          PY
+      - name: Check requested daily package without publication
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DATE: ${{ inputs.date }}
+        run: python scripts/editorial_evidence_gate.py --profile tu-perro --date "$DATE"
