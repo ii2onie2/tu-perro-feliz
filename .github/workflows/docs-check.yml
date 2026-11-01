@@ -1,0 +1,47 @@
+name: Docs check
+on:
+  pull_request:
+    paths:
+      - README.md
+      - GROWTH_ENGINE.md
+      - .github/workflows/docs-check.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Buffer documentation guardrails
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          docs = [p for p in (Path('README.md'), Path('GROWTH_ENGINE.md')) if p.is_file()]
+          if not docs:
+              raise SystemExit('FAIL: no documentation found')
+          combined = '\n'.join(p.read_text(encoding='utf-8') for p in docs)
+          forbidden = [
+              r'confirmed by (the )?owner',
+              r'confirm[eé]es? par le propri[eé]taire',
+              r'confirmad[ao]s? por el propietario',
+              r'la conexi[oó]n de (las )?dos cuentas.{0,60}confirmad',
+              r'la connexion des deux cha[iî]nes.{0,60}confirm',
+          ]
+          for pattern in forbidden:
+              if re.search(pattern, combined, re.IGNORECASE):
+                  raise SystemExit(f'FAIL: unsupported Buffer claim: {pattern}')
+          readme = Path('README.md').read_text(encoding='utf-8')
+          if 'Tal Día Como Hoy' in readme:
+              required = ('NON VÉRIFIÉ', 'GraphQL', 'autorisation du propriétaire', "n'active aucune automatisation")
+          elif 'Tu Perro Feliz' in readme:
+              required = ('NO VERIFICADO', 'GraphQL', 'autorización expresa', 'No activa ninguna automatización')
+          else:
+              raise SystemExit('FAIL: unknown project README')
+          for token in required:
+              if token not in readme:
+                  raise SystemExit(f'FAIL: missing README guardrail: {token}')
+          print('PASS: documentary guardrails verified; Buffer connectivity NOT verified')
+          PY
