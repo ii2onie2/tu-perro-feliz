@@ -31,6 +31,23 @@ jobs:
           for suffix in .mp4 .caption.txt .sources.json; do
             test -s "videos/$DAY$suffix" || { echo "SKIP=missing new package videos/$DAY$suffix"; exit 0; }
           done
+          python3 - "$DAY" <<'PY'
+          import json, pathlib, sys
+          content = pathlib.Path("content") / (sys.argv[1] + ".json")
+          if not content.is_file():
+              raise SystemExit("BLOCKED: missing editorial content")
+          data = json.loads(content.read_text(encoding="utf-8"))
+          for key, expected in (("editorial_status","APPROVED"),("media_rights_status","VERIFIED"),("publishing_status","READY")):
+              if data.get(key) != expected:
+                  raise SystemExit("BLOCKED: approval missing " + key)
+          media = data.get("media")
+          if not isinstance(media,list) or not media:
+              raise SystemExit("BLOCKED: missing reviewed media")
+          for item in media:
+              if not isinstance(item,dict) or not (item.get("commons_title") or (item.get("path") and item.get("sha256") and item.get("rights_review")=="PASS" and item.get("visual_review")=="PASS")):
+                  raise SystemExit("BLOCKED: unreviewed media")
+          print("BUFFER_EDITORIAL_GATE=PASS_INPUT_ONLY")
+          PY
           python3 scripts/buffer_duplicate_guard.py --date "$DAY"
           mkdir -p .buffer-queue-reservations
           if test -e ".buffer-queue-reservations/$DAY"; then
