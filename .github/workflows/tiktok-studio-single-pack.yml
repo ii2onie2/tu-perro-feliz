@@ -1,0 +1,37 @@
+name: TikTok Studio Single Video Pack
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: Approved rendered video date (YYYY-MM-DD)
+        required: true
+permissions:
+  contents: read
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and bundle one video
+        env:
+          DAY: ${{ inputs.date }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$DAY" =~ ^20[0-9]{2}-[0-9]{2}-[0-9]{2}$ ]] || exit 1
+          mkdir -p studio-pack
+          for SUFFIX in mp4 caption.txt sources.json; do
+            test -s "videos/$DAY.$SUFFIX"
+            cp "videos/$DAY.$SUFFIX" studio-pack/
+          done
+          if [ -s "videos/$DAY.credits.json" ]; then
+            cp "videos/$DAY.credits.json" studio-pack/
+          fi
+          printf '%s\n' 'Review all media rights and claims. Upload and publish manually in TikTok Studio. This workflow never posts to TikTok.' > studio-pack/README.txt
+      - name: Upload manual publishing pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: tu-perro-feliz-studio-single-${{ inputs.date }}
+          path: studio-pack/
+          if-no-files-found: error
+          retention-days: 30
