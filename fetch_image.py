@@ -1,72 +1,62 @@
 import sys
 import json
 import urllib.request
-import urllib.parse
 import pathlib
+import os
+import base64
+import requests
 
-# URL de secours : La Reddition de Bailén (peinture historique espagnole, Domaine Public)
-FALLBACK_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/La_rendici%C3%B3n_de_Bail%C3%A9n.jpg/1280px-La_rendici%C3%B3n_de_Bail%C3%A9n.jpg"
+FALLBACK_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Collage_of_Nine_Dogs.jpg/1280px-Collage_of_Nine_Dogs.jpg"
 
-def get_image_url(query):
-    search_url = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({
-        "action": "query", "format": "json", "generator": "search",
-        "gsrsearch": query + " filetype:bitmap", "gsrnamespace": "6", "gsrlimit": "5",
-        "prop": "imageinfo", "iiprop": "url|extmetadata"
-    })
+def generate_with_gemini(prompt, output_path):
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key: return False
     
-    req = urllib.request.Request(search_url, headers={'User-Agent': 'TalDiaBot/1.0'})
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key={api_key}"
+    payload = {
+        "contents": [{
+            "parts": [{"text": f"Genera una foto realista vertical (formato 9:16) de un perro sobre: {prompt}. Sin texto."}]
+        }]
+    }
+    
     try:
-        with urllib.request.urlopen(req) as response:
-            data = json.load(response)
-            
-        pages = data.get("query", {}).get("pages", {})
-        for page in pages.values():
-            info = page.get("imageinfo", [{}])[0]
-            ext = info.get("extmetadata", {})
-            license_short = ext.get("LicenseShortName", {}).get("value", "")
-            
-            if "Public domain" in license_short or "CC0" in license_short:
-                return info.get("url")
+        response = requests.post(url, json=payload)
+        data = response.json()
+        for part in data["candidates"][0]["content"]["parts"]:
+            if "inlineData" in part:
+                img_data = base64.b64decode(part["inlineData"]["data"])
+                with open(output_path, "wb") as f:
+                    f.write(img_data)
+                print("✅ Image générée par Gemini.")
+                return True
+        return False
     except Exception as e:
-        print(f"Erreur lors de la recherche : {e}")
-        
-    return None
+        print(f"❌ Erreur Gemini : {e}")
+        return False
 
-def download_and_update(json_path, image_url):
+def download_fallback(image_url, output_path):
+    req = urllib.request.Request(image_url, headers={'User-Agent': 'TalDiaBot/1.0'})
+    with urllib.request.urlopen(req) as response, open(output_path, 'wb') as out_file:
+        out_file.write(response.read())
+    return True
+
+def update_json(json_path, image_path):
     path = pathlib.Path(json_path)
     data = json.loads(path.read_text(encoding="utf-8"))
-    
-    media_dir = pathlib.Path("media")
-    media_dir.mkdir(exist_ok=True)
-    image_path = media_dir / "image_01.jpg"
-    
-    print(f"Téléchargement : {image_url}")
-    req = urllib.request.Request(image_url, headers={'User-Agent': 'TalDiaBot/1.0'})
-    try:
-        with urllib.request.urlopen(req) as response, open(image_path, 'wb') as out_file:
-            out_file.write(response.read())
-            
-        data["media"] = [{"path": str(image_path)}]
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        print("✅ JSON mis à jour avec le chemin de l'image.")
-        return True
-    except Exception as e:
-        print(f"❌ Erreur de téléchargement : {e}")
-        return False
+    data["media"] = [{"path": str(image_path)}]
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 if __name__ == "__main__":
     json_file = sys.argv[1]
     with open(json_file, "r", encoding="utf-8") as f:
         data = json.load(f)
     
-    prompt = data.get("media_prompt", "history painting")
-    print(f"Recherche d'image pour : {prompt}")
+    prompt = data.get("media_prompt", "un perro feliz")
+    media_dir = pathlib.Path("media")
+    media_dir.mkdir(exist_ok=True)
+    image_path = media_dir / "image_01.jpg"
     
-    image_url = get_image_url(prompt)
+    if not generate_with_gemini(prompt, image_path):
+        download_fallback(FALLBACK_URL, image_path)
     
-    if not image_url:
-        print("⚠️ Aucune image trouvée, utilisation de l'image de secours.")
-        image_url = FALLBACK_URL
-        
-    if not download_and_update(json_file, image_url):
-        sys.exit(1)
+    update_json(json_file, image_path)
