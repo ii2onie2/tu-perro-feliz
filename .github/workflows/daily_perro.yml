@@ -1,0 +1,85 @@
+name: Daily Dog Video (Tu Perro)
+
+on:
+  schedule:
+    - cron: '30 6 * * *' # Décalé de 30 min par rapport à Tal Día pour ne pas surcharger
+  workflow_dispatch:
+
+jobs:
+  generate-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core wget git build-essential autoconf automake libtool pkg-config
+          pip install -r requirements.txt
+
+      - name: Install espeak-ng from source
+        run: |
+          git clone --depth 1 https://github.com/rhasspy/espeak-ng.git
+          cd espeak-ng
+          ./autogen.sh && ./configure --prefix=/usr && make -j$(nproc) && sudo make install && sudo ldconfig
+
+      - name: Install Piper TTS
+        run: |
+          wget https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz
+          tar -xzf piper_linux_x86_64.tar.gz
+          sudo cp piper/piper /usr/local/bin/
+          sudo cp piper/libpiper_phonemize.so* /usr/lib/ 2>/dev/null || true
+          sudo cp piper/libonnxruntime.so* /usr/lib/ 2>/dev/null || true
+          sudo ldconfig
+
+      - name: Download Voice Model
+        run: |
+          mkdir -p voices
+          wget -O voices/es_ES-sharvard-medium.onnx "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx"
+          wget -O voices/es_ES-sharvard-medium.onnx.json "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx.json"
+
+      - name: Install Ollama
+        run: curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Start Ollama
+        run: |
+          ollama serve &
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:11434/api/tags > /dev/null; then break; fi
+            sleep 2
+          done
+          ollama pull llama3.2:3b
+
+      - name: Set Content File Name
+        run: echo "CONTENT_FILE=content/episode_$(date +%Y%m%d).json" >> $GITHUB_ENV
+
+      - name: Generate Content
+        run: python generer_script_perro.py "Comment prendre soin de son chien" "$CONTENT_FILE"
+
+      - name: Fetch Image
+        run: python fetch_image.py "$CONTENT_FILE"
+
+      - name: Render Video
+        env:
+          PIPER_VOICE_MODEL: "voices/es_ES-sharvard-medium.onnx"
+        run: python scripts/render.py --content "$CONTENT_FILE" --out final_video
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v-$(date +%Y%m%d-%H%M%S)"
+          gh release create "$TAG" final_video/video.mp4 --title "Épisode Chien $(date +%d/%m/%Y)"
+          echo "VIDEO_URL=${{ github.server_url }}/${{ github.repository }}/releases/download/$TAG/video.mp4" >> $GITHUB_ENV
+
+      - name: Publish to Buffer
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+        run: |
+          python publier.py perro "Découvrez notre conseil du jour. #TuPerroFeliz #Perros" "$VIDEO_URL"
