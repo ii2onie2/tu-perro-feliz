@@ -2,7 +2,9 @@ name: Daily Dog Video (Tu Perro)
 
 on:
   schedule:
-    - cron: '30 6 * * *'
+    - cron: '30 7 * * *'
+    - cron: '30 14 * * *'
+    - cron: '30 18 * * *'
   workflow_dispatch:
 
 jobs:
