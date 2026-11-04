@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    timeout-minutes: 15 # Sécurité : annule si ça bloque plus de 15 min
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -51,19 +51,11 @@ jobs:
       - name: Start Ollama and pull model
         run: |
           ollama serve &
-          echo "Attente du démarrage d'Ollama..."
           for i in $(seq 1 30); do
-            if curl -s http://localhost:11434/api/tags > /dev/null; then
-              echo "Serveur Ollama prêt."
-              break
-            fi
+            if curl -s http://localhost:11434/api/tags > /dev/null; then break; fi
             sleep 2
           done
-          echo "Téléchargement du modèle..."
           ollama pull llama3.2:3b
-          echo "Test de génération..."
-          curl -X POST http://localhost:11434/api/generate -d '{"model": "llama3.2:3b", "prompt": "Di hola", "stream": false}' | head -c 100
-          echo ""
 
       - name: Set Content File Name
         run: echo "CONTENT_FILE=content/episode_$(date +%Y%m%d).json" >> $GITHUB_ENV
@@ -91,4 +83,4 @@ jobs:
         env:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
         run: |
-          python publier.py perro "Découvrez notre conseil du jour. #TuPerroFeliz #Perros" "$VIDEO_URL"
+          python publier.py perro "$CONTENT_FILE" "$VIDEO_URL"
