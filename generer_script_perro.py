@@ -1,6 +1,7 @@
 import sys
 import json
 import ollama
+import datetime
 from pathlib import Path
 
 schema = {
@@ -16,29 +17,34 @@ schema = {
     "required": ["date", "hook", "narration", "caption", "hashtags", "media_prompt"]
 }
 
-def generer_contenu(sujet):
-    print(f"Génération du script chien pour : {sujet}...")
-    prompt_system = """Eres un experto en perros y redactor para el canal de TikTok español "Tu Perro Feliz".
-Tu objetivo es crear un guion de 60 segundos con un consejo útil, cariñoso y práctico sobre perros.
+def generer_contenu(sujet, format_type):
+    print(f"Génération du script ({format_type}) pour : {sujet}...")
+    
+    if format_type == "education":
+        prompt_system = "Eres un educador canino. Crea un guion de 60 segundos con un consejo práctico de educación o obediencia."
+    elif format_type == "sante":
+        prompt_system = "Eres un veterinario. Crea un guion de 60 segundos con un consejo de salud, alimentación o cuidado para perros."
+    else: # comportement
+        prompt_system = "Eres un etólogo canino. Crea un guion de 60 segundos para explicar un comportamiento curioso o cómo manejar un problema de conducta."
 
-REGLAS:
-- La narración debe estar en español y tener unas 120-150 palabras.
-- Debe empezar con un gancho fuerte y terminar con una pregunta para la comunidad.
-- El gancho (hook) debe ser impactante.
-- Para el campo media_prompt, encuentra palabras clave en INGLÉS para buscar una foto de perro (ej: "happy golden retriever playing")."""
+    prompt_system += """
+    REGLAS:
+    - La narración debe estar en español y tener unas 120-150 palabras.
+    - El gancho (hook) debe ser impactante y captar la atención de inmediato.
+    - Los hashtags deben ser relevantes.
+    - Para media_prompt, encuentra palabras clave en INGLÉS para buscar una foto de perro (ej: "happy golden retriever")."""
 
     try:
         response = ollama.chat(
             model='llama3.2:3b',
             messages=[
                 {'role': 'system', 'content': prompt_system},
-                {'role': 'user', 'content': f'Génère le script pour le sujet : {sujet}'}
+                {'role': 'user', 'content': f'Génère le script pour : {sujet}'}
             ],
             format=schema,
-            options={'temperature': 0.7}
+            options={'temperature': 0.8}
         )
-        contenu = json.loads(response['message']['content'])
-        return contenu
+        return json.loads(response['message']['content'])
     except Exception as e:
         print(f"\n❌ ERREUR OLLAMA : {e}\n")
         sys.exit(1)
@@ -62,7 +68,20 @@ def sauvegarder_json(data, nom_fichier):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python generer_script_perro.py <sujet> <nom_fichier.json>")
         sys.exit(1)
-    data = generer_contenu(sys.argv[1])
+        
+    heure = datetime.datetime.now(datetime.timezone.utc).hour
+    
+    if heure < 10:
+        format_type = "education"
+        sujet = "Un conseil d'éducation canine"
+    elif heure < 16:
+        format_type = "sante"
+        sujet = "Un conseil de santé ou d'alimentation"
+    else:
+        format_type = "comportement"
+        sujet = "Comprendre le comportement de son chien"
+        
+    print(f"Heure UTC : {heure}h. Format choisi : {format_type}")
+    data = generer_contenu(sujet, format_type)
     sauvegarder_json(data, sys.argv[2])
