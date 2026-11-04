@@ -66,6 +66,8 @@ jobs:
         run: python generer_script_perro.py "Comment prendre soin de son chien" "$CONTENT_FILE"
 
       - name: Fetch Image
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python fetch_image.py "$CONTENT_FILE"
 
       - name: Render Video
