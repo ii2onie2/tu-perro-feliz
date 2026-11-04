@@ -1,82 +1,92 @@
 import sys
 import json
+import pathlib
+import os
+import base64
+import requests
 import urllib.request
 import urllib.parse
-import pathlib
 
-# URL de secours (on garde le collage de chiens)
 FALLBACK_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Collage_of_Nine_Dogs.jpg/1280px-Collage_of_Nine_Dogs.jpg"
+MODEL_NAME = "gemini-2.5-flash-image" 
 
-def get_images_urls(query, limit=3):
-    urls = []
-    search_url = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({
-        "action": "query", "format": "json", "generator": "search",
-        "gsrsearch": query + " dog filetype:bitmap", "gsrnamespace": "6", "gsrlimit": "15", # On cherche 15 images pour en avoir 3 bonnes
-        "prop": "imageinfo", "iiprop": "url|extmetadata"
-    })
+def generate_with_gemini(prompt, output_path):
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("⚠️ Pas de clé GEMINI_API_KEY.")
+        return False
     
-    req = urllib.request.Request(search_url, headers={'User-Agent': 'TuPerroBot/1.0'})
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent?key={api_key}"
+    payload = {
+        "contents": [{"parts": [{"text": f"Genera una foto realista y colorida (formato vertical 9:16) de un perro feliz sobre: {prompt}. Sin texto en la imagen."}]}],
+        "generationConfig": {"responseModalities": ["IMAGE"]}
+    }
+    
+    print(f"Appel à l'API Gemini ({MODEL_NAME})...")
     try:
-        with urllib.request.urlopen(req) as response:
-            data = json.load(response)
+        response = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
+        
+        if response.status_code != 200:
+            print(f"❌ Code HTTP {response.status_code} : {response.text[:200]}")
+            return False
             
-        pages = data.get("query", {}).get("pages", {})
-        for page in pages.values():
-            if len(urls) >= limit:
-                break
-            info = page.get("imageinfo", [{}])[0]
-            ext = info.get("extmetadata", {})
-            license_short = ext.get("LicenseShortName", {}).get("value", "")
+        data = response.json()
+        candidates = data.get("candidates", [])
+        if not candidates:
+            print("❌ Aucun candidat dans la réponse.")
+            return False
             
-            if "Public domain" in license_short or "CC0" in license_short:
-                urls.append(info.get("url"))
+        parts = candidates[0].get("content", {}).get("parts", [])
+        for part in parts:
+            if "inlineData" in part:
+                img_data = base64.b64decode(part["inlineData"]["data"])
+                with open(output_path, "wb") as f:
+                    f.write(img_data)
+                print("✅ Image générée par Gemini Nano Banana.")
+                return True
+                
+        print("❌ Gemini n'a pas renvoyé d'image dans la réponse.")
+        return False
     except Exception as e:
-        print(f"Erreur recherche Wikimedia: {e}")
-    return urls
+        print(f"❌ Erreur API Gemini : {e}")
+        return False
 
-def download_and_update(json_path, image_urls):
+def download_fallback(output_path):
+    print(f"Téléchargement de l'image de secours : {FALLBACK_URL}")
+    try:
+        req = urllib.request.Request(FALLBACK_URL, headers={'User-Agent': 'TuPerroBot/1.0'})
+        with urllib.request.urlopen(req) as response, open(output_path, 'wb') as out_file:
+            out_file.write(response.read())
+        print("✅ Image de secours téléchargée.")
+        return True
+    except Exception as e:
+        print(f"❌ Impossible de télécharger l'image de secours : {e}")
+        return False
+
+def update_json(json_path, image_path):
     path = pathlib.Path(json_path)
     data = json.loads(path.read_text(encoding="utf-8"))
-    media_dir = pathlib.Path("media")
-    media_dir.mkdir(exist_ok=True)
-    
-    media_entries = []
-    for i, url in enumerate(image_urls):
-        image_path = media_dir / f"image_0{i+1}.jpg"
-        print(f"Téléchargement de l'image {i+1} : {url}")
-        req = urllib.request.Request(url, headers={'User-Agent': 'TuPerroBot/1.0'})
-        try:
-            with urllib.request.urlopen(req) as response, open(image_path, 'wb') as out_file:
-                out_file.write(response.read())
-            media_entries.append({"path": str(image_path)})
-        except Exception as e:
-            print(f"❌ Erreur téléchargement image {i+1} : {e}")
-            
-    if not media_entries:
-        print("⚠️ Aucune image téléchargée, on utilise le fallback.")
-        image_path = media_dir / "image_01.jpg"
-        req = urllib.request.Request(FALLBACK_URL, headers={'User-Agent': 'TuPerroBot/1.0'})
-        with urllib.request.urlopen(req) as response, open(image_path, 'wb') as out_file:
-            out_file.write(response.read())
-        media_entries = [{"path": str(image_path)}]
-        
-    data["media"] = media_entries
+    data["media"] = [{"path": str(image_path)}]
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"✅ JSON mis à jour avec {len(media_entries)} images.")
 
 if __name__ == "__main__":
     json_file = sys.argv[1]
     with open(json_file, "r", encoding="utf-8") as f:
         data = json.load(f)
     
-    prompt = data.get("media_prompt", "happy dog")
-    print(f"Recherche de 3 images pour : {prompt}")
+    prompt = data.get("media_prompt", "un perro jugando en el parque")
     
-    image_urls = get_images_urls(prompt, limit=3)
+    media_dir = pathlib.Path("media")
+    media_dir.mkdir(exist_ok=True)
+    image_path = media_dir / "image_01.jpg"
     
-    if len(image_urls) < 3:
-        print("⚠️ Moins de 3 images trouvées, on complète avec le fallback.")
-        while len(image_urls) < 3:
-            image_urls.append(FALLBACK_URL)
-            
-    download_and_update(json_file, image_urls)
+    # 1. ON ESSAIE GEMINI EN PREMIER
+    success = generate_with_gemini(prompt, image_path)
+    
+    # 2. Si Gemini échoue, on prend l'image de secours (Wikimedia)
+    if not success:
+        print("Bascule sur l'image de secours (Wikimedia).")
+        download_fallback(image_path)
+    
+    update_json(json_file, image_path)
+    print("✅ JSON mis à jour avec le chemin de l'image.")
