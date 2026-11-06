@@ -20,10 +20,19 @@ jobs:
         with:
           python-version: '3.11'
 
+      # NOUVEAU : Téléchargement de FFmpeg statique (instantané) au lieu d'apt-get
+      - name: Download static FFmpeg
+        run: |
+          wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+          tar xf ffmpeg-release-amd64-static.tar.xz
+          sudo mv ffmpeg-*-amd64-static/ffmpeg /usr/local/bin/
+          sudo mv ffmpeg-*-amd64-static/ffprobe /usr/local/bin/
+
       - name: Install dependencies
         run: |
+          # On garde apt-get uniquement pour les polices et build-essential (plus léger)
           sudo apt-get update
-          sudo apt-get install -y ffmpeg fonts-dejavu-core wget git build-essential autoconf automake libtool pkg-config
+          sudo apt-get install -y fonts-dejavu-core wget git build-essential autoconf automake libtool pkg-config
           pip install -r requirements.txt
 
       - name: Install espeak-ng from source
@@ -60,14 +69,12 @@ jobs:
           ollama pull llama3.2:3b
 
       - name: Set Content File Name
-        run: echo "CONTENT_FILE=content/episode_$(date +%Y%m%d).json" >> $GITHUB_ENV
+        run: echo "CONTENT_FILE=content/episode_$(date +%Y%m%d_%H%M%S).json" >> $GITHUB_ENV
 
       - name: Generate Content
-        run: python generer_script_perro.py "Comment prendre soin de son chien" "$CONTENT_FILE"
+        run: python generer_script_perro.py "$CONTENT_FILE"
 
       - name: Fetch Image
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python fetch_image.py "$CONTENT_FILE"
 
       - name: Render Video
