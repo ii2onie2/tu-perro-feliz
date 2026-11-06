@@ -1,73 +1,60 @@
 import sys
 import json
-import urllib.request
-import urllib.parse
 import pathlib
+import random
+import shutil
 
-# URL de secours (une seule belle image de chien)
-FALLBACK_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Golde33443.jpg/1280px-Golde33443.jpg"
-
-def get_best_image_url(query):
-    search_url = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({
-        "action": "query", "format": "json", "generator": "search",
-        "gsrsearch": query + " dog filetype:bitmap", "gsrnamespace": "6", "gsrlimit": "10",
-        "prop": "imageinfo", "iiprop": "url|extmetadata|size"
-    })
+def get_random_dog_image():
+    assets_dir = pathlib.Path("assets/dogs")
+    if not assets_dir.exists():
+        print("❌ Dossier assets/dogs introuvable.")
+        return None
+        
+    images = list(assets_dir.glob("*.jpg"))
+    if not images:
+        print("❌ Aucune image dans assets/dogs.")
+        return None
     
-    req = urllib.request.Request(search_url, headers={'User-Agent': 'TuPerroBot/1.0'})
-    try:
-        with urllib.request.urlopen(req) as response:
-            data = json.load(response)
-            
-        pages = data.get("query", {}).get("pages", {})
-        for page in pages.values():
-            info = page.get("imageinfo", [{}])[0]
-            ext = info.get("extmetadata", {})
-            license_short = ext.get("LicenseShortName", {}).get("value", "")
-            
-            # On ne garde que les images libres et assez grandes (au moins 800px)
-            width = info.get("width", 0)
-            if ("Public domain" in license_short or "CC0" in license_short) and width >= 800:
-                return info.get("url")
-    except Exception as e:
-        print(f"Erreur recherche Wikimedia: {e}")
-    return None
+    # Lire la dernière image utilisée pour éviter les doublons
+    last_image_file = pathlib.Path("last_image.txt")
+    last_image = ""
+    if last_image_file.exists():
+        last_image = last_image_file.read_text().strip()
+    
+    # Filtrer pour éviter la dernière image
+    candidates = [img for img in images if img.name != last_image]
+    if not candidates:
+        candidates = images
+        
+    selected = random.choice(candidates)
+    
+    # Sauvegarder le nom pour la prochaine fois
+    last_image_file.write_text(selected.name)
+    
+    print(f"✅ Image locale sélectionnée : {selected.name}")
+    return selected
 
-def download_and_update(json_path, image_url):
+def update_json(json_path, image_path):
     path = pathlib.Path(json_path)
     data = json.loads(path.read_text(encoding="utf-8"))
+    
     media_dir = pathlib.Path("media")
     media_dir.mkdir(exist_ok=True)
-    image_path = media_dir / "image_01.jpg"
+    final_path = media_dir / "image_01.jpg"
     
-    print(f"Téléchargement de l'image : {image_url}")
-    req = urllib.request.Request(image_url, headers={'User-Agent': 'TuPerroBot/1.0'})
-    try:
-        with urllib.request.urlopen(req) as response, open(image_path, 'wb') as out_file:
-            out_file.write(response.read())
-        
-        # On ne met QU'UNE SEULE image dans le JSON pour éviter l'effet collage
-        data["media"] = [{"path": str(image_path)}]
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        print("✅ JSON mis à jour avec une seule image.")
-        return True
-    except Exception as e:
-        print(f"❌ Erreur téléchargement : {e}")
-        return False
+    shutil.copy(image_path, final_path)
+    
+    data["media"] = [{"path": str(final_path)}]
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    print("✅ JSON mis à jour avec l'image locale.")
 
 if __name__ == "__main__":
     json_file = sys.argv[1]
-    with open(json_file, "r", encoding="utf-8") as f:
-        data = json.load(f)
     
-    prompt = data.get("media_prompt", "happy dog")
-    print(f"Recherche d'une seule image pour : {prompt}")
+    image_path = get_random_dog_image()
     
-    image_url = get_best_image_url(prompt)
-    
-    if not image_url:
-        print("⚠️ Aucune image trouvée, utilisation de l'image de secours.")
-        image_url = FALLBACK_URL
-        
-    if not download_and_update(json_file, image_url):
+    if image_path:
+        update_json(json_file, image_path)
+    else:
+        print("❌ Impossible de trouver une image. Arrêt.")
         sys.exit(1)
