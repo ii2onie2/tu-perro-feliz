@@ -20,12 +20,13 @@ jobs:
         with:
           python-version: '3.11'
 
+      # NOUVELLE ÉTAPE : FFmpeg depuis BtbN (GitHub)
       - name: Download static FFmpeg
         run: |
-          wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-          tar xf ffmpeg-release-amd64-static.tar.xz
-          sudo mv ffmpeg-*-amd64-static/ffmpeg /usr/local/bin/
-          sudo mv ffmpeg-*-amd64-static/ffprobe /usr/local/bin/
+          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-04-30-13-44/ffmpeg-n7.1.3-46-g957b06a788-linux64-gpl-7.1.tar.xz
+          tar -xf ffmpeg-n7.1.3-46-g957b06a788-linux64-gpl-7.1.tar.xz
+          sudo cp ffmpeg-n7.1.3-46-g957b06a788-linux64-gpl-7.1/bin/ffmpeg /usr/local/bin/
+          sudo cp ffmpeg-n7.1.3-46-g957b06a788-linux64-gpl-7.1/bin/ffprobe /usr/local/bin/
 
       - name: Install dependencies
         run: |
@@ -65,12 +66,6 @@ jobs:
             sleep 2
           done
           ollama pull llama3.2:3b
-          
-      - name: Test Ollama
-        run: |
-          echo "Test de génération avec Ollama..."
-          curl -X POST http://localhost:11434/api/generate -d '{"model": "llama3.2:3b", "prompt": "Di hola", "stream": false}' | head -c 200
-          echo ""
 
       - name: Set Content File Name
         run: echo "CONTENT_FILE=content/episode_$(date +%Y%m%d_%H%M%S).json" >> $GITHUB_ENV
