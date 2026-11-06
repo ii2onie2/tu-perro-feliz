@@ -17,50 +17,48 @@ schema = {
     "required": ["date", "hook", "narration", "caption", "hashtags", "media_prompt"]
 }
 
-def generer_contenu(sujet, format_type):
-    print(f"Génération du script ({format_type}) pour : {sujet}...")
+def generer_contenu(format_type):
+    print(f"Génération du script ({format_type})...")
     
     if format_type == "education":
-        prompt_system = "Eres un educador canino. Crea un guion de 60 segundos con un consejo práctico de educación o obediencia."
+        prompt_system = "Eres un educador canino. Crea un guion de 60 segundos con un consejo práctico de educación."
     elif format_type == "sante":
-        prompt_system = "Eres un veterinario. Crea un guion de 60 segundos con un consejo de salud, alimentación o cuidado para perros."
-    else: # comportement
-        prompt_system = "Eres un etólogo canino. Crea un guion de 60 segundos para explicar un comportamiento curioso o cómo manejar un problema de conducta."
+        prompt_system = "Eres un veterinario. Crea un guion de 60 segundos con un consejo de salud."
+    else:
+        prompt_system = "Eres un etólogo canino. Crea un guion de 60 segundos para explicar un comportamiento."
 
-    prompt_system += """
-    REGLAS:
-    - La narración debe estar en español y tener unas 120-150 palabras.
-    - El gancho (hook) debe ser impactante y captar la atención de inmediato.
-    - Los hashtags deben ser relevantes.
-    - Para media_prompt, encuentra palabras clave en INGLÉS para buscar una foto de perro (ej: "happy golden retriever")."""
+    prompt_system += "\nREGLA: La narración debe estar en español y tener unas 120-150 palabras. Devuelve el JSON exacto."
 
     try:
         response = ollama.chat(
             model='llama3.2:3b',
             messages=[
                 {'role': 'system', 'content': prompt_system},
-                {'role': 'user', 'content': f'Génère le script pour : {sujet}'}
+                {'role': 'user', 'content': 'Génère le script.'}
             ],
             format=schema,
             options={'temperature': 0.8}
         )
+        # Ici on sécurise le parsing du JSON
         try:
-            return json.loads(response["message"]["content"])
+            data = json.loads(response['message']['content'])
+            return data
         except json.JSONDecodeError:
-            print("Erreur de format JSON. L'IA a répondu un texte invalide.")
+            print("❌ Erreur : L'IA a renvoyé un texte qui n'est pas du JSON valide.")
             sys.exit(1)
+            
     except Exception as e:
-        print(f"\n❌ ERREUR OLLAMA : {e}\n")
+        print(f"\n❌ ERREUR OLLAMA (Connexion échouée) : {e}\n")
         sys.exit(1)
 
 def sauvegarder_json(data, nom_fichier):
     json_final = {
-        "date": data["date"],
+        "date": data.get("date", datetime.datetime.now().strftime("%Y-%m-%d")),
         "series": "Tu Perro Feliz",
-        "hook": data["hook"],
-        "narration": data["narration"],
-        "caption": data["caption"],
-        "hashtags": data["hashtags"],
+        "hook": data.get("hook", "Consejo canino"),
+        "narration": data.get("narration", "Consejo para tu perro."),
+        "caption": data.get("caption", "Consejo del día."),
+        "hashtags": data.get("hashtags", ["#Perros"]),
         "media": [],
         "format": "educational_short",
         "duration_target": "60-75s"
@@ -71,21 +69,18 @@ def sauvegarder_json(data, nom_fichier):
     print(f"✅ Fichier sauvegardé : {chemin}")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         sys.exit(1)
         
     heure = datetime.datetime.now(datetime.timezone.utc).hour
     
     if heure < 10:
-        format_type = "education"
-        sujet = "Un conseil d'éducation canine"
+        target_format = "education"
     elif heure < 16:
-        format_type = "sante"
-        sujet = "Un conseil de santé ou d'alimentation"
+        target_format = "sante"
     else:
-        format_type = "comportement"
-        sujet = "Comprendre le comportement de son chien"
+        target_format = "comportement"
         
-    print(f"Heure UTC : {heure}h. Format choisi : {format_type}")
-    data = generer_contenu(sujet, format_type)
-    sauvegarder_json(data, sys.argv[2])
+    print(f"Heure UTC : {heure}h. Format choisi : {target_format}")
+    data = generer_contenu(target_format)
+    sauvegarder_json(data, sys.argv[1])
