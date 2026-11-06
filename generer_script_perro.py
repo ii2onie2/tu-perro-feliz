@@ -44,7 +44,11 @@ def generer_contenu(sujet, format_type):
             format=schema,
             options={'temperature': 0.8}
         )
-        return json.loads(response['message']['content'])
+        try:
+            return json.loads(response["message"]["content"])
+        except json.JSONDecodeError:
+            print("Erreur de format JSON. L'IA a répondu un texte invalide.")
+            sys.exit(1)
     except Exception as e:
         print(f"\n❌ ERREUR OLLAMA : {e}\n")
         sys.exit(1)

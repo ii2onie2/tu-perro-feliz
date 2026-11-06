@@ -20,7 +20,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      # NOUVEAU : Téléchargement de FFmpeg statique (instantané) au lieu d'apt-get
       - name: Download static FFmpeg
         run: |
           wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
@@ -30,7 +29,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # On garde apt-get uniquement pour les polices et build-essential (plus léger)
           sudo apt-get update
           sudo apt-get install -y fonts-dejavu-core wget git build-essential autoconf automake libtool pkg-config
           pip install -r requirements.txt
@@ -67,6 +65,12 @@ jobs:
             sleep 2
           done
           ollama pull llama3.2:3b
+          
+      - name: Test Ollama
+        run: |
+          echo "Test de génération avec Ollama..."
+          curl -X POST http://localhost:11434/api/generate -d '{"model": "llama3.2:3b", "prompt": "Di hola", "stream": false}' | head -c 200
+          echo ""
 
       - name: Set Content File Name
         run: echo "CONTENT_FILE=content/episode_$(date +%Y%m%d_%H%M%S).json" >> $GITHUB_ENV
