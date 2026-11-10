@@ -2,37 +2,27 @@ name: Daily Dog Video (Tu Perro)
 
 on:
   schedule:
-    - cron: '30 7 * * *'
-    - cron: '30 14 * * *'
-    - cron: '30 18 * * *'
+    - cron: '0 7,14,18 * * *'
   workflow_dispatch:
 
 jobs:
   generate-and-publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    timeout-minutes: 15
-
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # NOUVELLE ÉTAPE : FFmpeg depuis BtbN (GitHub)
-      - name: Download static FFmpeg
-        run: |
-          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-04-30-13-44/ffmpeg-n7.1.3-46-g957b06a788-linux64-gpl-7.1.tar.xz
-          tar -xf ffmpeg-n7.1.3-46-g957b06a788-linux64-gpl-7.1.tar.xz
-          sudo cp ffmpeg-n7.1.3-46-g957b06a788-linux64-gpl-7.1/bin/ffmpeg /usr/local/bin/
-          sudo cp ffmpeg-n7.1.3-46-g957b06a788-linux64-gpl-7.1/bin/ffprobe /usr/local/bin/
-
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y fonts-dejavu-core wget git build-essential autoconf automake libtool pkg-config
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install requests ollama
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Install espeak-ng from source
         run: |
@@ -52,13 +42,13 @@ jobs:
       - name: Download Voice Model
         run: |
           mkdir -p voices
-          wget -O voices/es_ES-sharvard-medium.onnx "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx"
-          wget -O voices/es_ES-sharvard-medium.onnx.json "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx.json"
+          wget -O voices/es_ES-davefx-medium.onnx "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/davefx/medium/es_ES-davefx-medium.onnx"
+          wget -O voices/es_ES-davefx-medium.onnx.json "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/davefx/medium/es_ES-davefx-medium.onnx.json"
 
       - name: Install Ollama
         run: curl -fsSL https://ollama.com/install.sh | sh
 
-      - name: Start Ollama and pull model
+      - name: Generate Content
         run: |
           ollama serve &
           for i in $(seq 1 30); do
@@ -66,31 +56,39 @@ jobs:
             sleep 2
           done
           ollama pull llama3.2:3b
-
-      - name: Set Content File Name
-        run: echo "CONTENT_FILE=content/episode_$(date +%Y%m%d_%H%M%S).json" >> $GITHUB_ENV
-
-      - name: Generate Content
-        run: python generer_script_perro.py "$CONTENT_FILE"
+          export CONTENT_FILE=content/episode_$(date +%Y%m%d_%H%M%S).json
+          echo "CONTENT_FILE=$CONTENT_FILE" >> $GITHUB_ENV
+          python generer_script.py "$CONTENT_FILE"
 
       - name: Fetch Image
+        env:
+          EUROPEANA_API_KEY: ${{ secrets.EUROPEANA_API_KEY }}
         run: python fetch_image.py "$CONTENT_FILE"
 
       - name: Render Video
         env:
-          PIPER_VOICE_MODEL: "voices/es_ES-sharvard-medium.onnx"
+          ESPEAK_DATA_PATH: /usr/share/espeak-ng-data
+          PIPER_VOICE_MODEL: "voices/es_ES-davefx-medium.onnx"
         run: python scripts/render.py --content "$CONTENT_FILE" --out final_video
 
       - name: Create Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="v-$(date +%Y%m%d-%H%M%S)"
-          gh release create "$TAG" final_video/video.mp4 --title "Épisode Chien $(date +%d/%m/%Y)"
+          TAG="v-$(date +%Y%m%d%H%M%S)"
+          gh release create "$TAG" final_video/video.mp4 --title "Episode $(date +%d/%m/%Y)" --notes "Nouvel épisode généré automatiquement."
           echo "VIDEO_URL=${{ github.server_url }}/${{ github.repository }}/releases/download/$TAG/video.mp4" >> $GITHUB_ENV
 
       - name: Publish to Buffer
         env:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+        run: python publier.py perro "$CONTENT_FILE" "$VIDEO_URL"
+
+      - name: Commit and Push History
         run: |
-          python publier.py perro "$CONTENT_FILE" "$VIDEO_URL"
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add last_images.txt content/*.json || true
+          git commit -m "chore: update history and content [skip ci]" || true
+          git pull --rebase -X theirs
+          git push

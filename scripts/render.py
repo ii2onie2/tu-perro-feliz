@@ -47,9 +47,7 @@ def main():
         raise SystemExit("PIPER_VOICE_MODEL absent")
 
     # === CORRECTION AUDIO : Nettoyage pour Piper ===
-    # 1. On nettoie les caractères spéciaux qui font planter Piper
     narration_clean = re.sub(r'[^\w\s,\.\!\?\;\:\-\'\"\(\)]', '', narration)
-    # 2. On remplace les apostrophes typographiques par des apostrophes simples
     narration_clean = narration_clean.replace("’", "'").replace("“", '"').replace("”", '"')
 
     cmd = ["piper", "--model", args.voice_model, "--output_file", wav]
@@ -92,7 +90,6 @@ def main():
 
     video_out = out / "video.mp4"
 
-    # On utilise l'image sélectionnée par fetch_image.py
     cmd_ffmpeg = [
         "ffmpeg", "-y", "-loop", "1", "-i", "assets/history/sources/current.jpg",
         "-i", wav,
