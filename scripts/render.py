@@ -1,4 +1,11 @@
-import argparse, json, math, os, pathlib, subprocess, textwrap, re
+import argparse, json, math, os, pathlib, subprocess, textwrap, re, sys, asyncio
+
+# Installation automatique d'edge-tts
+try:
+    import edge_tts
+except ImportError:
+    subprocess.run([sys.executable, "-m", "pip", "install", "edge-tts"], check=True)
+    import edge_tts
 
 def probe_duration(path):
     p = subprocess.run(
@@ -25,12 +32,17 @@ def make_srt(text, duration, out):
 def ffpath(p):
     return str(p).replace("'", "'\\''").replace(":", "\\:")
 
+async def generate_audio(text, output_path):
+    # Voix espagnole (Espagne) naturelle pour les chiens
+    # Autres options : "es-ES-ElviraNeural" (femme), "es-MX-JorgeNeural" (Mexique)
+    voice = "es-ES-AlvaroNeural"
+    communicate = edge_tts.Communicate(text, voice)
+    await communicate.save(output_path)
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--content", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--voice-model", default=os.environ.get("PIPER_VOICE_MODEL"))
-    ap.add_argument("--voice-config", default=os.environ.get("PIPER_VOICE_CONFIG"))
     args = ap.parse_args()
 
     out = pathlib.Path(args.out)
@@ -42,31 +54,15 @@ def main():
         raise SystemExit("Narration vide")
     narration = re.sub(r'\s+', ' ', narration).strip()
 
-    wav = str(out / "voice.wav")
-    if not args.voice_model:
-        raise SystemExit("PIPER_VOICE_MODEL absent")
+    wav = str(out / "voice.mp3")
 
-    # === CORRECTION AUDIO : Nettoyage + Fallback ===
-    narration_clean = re.sub(r'[^\w\s,\.\!\?\;\:\-\'\"\(\)]', '', narration)
-    narration_clean = narration_clean.replace("’", "'").replace("“", '"').replace("”", '"')
-    narration_clean = narration_clean.encode('ascii', 'ignore').decode('ascii')
-
-    cmd = ["piper", "--model", args.voice_model, "--output_file", wav]
-    if args.voice_config:
-        cmd += ["--config", args.voice_config]
-
-    try:
-        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, text=True)
-        p.communicate(narration_clean)
-        if p.returncode != 0:
-            raise Exception("Piper a crashé")
-    except Exception as e:
-        print(f"⚠️ Piper a échoué, bascule sur espeak-ng. Erreur: {e}")
-        subprocess.run(["espeak-ng", "-v", "es", "-s", "150", "-w", wav, narration_clean], check=True)
+    print("Génération audio avec Edge TTS...")
+    asyncio.run(generate_audio(narration, wav))
+    print("Audio généré.")
 
     duration = probe_duration(wav)
     srt = str(out / "subtitles.srt")
-    make_srt(narration_clean, duration, srt)
+    make_srt(narration, duration, srt)
 
     series = (data.get("series_name") or data.get("series") or "Tu Perro Feliz").strip()
     hook = (data.get("hook") or "").strip()
@@ -85,7 +81,7 @@ def main():
     date_file = out / "date.txt"
 
     hook_file.write_text(hook + "\n", encoding="utf-8")
-    cta_file.write_text("Sígueme para más consejos sobre tu perro.", encoding="utf-8")
+    cta_file.write_text("Sígueme para más consejos sobre tu perro.", encoding="utf-8") # CTA adapté
     series_file.write_text(series + "\n", encoding="utf-8")
     date_file.write_text(date_label + "\n", encoding="utf-8")
 
@@ -94,7 +90,6 @@ def main():
 
     video_out = out / "video.mp4"
 
-    # === CORRECTION IMAGE : On récupère le chemin depuis le JSON ===
     image_path = data.get("image", "assets/history/sources/current.jpg")
     if not os.path.exists(image_path):
         image_path = "media/image_01.jpg"
@@ -127,7 +122,7 @@ def main():
 
     (out / "caption.txt").write_text(narration, encoding="utf-8")
     (out / "sources.json").write_text(json.dumps([], ensure_ascii=False), encoding="utf-8")
-    print(f"Vidéo générée : {video_out}")
+    print(f"Vidéo générée avec Edge TTS : {video_out}")
 
 if __name__ == "__main__":
     main()
