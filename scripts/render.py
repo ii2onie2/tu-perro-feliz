@@ -1,6 +1,6 @@
 import argparse, json, math, os, pathlib, subprocess, textwrap, re, sys, asyncio
 
-# Installation automatique d'edge-tts
+# Installation automatique d'edge-tts si absent
 try:
     import edge_tts
 except ImportError:
@@ -16,8 +16,7 @@ def probe_duration(path):
 
 def make_srt(text, duration, out):
     chunks = textwrap.wrap(text, width=42, break_long_words=False, break_on_hyphens=False) or [text]
-    if not chunks:
-        chunks = [" "]
+    if not chunks: chunks = [" "]
     lines = []
     step = duration / len(chunks)
     for i, chunk in enumerate(chunks):
@@ -33,9 +32,8 @@ def ffpath(p):
     return str(p).replace("'", "'\\''").replace(":", "\\:")
 
 async def generate_audio(text, output_path):
-    # Voix espagnole (Espagne) naturelle pour les chiens
-    # Autres options : "es-ES-ElviraNeural" (femme), "es-MX-JorgeNeural" (Mexique)
-    voice = "es-ES-AlvaroNeural"
+    # Voix espagnole naturelle (Espagne)
+    voice = "es-ES-AlvaroNeural" # Alternative : "es-ES-ElviraNeural" (femme)
     communicate = edge_tts.Communicate(text, voice)
     await communicate.save(output_path)
 
@@ -50,8 +48,7 @@ def main():
     data = json.loads(pathlib.Path(args.content).read_text(encoding="utf-8"))
 
     narration = (data.get("narration") or data.get("script") or "").strip()
-    if not narration:
-        raise SystemExit("Narration vide")
+    if not narration: raise SystemExit("Narration vide")
     narration = re.sub(r'\s+', ' ', narration).strip()
 
     wav = str(out / "voice.mp3")
@@ -72,51 +69,33 @@ def main():
             from datetime import datetime
             d = datetime.strptime(date_label, "%Y-%m-%d")
             date_label = d.strftime("%d/%m/%Y")
-        except:
-            pass
+        except: pass
 
-    hook_file = out / "hook.txt"
-    cta_file = out / "cta.txt"
-    series_file = out / "series.txt"
-    date_file = out / "date.txt"
-
+    hook_file, cta_file, series_file, date_file = out/"hook.txt", out/"cta.txt", out/"series.txt", out/"date.txt"
     hook_file.write_text(hook + "\n", encoding="utf-8")
-    cta_file.write_text("Sígueme para más consejos sobre tu perro.", encoding="utf-8") # CTA adapté
+    cta_file.write_text("Sígueme para más consejos sobre tu perro.", encoding="utf-8")
     series_file.write_text(series + "\n", encoding="utf-8")
     date_file.write_text(date_label + "\n", encoding="utf-8")
 
     hook_end = max(3.0, duration * 0.15)
     cta_start = max(0.0, duration - 3.5)
-
     video_out = out / "video.mp4"
 
     image_path = data.get("image", "assets/history/sources/current.jpg")
     if not os.path.exists(image_path):
         image_path = "media/image_01.jpg"
-        if not os.path.exists(image_path):
-            raise SystemExit(f"Image introuvable : {image_path}")
+        if not os.path.exists(image_path): raise SystemExit(f"Image introuvable : {image_path}")
 
     cmd_ffmpeg = [
-        "ffmpeg", "-y", "-loop", "1", "-i", image_path,
-        "-i", wav,
+        "ffmpeg", "-y", "-loop", "1", "-i", image_path, "-i", wav,
         "-filter_complex",
         f"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,"
-        f"drawtext=textfile='{ffpath(series_file)}':font='DejaVu Sans':fontcolor=white@0.8:fontsize=24:"
-        f"x=(w-text_w)/2:y=70,"
-        f"drawtext=textfile='{ffpath(date_file)}':font='DejaVu Sans':fontcolor=white@0.8:fontsize=28:"
-        f"x=(w-text_w)/2:y=120,"
-        f"drawtext=textfile='{ffpath(hook_file)}':font='DejaVu Sans':fontcolor=white:fontsize=54:"
-        f"box=1:boxcolor=black@0.6:boxborderw=20:"
-        f"x=(w-text_w)/2:y=155:enable='between(t,0,{hook_end:.2f})',"
-        f"drawtext=textfile='{ffpath(cta_file)}':font='DejaVu Sans':fontcolor=white:fontsize=40:"
-        f"box=1:boxcolor=black@0.6:boxborderw=15:"
-        f"x=(w-text_w)/2:y=h-360:enable='gte(t,{cta_start:.2f})'"
-        f"[v]",
-        "-map", "[v]", "-map", "1:a",
-        "-c:v", "libx264", "-crf", "25", "-preset", "veryfast",
-        "-c:a", "aac", "-b:a", "128k",
-        "-shortest", "-t", f"{duration:.2f}",
-        str(video_out)
+        f"drawtext=textfile='{ffpath(series_file)}':font='DejaVu Sans':fontcolor=white@0.8:fontsize=24:x=(w-text_w)/2:y=70,"
+        f"drawtext=textfile='{ffpath(date_file)}':font='DejaVu Sans':fontcolor=white@0.8:fontsize=28:x=(w-text_w)/2:y=120,"
+        f"drawtext=textfile='{ffpath(hook_file)}':font='DejaVu Sans':fontcolor=white:fontsize=54:box=1:boxcolor=black@0.6:boxborderw=20:x=(w-text_w)/2:y=155:enable='between(t,0,{hook_end:.2f})',"
+        f"drawtext=textfile='{ffpath(cta_file)}':font='DejaVu Sans':fontcolor=white:fontsize=40:box=1:boxcolor=black@0.6:boxborderw=15:x=(w-text_w)/2:y=h-360:enable='gte(t,{cta_start:.2f})'[v]",
+        "-map", "[v]", "-map", "1:a", "-c:v", "libx264", "-crf", "25", "-preset", "veryfast",
+        "-c:a", "aac", "-b:a", "128k", "-shortest", "-t", f"{duration:.2f}", str(video_out)
     ]
     subprocess.run(cmd_ffmpeg, check=True)
 
