@@ -50,7 +50,9 @@ def main():
         raise SystemExit("PIPER_VOICE_MODEL missing")
 
     wav=str(out/"voice.wav")
-    cmd=["piper","--model",args.voice_model,"--output_file",wav]
+    # Fallback espeak-ng pour éviter le crash Piper sur les phonèmes anglais
+    narration_clean = narration.replace("*", "").replace("#", "").replace("_", "").replace("`", "")
+    subprocess.run(["espeak-ng", "-v", "es", "-s", "150", "-w", wav, narration_clean], check=True)
     if args.voice_config:
         cmd += ["--config",args.voice_config]
     p=subprocess.Popen(cmd,stdin=subprocess.PIPE,text=True)
