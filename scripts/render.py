@@ -46,24 +46,28 @@ def main():
     if not args.voice_model:
         raise SystemExit("PIPER_VOICE_MODEL absent")
 
-    # === CORRECTION AUDIO : Nettoyage pour Piper ===
+    # === CORRECTION AUDIO : Nettoyage + Fallback ===
     narration_clean = re.sub(r'[^\w\s,\.\!\?\;\:\-\'\"\(\)]', '', narration)
     narration_clean = narration_clean.replace("’", "'").replace("“", '"').replace("”", '"')
+    narration_clean = narration_clean.encode('ascii', 'ignore').decode('ascii')
 
     cmd = ["piper", "--model", args.voice_model, "--output_file", wav]
     if args.voice_config:
         cmd += ["--config", args.voice_config]
 
-    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, text=True)
-    p.communicate(narration_clean)
-    if p.returncode:
-        raise SystemExit(p.returncode)
+    try:
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, text=True)
+        p.communicate(narration_clean)
+        if p.returncode != 0:
+            raise Exception("Piper a crashé")
+    except Exception as e:
+        print(f"⚠️ Piper a échoué, bascule sur espeak-ng. Erreur: {e}")
+        subprocess.run(["espeak-ng", "-v", "es", "-s", "150", "-w", wav, narration_clean], check=True)
 
     duration = probe_duration(wav)
     srt = str(out / "subtitles.srt")
     make_srt(narration_clean, duration, srt)
 
-    # Adaptation pour la chaîne Tu Perro Feliz
     series = (data.get("series_name") or data.get("series") or "Tu Perro Feliz").strip()
     hook = (data.get("hook") or "").strip()
     date_label = (data.get("date") or "").strip()
