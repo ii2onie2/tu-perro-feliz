@@ -53,9 +53,6 @@ def main():
     # Fallback espeak-ng pour éviter le crash Piper sur les phonèmes anglais
     narration_clean = narration.replace("*", "").replace("#", "").replace("_", "").replace("`", "")
     subprocess.run(["espeak-ng", "-v", "es", "-s", "150", "-w", wav, narration_clean], check=True)
-    p.communicate(narration)
-    if p.returncode:
-        raise SystemExit(p.returncode)
 
     duration=probe_duration(wav)
     srt=str(out/"subtitles.srt")
