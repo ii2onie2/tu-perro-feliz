@@ -53,9 +53,6 @@ def main():
     # Fallback espeak-ng pour éviter le crash Piper sur les phonèmes anglais
     narration_clean = narration.replace("*", "").replace("#", "").replace("_", "").replace("`", "")
     subprocess.run(["espeak-ng", "-v", "es", "-s", "150", "-w", wav, narration_clean], check=True)
-    if args.voice_config:
-        cmd += ["--config",args.voice_config]
-    p=subprocess.Popen(cmd,stdin=subprocess.PIPE,text=True)
     p.communicate(narration)
     if p.returncode:
         raise SystemExit(p.returncode)
