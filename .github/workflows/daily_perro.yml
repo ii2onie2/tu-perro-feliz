@@ -1,5 +1,8 @@
 name: Daily Dog Video (Tu Perro)
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: '0 7,14,18 * * *'
@@ -8,6 +11,8 @@ on:
 jobs:
   generate-and-publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,31 +24,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests ollama
+          pip install requests ollama edge-tts
 
       - name: Install FFmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
-
-      - name: Install espeak-ng from source
-        run: |
-          git clone --depth 1 https://github.com/rhasspy/espeak-ng.git
-          cd espeak-ng
-          ./autogen.sh && ./configure --prefix=/usr && make -j$(nproc) && sudo make install && sudo ldconfig
-
-      - name: Install Piper TTS
-        run: |
-          wget https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz
-          tar -xzf piper_linux_x86_64.tar.gz
-          sudo cp piper/piper /usr/local/bin/
-          sudo cp piper/libpiper_phonemize.so* /usr/lib/ 2>/dev/null || true
-          sudo cp piper/libonnxruntime.so* /usr/lib/ 2>/dev/null || true
-          sudo ldconfig
-
-      - name: Download Voice Model
-        run: |
-          mkdir -p voices
-          wget -O voices/es_ES-davefx-medium.onnx "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/davefx/medium/es_ES-davefx-medium.onnx"
-          wget -O voices/es_ES-davefx-medium.onnx.json "https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_ES/davefx/medium/es_ES-davefx-medium.onnx.json"
 
       - name: Install Ollama
         run: curl -fsSL https://ollama.com/install.sh | sh
@@ -66,9 +50,6 @@ jobs:
         run: python fetch_image.py "$CONTENT_FILE"
 
       - name: Render Video
-        env:
-          ESPEAK_DATA_PATH: /usr/share/espeak-ng-data
-          PIPER_VOICE_MODEL: "voices/es_ES-davefx-medium.onnx"
         run: python scripts/render.py --content "$CONTENT_FILE" --out final_video
 
       - name: Create Release
@@ -78,6 +59,17 @@ jobs:
           TAG="v-$(date +%Y%m%d%H%M%S)"
           gh release create "$TAG" final_video/video.mp4 --title "Episode $(date +%d/%m/%Y)" --notes "Nouvel épisode généré automatiquement."
           echo "VIDEO_URL=${{ github.server_url }}/${{ github.repository }}/releases/download/$TAG/video.mp4" >> $GITHUB_ENV
+
+      - name: Verify MP4 Accessibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${VIDEO_URL:-}"
+          curl --fail --location --silent --show-error --retry 5 --retry-delay 3 --max-time 120 --output /tmp/remote_video.mp4 "$VIDEO_URL"
+          test -s /tmp/remote_video.mp4
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height -of default=noprint_wrappers=1 /tmp/remote_video.mp4
+          cmp -s final_video/video.mp4 /tmp/remote_video.mp4 || { echo "ERREUR : le fichier distant diffère du MP4 local"; exit 1; }
+          echo "REMOTE_MP4_VERIFIED=PASS"
 
       - name: Publish to Buffer
         env:
