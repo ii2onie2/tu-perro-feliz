@@ -58,7 +58,7 @@ jobs:
           ollama pull llama3.2:3b
           export CONTENT_FILE=content/episode_$(date +%Y%m%d_%H%M%S).json
           echo "CONTENT_FILE=$CONTENT_FILE" >> $GITHUB_ENV
-          python generer_script.py "$CONTENT_FILE"
+          python generer_script_perro.py "$CONTENT_FILE"
 
       - name: Fetch Image
         env:
