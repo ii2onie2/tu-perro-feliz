@@ -1,10 +1,9 @@
 import sys, json, os, requests
 
 BUFFER_API_KEY = os.environ.get("BUFFER_API_KEY")
-# IDs inversés pour que "perro" pointe vers tuperrofelizofficial
 CHANNELS = {
-    "tal": "6ae072482f1f5ed648e82144",
-    "perro": "6ae072482f1f5ed648e82143"
+    "tal": "6ae070412f1f5ed648e8137f",    # Vrai ID de taldiacomohoy09
+    "perro": "6ae072482f1f5ed648e82143"   # Vrai ID de tuperrofelizofficial
 }
 
 def publier(chaîne, json_path, url_video):
@@ -26,7 +25,7 @@ def publier(chaîne, json_path, url_video):
 
     # Lecture du texte
     caption = data.get("caption") or data.get("narration") or data.get("script") or ""
-    hashtags = data.get("hashtags", "#TuPerroFeliz #Perros #ConsejosCaninos")
+    hashtags = data.get("hashtags", "#TalDíaComoHoy #Historia #España")
     texte_final = f"{caption}\n\n{hashtags}".strip()
     
     # Échappement du texte
