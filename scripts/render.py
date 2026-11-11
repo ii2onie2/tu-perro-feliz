@@ -32,8 +32,7 @@ def ffpath(p):
     return str(p).replace("'", "'\\''").replace(":", "\\:")
 
 async def generate_audio(text, output_path):
-    # Voix espagnole naturelle (Espagne)
-    voice = "es-ES-AlvaroNeural" # Alternative : "es-ES-ElviraNeural" (femme)
+    voice = "es-ES-AlvaroNeural"
     communicate = edge_tts.Communicate(text, voice)
     await communicate.save(output_path)
 
@@ -61,6 +60,7 @@ def main():
     srt = str(out / "subtitles.srt")
     make_srt(narration, duration, srt)
 
+    # Textes pour l'overlay (adaptés à Tu Perro Feliz)
     series = (data.get("series_name") or data.get("series") or "Tu Perro Feliz").strip()
     hook = (data.get("hook") or "").strip()
     date_label = (data.get("date") or "").strip()
@@ -73,9 +73,13 @@ def main():
 
     hook_file, cta_file, series_file, date_file = out/"hook.txt", out/"cta.txt", out/"series.txt", out/"date.txt"
     hook_file.write_text(hook + "\n", encoding="utf-8")
+    # CTA adapté aux chiens
     cta_file.write_text("Sígueme para más consejos sobre tu perro.", encoding="utf-8")
     series_file.write_text(series + "\n", encoding="utf-8")
     date_file.write_text(date_label + "\n", encoding="utf-8")
+
+    # Fichiers pour Buffer
+    (out / "caption.txt").write_text(narration, encoding="utf-8")
 
     hook_end = max(3.0, duration * 0.15)
     cta_start = max(0.0, duration - 3.5)
@@ -86,6 +90,7 @@ def main():
         image_path = "media/image_01.jpg"
         if not os.path.exists(image_path): raise SystemExit(f"Image introuvable : {image_path}")
 
+    # FFmpeg avec sous-titres incrustés
     cmd_ffmpeg = [
         "ffmpeg", "-y", "-loop", "1", "-i", image_path, "-i", wav,
         "-filter_complex",
@@ -93,15 +98,14 @@ def main():
         f"drawtext=textfile='{ffpath(series_file)}':font='DejaVu Sans':fontcolor=white@0.8:fontsize=24:x=(w-text_w)/2:y=70,"
         f"drawtext=textfile='{ffpath(date_file)}':font='DejaVu Sans':fontcolor=white@0.8:fontsize=28:x=(w-text_w)/2:y=120,"
         f"drawtext=textfile='{ffpath(hook_file)}':font='DejaVu Sans':fontcolor=white:fontsize=54:box=1:boxcolor=black@0.6:boxborderw=20:x=(w-text_w)/2:y=155:enable='between(t,0,{hook_end:.2f})',"
-        f"drawtext=textfile='{ffpath(cta_file)}':font='DejaVu Sans':fontcolor=white:fontsize=40:box=1:boxcolor=black@0.6:boxborderw=15:x=(w-text_w)/2:y=h-360:enable='gte(t,{cta_start:.2f})'[v]",
+        f"drawtext=textfile='{ffpath(cta_file)}':font='DejaVu Sans':fontcolor=white:fontsize=40:box=1:boxcolor=black@0.6:boxborderw=15:x=(w-text_w)/2:y=h-360:enable='gte(t,{cta_start:.2f})',"
+        f"subtitles='{srt}':force_style='FontName=DejaVu Sans,FontSize=24,PrimaryColour=&HFFFFFF&,OutlineColour=&H000000&,Outline=2'[v]",
         "-map", "[v]", "-map", "1:a", "-c:v", "libx264", "-crf", "25", "-preset", "veryfast",
         "-c:a", "aac", "-b:a", "128k", "-shortest", "-t", f"{duration:.2f}", str(video_out)
     ]
     subprocess.run(cmd_ffmpeg, check=True)
 
-    (out / "caption.txt").write_text(narration, encoding="utf-8")
-    (out / "sources.json").write_text(json.dumps([], ensure_ascii=False), encoding="utf-8")
-    print(f"Vidéo générée avec Edge TTS : {video_out}")
+    print(f"Vidéo générée avec Edge TTS et sous-titres : {video_out}")
 
 if __name__ == "__main__":
     main()
