@@ -1,0 +1,43 @@
+name: Safe daily JSON diagnostics
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/render.yml'
+      - '.github/workflows/daily-json-diagnostics.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test required daily input detection without rendering
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$(mktemp -d)"
+          trap 'rm -rf "$root"' EXIT
+          cd "$root"
+          mkdir content
+          today="$(TZ=Europe/Madrid date +%F)"
+          files=("content/${today}.json" "content/${today}-educacion.json" "content/${today}-sabias.json")
+          check() {
+            local missing=0 file
+            for file in "${files[@]}"; do
+              if [ ! -s "$file" ]; then missing=1; fi
+            done
+            test "$missing" -eq 0
+          }
+          if check; then echo 'ERROR: absent files accepted'; exit 1; fi
+          printf '{}' > "${files[0]}"
+          if check; then echo 'ERROR: two absent files accepted'; exit 1; fi
+          printf '{}' > "${files[1]}"
+          : > "${files[2]}"
+          if check; then echo 'ERROR: empty file accepted'; exit 1; fi
+          printf '{}' > "${files[2]}"
+          check
+          rm "${files[0]}"
+          printf '{}' > content/2026-10-09.json
+          if check; then echo 'ERROR: older fallback accepted'; exit 1; fi
+          echo 'PASS: five isolated scenarios'
