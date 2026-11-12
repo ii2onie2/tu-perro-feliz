@@ -1,0 +1,37 @@
+{
+  "series": "¿Sabías esto de tu perro?",
+  "title": "Una cola que se mueve no siempre significa que tu perro esté feliz",
+  "date": "2026-10-29",
+  "slot": "19:00",
+  "hook": "¿Sabías que mover la cola no siempre significa alegría?",
+  "narration": "Seguro que alguna vez has visto a un perro mover la cola y has pensado que quería jugar. Pero la cola, por sí sola, no cuenta toda la historia. Una cola que se mueve puede aparecer con emociones distintas; para interpretar la situación hay que mirar también el resto del cuerpo y lo que sucede alrededor. Observa si el perro está relajado o rígido, si se acerca por iniciativa propia o intenta apartarse y si tiene espacio para alejarse. Una cola baja o recogida, junto con señales de tensión, puede indicar que se siente preocupado, incluso si se mueve un poco. En cambio, un movimiento amplio y un cuerpo suelto suelen acompañar interacciones más relajadas. Ninguna señal aislada permite conocer con certeza lo que siente un animal. Si un perro parece incómodo, no lo obligues a saludar ni permitas que alguien lo invada. Dale distancia y opciones. Aprender a observarlo ayuda a que las interacciones sean más respetuosas y seguras. ¿En qué momentos notas que tu perro mueve más la cola?",
+  "caption": "La cola es solo una parte del lenguaje canino. Observa postura, contexto y posibilidad de alejarse.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#LenguajeCanino",
+    "#BienestarCanino",
+    "#Perros",
+    "#SabiasQue"
+  ],
+  "sources": [
+    {
+      "name": "Blue Cross — Why do dogs wag their tails?",
+      "url": "https://www.bluecross.org.uk/advice/dog/why-do-dogs-wag-their-tails"
+    }
+  ],
+  "media": [
+    {
+      "role": "Ilustración o vídeo de lenguaje corporal canino; material no seleccionado",
+      "asset_status": "NOT_SELECTED",
+      "license_note": "RIGHTS_UNVERIFIED_NO_RENDER"
+    }
+  ],
+  "cta": "Síguenos para aprender a entender mejor el lenguaje de tu perro.",
+  "format": "body_language",
+  "hook_pattern": "context_changes_meaning",
+  "topic_family": "interpretacion_de_la_cola_canina",
+  "duration_target": "60-75s",
+  "editorial_status": "RESEARCH_DRAFT_UNAPPROVED",
+  "fact_reference_status": "DIRECT_SOURCE_REVIEWED",
+  "media_rights_status": "NOT_VERIFIED"
+}

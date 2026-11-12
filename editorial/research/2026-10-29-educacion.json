@@ -1,0 +1,37 @@
+{
+  "series": "Buenos modales",
+  "title": "Cómo ayudar a tu perro a esperar tranquilo antes de salir por la puerta",
+  "date": "2026-10-29",
+  "slot": "16:00",
+  "hook": "¿Tu perro sale disparado al abrir la puerta? Enséñale a esperar sin gritos.",
+  "narration": "¿Tu perro se precipita hacia la puerta cada vez que vais a salir? Puedes enseñarle a esperar con calma usando pequeños pasos y premios. Empieza en una puerta interior, en un momento tranquilo, con tu perro sujeto de forma segura y algunos premios adecuados para él. Acércate al picaporte. Si mantiene las patas en el suelo y la correa floja, prémialo. Abre la puerta apenas un poco y vuelve a recompensar la calma. Si intenta lanzarse, cierra suavemente y haz el ejercicio más fácil, sin regañarlo ni forzarlo. Avanza poco a poco hasta que pueda ver la puerta abierta sin salir corriendo. Después, acompáñalo al otro lado y felicítalo. No hace falta exigir que se siente: lo importante es que pueda esperar relajado. Practica en sesiones cortas y nunca dejes una puerta hacia la calle abierta si no puedes garantizar su seguridad. El objetivo no es controlar cada movimiento, sino conseguir salidas más tranquilas y seguras. ¿Qué parte del paseo emociona más a tu perro?",
+  "caption": "Practica la espera en una puerta interior y recompensa la calma. Progresión gradual y seguridad primero.",
+  "hashtags": [
+    "#TuPerroFeliz",
+    "#BuenosModales",
+    "#EducacionCanina",
+    "#RefuerzoPositivo",
+    "#Perros"
+  ],
+  "sources": [
+    {
+      "name": "Dogs Trust — How to train your dog to be patient in doorways",
+      "url": "https://www.dogstrust.org.uk/dog-advice/training/home/doorway-training"
+    }
+  ],
+  "media": [
+    {
+      "role": "Demostración visual de la espera ante una puerta; material no seleccionado",
+      "asset_status": "NOT_SELECTED",
+      "license_note": "RIGHTS_UNVERIFIED_NO_RENDER"
+    }
+  ],
+  "cta": "Síguenos para descubrir más ejercicios amables y seguros.",
+  "format": "mini_lesson",
+  "hook_pattern": "safety_first",
+  "topic_family": "espera_tranquila_en_puertas",
+  "duration_target": "60-75s",
+  "editorial_status": "RESEARCH_DRAFT_UNAPPROVED",
+  "fact_reference_status": "DIRECT_SOURCE_REVIEWED",
+  "media_rights_status": "NOT_VERIFIED"
+}

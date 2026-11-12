@@ -1,0 +1,61 @@
+name: Research Commons candidate metadata and SHA256 probe (no render)
+
+on:
+  pull_request:
+    paths:
+      - 'editorial/research/2026-10-29-commons-media-candidates.md'
+      - '.github/workflows/commons-candidate-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  commons-candidate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        title:
+          - "File:Brown dog with curly hair sitting and waiting at the door with woman in the background.jpg"
+          - "File:Dog tail.jpg"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install lightweight Commons client
+        run: python -m pip install requests
+      - name: Validate API license, provenance and actual downloaded SHA256 (ephemeral only)
+        env:
+          CANDIDATE_TITLE: ${{ matrix.title }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import shutil
+          import subprocess
+          import tempfile
+
+          title = os.environ['CANDIDATE_TITLE']
+          media_dir = pathlib.Path('media/.commons-research-probe')
+          try:
+              with tempfile.TemporaryDirectory(prefix='commons-content-') as temp_dir:
+                  content = pathlib.Path(temp_dir) / 'candidate.json'
+                  content.write_text(json.dumps({'media': [{'commons_title': title}]}), encoding='utf-8')
+                  subprocess.run(['python', 'scripts/fetch_media.py', '--content', str(content), '--out', str(media_dir)], check=True)
+                  credits = json.loads((media_dir / 'credits.json').read_text(encoding='utf-8'))
+                  assert len(credits) == 1, 'Expected exactly one audited media entry'
+                  credit = credits[0]
+                  assert credit['commons_title'] == title, 'File title mismatch'
+                  assert credit.get('sha256'), 'Missing media SHA256'
+                  name = credit['metadata']['LicenseShortName']
+                  license_name = name.get('value', '') if isinstance(name, dict) else str(name)
+                  print(f'RESEARCH_MEDIA_METADATA_SHA256=PASS TITLE={title} LICENSE={license_name} SHA256={credit["sha256"]}')
+                  print('PUBLICATION_RIGHTS_CLEARANCE=NOT_GRANTED')
+          finally:
+              shutil.rmtree(media_dir, ignore_errors=True)
+          PY
