@@ -40,11 +40,12 @@ def main():
     fmt = get_format()
     print(f"Heure UTC : {datetime.datetime.now(datetime.timezone.utc).hour}h. Format choisi : {fmt}")
 
+    # Règles absolues : espagnol, pas de français, durée minimale
     rules = (
         "RÈGLE ABSOLUE 1 : Écris UNIQUEMENT en espagnol d'Espagne. N'utilise AUCUN mot de français. "
         "Si tu utilises un mot français, la vidéo sera rejetée.\n"
         "RÈGLE ABSOLUE 2 : N'utilise AUCUN mot en anglais, AUCUN symbole mathématique, AUCUNE émoticône.\n"
-        "RÈGLE ABSOLUE 3 : La narration DOIT faire au moins 150 mots."
+        "RÈGLE ABSOLUE 3 : La narration DOIT faire au moins 150 mots. Si tu ne fais pas 150 mots, la vidéo sera rejetée."
     )
 
     if fmt == "consejo":
@@ -60,6 +61,19 @@ def main():
     print("Génération du script...")
     text = call_ollama(prompt)
 
+    # Boucle de sécurité pour allonger le texte
+    attempts = 0
+    while len(text.split()) < 140 and attempts < 3:
+        print(f"⚠️ Texte trop court ({len(text.split())} mots). Tentative {attempts+1}/3...")
+        if attempts == 0:
+            prompt += " Développe davantage, raconte une histoire complète, donne des exemples concrets."
+        elif attempts == 1:
+            prompt += " La narration doit absolument faire plus de 150 mots. Allonge chaque paragraphe."
+        else:
+            prompt += " Fais une narration très détaillée de plus de 200 mots."
+        text = call_ollama(prompt)
+        attempts += 1
+
     if is_french(text):
         print("⚠️ Texte en français détecté, régénération en espagnol...")
         text = call_ollama(prompt + " IMPORTANT : Escribe en ESPAÑOL, no en francés.")
@@ -70,8 +84,8 @@ def main():
     text = text.replace('"', "'").replace('“', "'").replace('”', "'").replace('’', "'")
 
     if len(text.split()) < 120:
-        print("⚠️ Texte trop court, on ajoute une conclusion.")
-        text += "\n\nRecuerda que cada perro es único y merece todo nuestro cariño y atención."
+        print("⚠️ Texte toujours trop court, on ajoute une conclusion.")
+        text += "\n\nRecuerda que cada perro es único y merece todo nuestro cariño y atención. La paciencia y el amor son las claves para una relación sana con tu mascota."
 
     data = {
         "narration": text,
