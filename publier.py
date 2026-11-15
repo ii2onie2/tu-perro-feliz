@@ -2,9 +2,29 @@ import sys, json, os, requests
 
 BUFFER_API_KEY = os.environ.get("BUFFER_API_KEY")
 CHANNELS = {
-    "tal": "6ae070412f1f5ed648e8137f",    # Vrai ID de taldiacomohoy09
-    "perro": "6ae072482f1f5ed648e82143"   # Vrai ID de tuperrofelizofficial
+    "tal": "6ae070412f1f5ed648e8137f",
+    "perro": "6ae072482f1f5ed648e82143"
 }
+LIMIT = 6  # Nombre maximum de posts en file d'attente
+
+def get_queue_length(channel_id, headers):
+    query = f"""
+    query {{
+      posts(channelId: "{channel_id}", status: [queued]) {{
+        edges {{
+          node {{
+            id
+          }}
+        }}
+      }}
+    }}
+    """
+    response = requests.post("https://api.buffer.com/graphql", json={"query": query}, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        if "data" in data and "posts" in data["data"]:
+            return len(data["data"]["posts"]["edges"])
+    return 0
 
 def publier(chaîne, json_path, url_video):
     if not BUFFER_API_KEY:
@@ -16,6 +36,20 @@ def publier(chaîne, json_path, url_video):
         print(f"Erreur : chaîne '{chaîne}' inconnue.")
         sys.exit(1)
 
+    headers = {
+        "Authorization": f"Bearer {BUFFER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    # 1. Vérification de la file d'attente
+    current_queue = get_queue_length(channel_id, headers)
+    print(f"File d'attente actuelle : {current_queue} posts.")
+    
+    if current_queue >= LIMIT:
+        print(f"⏸️ File d'attente pleine ({current_queue}/{LIMIT}). Envoi annulé pour éviter de saturer Buffer.")
+        sys.exit(0) # On quitte sans erreur, pour ne pas faire échouer le workflow
+
+    # 2. Lecture du texte
     try:
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -23,15 +57,12 @@ def publier(chaîne, json_path, url_video):
         print(f"Erreur lecture JSON : {e}")
         sys.exit(1)
 
-    # Lecture du texte
     caption = data.get("caption") or data.get("narration") or data.get("script") or ""
-    hashtags = data.get("hashtags", "#TalDíaComoHoy #Historia #España")
+    hashtags = data.get("hashtags", "#TuPerroFeliz #Perros #ConsejosCaninos")
     texte_final = f"{caption}\n\n{hashtags}".strip()
-    
-    # Échappement du texte
     texte_echappe = json.dumps(texte_final)
 
-    # Requête GraphQL Buffer avec les DEUX champs obligatoires
+    # 3. Envoi à Buffer
     query = f"""
     mutation {{
       createPost(input: {{
@@ -46,23 +77,12 @@ def publier(chaîne, json_path, url_video):
         }}
       }}) {{
         ... on PostActionSuccess {{
-          post {{
-            id
-            status
-            dueAt
-          }}
+          post {{ id status dueAt }}
         }}
-        ... on MutationError {{
-          message
-        }}
+        ... on MutationError {{ message }}
       }}
     }}
     """
-
-    headers = {
-        "Authorization": f"Bearer {BUFFER_API_KEY}",
-        "Content-Type": "application/json"
-    }
 
     print(f"Envoi à Buffer (chaîne: {chaîne})...")
     response = requests.post("https://api.buffer.com/graphql", json={"query": query}, headers=headers)

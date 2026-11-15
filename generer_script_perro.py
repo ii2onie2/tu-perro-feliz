@@ -1,4 +1,4 @@
-import sys, json, os, datetime, requests
+import sys, json, os, datetime, requests, re
 
 def get_format():
     now_utc = datetime.datetime.now(datetime.timezone.utc)
@@ -40,12 +40,11 @@ def main():
     fmt = get_format()
     print(f"Heure UTC : {datetime.datetime.now(datetime.timezone.utc).hour}h. Format choisi : {fmt}")
 
-    # Règles absolues : espagnol, pas de français, durée minimale
     rules = (
-        "RÈGLE ABSOLUE 1 : Écris UNIQUEMENT en espagnol d'Espagne. N'utilise AUCUN mot de français. "
-        "Si tu utilises un mot français, la vidéo sera rejetée.\n"
+        "RÈGLE ABSOLUE 1 : Écris UNIQUEMENT en espagnol d'Espagne. N'utilise AUCUN mot de français.\n"
         "RÈGLE ABSOLUE 2 : N'utilise AUCUN mot en anglais, AUCUN symbole mathématique, AUCUNE émoticône.\n"
-        "RÈGLE ABSOLUE 3 : La narration DOIT faire au moins 150 mots. Si tu ne fais pas 150 mots, la vidéo sera rejetée."
+        "RÈGLE ABSOLUE 3 : La narration DOIT faire au moins 150 mots.\n"
+        "RÈGLE ABSOLUE 4 : Écris UNIQUEMENT le texte que la voix off doit prononcer. N'inclus AUCUNE indication de mise en scène, AUCUNE description d'image, AUCUNE action entre parenthèses (comme '(Baja la cámara)' ou '(Imágenes de...)')."
     )
 
     if fmt == "consejo":
@@ -61,16 +60,12 @@ def main():
     print("Génération du script...")
     text = call_ollama(prompt)
 
-    # Boucle de sécurité pour allonger le texte
     attempts = 0
     while len(text.split()) < 140 and attempts < 3:
         print(f"⚠️ Texte trop court ({len(text.split())} mots). Tentative {attempts+1}/3...")
-        if attempts == 0:
-            prompt += " Développe davantage, raconte une histoire complète, donne des exemples concrets."
-        elif attempts == 1:
-            prompt += " La narration doit absolument faire plus de 150 mots. Allonge chaque paragraphe."
-        else:
-            prompt += " Fais une narration très détaillée de plus de 200 mots."
+        if attempts == 0: prompt += " Développe davantage, raconte une histoire complète."
+        elif attempts == 1: prompt += " La narration doit absolument faire plus de 150 mots."
+        else: prompt += " Fais une narration très détaillée de plus de 200 mots."
         text = call_ollama(prompt)
         attempts += 1
 
@@ -81,11 +76,13 @@ def main():
     if not text:
         text = "No se pudo generar el texto. Inténtalo de nuevo más tarde."
 
-    text = text.replace('"', "'").replace('“', "'").replace('”', "'").replace('’', "'")
+    # Nettoyage des parenthèses et guillemets
+    text = re.sub(r'\(.*?\)', '', text)
+    text = text.replace('"', "'").replace('“', "'").replace('”', "'").replace('’', "'").strip()
 
     if len(text.split()) < 120:
         print("⚠️ Texte toujours trop court, on ajoute une conclusion.")
-        text += "\n\nRecuerda que cada perro es único y merece todo nuestro cariño y atención. La paciencia y el amor son las claves para una relación sana con tu mascota."
+        text += "\n\nRecuerda que cada perro es único y merece todo nuestro cariño y atención."
 
     data = {
         "narration": text,
